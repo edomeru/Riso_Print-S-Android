@@ -128,9 +128,9 @@ class Preview {
     }
 
     /**
-     * @brief InputTrayFtGlCerezonaS print settings for FT / GL / CEREZONA S series that refers to the tray location of input paper.
+     * @brief InputTrayFtGlCerezonaS print settings for FT / GL / CEREZONA S / OGA series that refers to the tray location of input paper.
      */
-    enum class InputTrayFtGlCerezonaS {
+    enum class InputTrayFtGlCerezonaSOga {
         AUTO,  ///< Auto Tray
         STANDARD,  ///< Standard Tray
         TRAY1,  ///< Tray 1
@@ -146,18 +146,18 @@ class Preview {
              * @return Input tray options array
              */
             @JvmStatic
-            fun valuesFtCerezonaS(): Array<InputTrayFtGlCerezonaS> {
+            fun valuesFtCerezonaS(): Array<InputTrayFtGlCerezonaSOga> {
                 return arrayOf(AUTO, STANDARD, TRAY1, TRAY2, EXTERNAL_FEEDER)
             }
 
 
             /**
-             * @brief Retrieves an array of input tray options for GL series
+             * @brief Retrieves an array of input tray options for GL and OGA series
              *
              * @return Input tray options array
              */
             @JvmStatic
-            fun valuesGl(): Array<InputTrayFtGlCerezonaS> {
+            fun valuesGlOga(): Array<InputTrayFtGlCerezonaSOga> {
                 return arrayOf(AUTO, STANDARD, TRAY1, TRAY2, TRAY3, EXTERNAL_FEEDER)
             }
         }

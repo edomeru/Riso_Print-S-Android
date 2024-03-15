@@ -40,7 +40,7 @@ class Printer : Parcelable {
      *
      * @param ipAddress The printer device IP address
      */
-    var ipAddress: String?
+    var ipAddress: String? = null
     /**
      * @brief Obtain the printer device MAC address.
      *
@@ -102,12 +102,16 @@ class Printer : Parcelable {
     var isActualPrinterTypeInvalid = false
         private set
 
+    var isEnabledIPPS = false
+        private set
+
     /**
      * @brief Printer port setting.
      */
     enum class PortSetting {
         LPR,  ///< LPR port
-        RAW ///< Raw port
+        RAW,  ///< Raw port
+        IPPS  ///< IPPS port
     }
 
     /**
@@ -145,6 +149,7 @@ class Printer : Parcelable {
         id = `in`.readInt()
         portSetting = when (`in`.readInt()) {
             1 -> PortSetting.RAW
+            2 -> PortSetting.IPPS
             else -> PortSetting.LPR
         }
         config!!.readFromParcel(`in`)
@@ -178,12 +183,12 @@ class Printer : Parcelable {
         get() = printerType == AppConstants.PRINTER_MODEL_FT // Classify CEREZONA S as FT model
 
     /**
-     * @brief Determines if the printer is of the GL series
+     * @brief Determines if the printer is of the GL or OGA series
      *
-     * @return True if the printers if of the GL series, false otherwise
+     * @return True if the printers if of the GL or OGA series, false otherwise
      */
-    val isPrinterGL: Boolean
-        get() = printerType == AppConstants.PRINTER_MODEL_GL
+    val isPrinterGLorOGA: Boolean
+        get() = printerType == AppConstants.PRINTER_MODEL_GL // Classify OGA as GL model
 
     /**
      * @brief Initializes the printer's printer type based on the printer's model (name) .
@@ -213,8 +218,14 @@ class Printer : Parcelable {
             printerType = AppConstants.PRINTER_MODEL_FT // Classify CEREZONA S as FT model
             return
         }
-        if (name!!.contains(AppConstants.PRINTER_MODEL_GL)) {
-            printerType = AppConstants.PRINTER_MODEL_GL
+        if (name!!.contains(AppConstants.PRINTER_MODEL_GL) || name!!.contains(AppConstants.PRINTER_MODEL_OGA)) {
+            printerType = AppConstants.PRINTER_MODEL_GL // Classify OGA as GL model
+
+            // Workaround: Only enable IPPS if printer is OGA
+            if (name!!.contains(AppConstants.PRINTER_MODEL_OGA)) {
+                isEnabledIPPS = true
+            }
+
             return
         }
         printerType = AppConstants.PRINTER_MODEL_IS
@@ -254,9 +265,17 @@ class Printer : Parcelable {
         /**
          * @brief Updates the value of mRawAvailable.
          *
-         * @param rawAvailable Enable/Disable Raw print capability
+         * @param isRawAvailable Enable/Disable Raw print capability
          */
         var isRawAvailable = true
+
+        /**
+         * @brief Determines the IPPS capability for printing.
+         *
+         * @retval true IPPS is enabled
+         * @retval false IPPS is disabled
+         */
+        var isIppsAvailable = false
         /**
          * @brief Determines the Booklet finishing capability of the device.
          *
@@ -392,7 +411,8 @@ class Printer : Parcelable {
                 isTrayTopAvailable,
                 isTrayStackAvailable,
                 isExternalFeederAvailable,
-                isPunch0Available
+                isPunch0Available,
+                isIppsAvailable
             )
             out.writeBooleanArray(config)
         }
@@ -414,7 +434,8 @@ class Printer : Parcelable {
                 isTrayTopAvailable,
                 isTrayStackAvailable,
                 isExternalFeederAvailable,
-                isPunch0Available
+                isPunch0Available,
+                isIppsAvailable
             )
             `in`.readBooleanArray(bConfig)
             config!!.isLprAvailable = bConfig[0]
@@ -428,6 +449,7 @@ class Printer : Parcelable {
             config!!.isTrayStackAvailable = bConfig[8]
             config!!.isExternalFeederAvailable = bConfig[9]
             config!!.isPunch0Available = bConfig[10]
+            config!!.isIppsAvailable = bConfig[11]
         }
     }
 

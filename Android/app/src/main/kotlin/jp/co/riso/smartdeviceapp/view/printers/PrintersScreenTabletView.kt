@@ -22,6 +22,7 @@ import jp.co.riso.android.dialog.DialogUtils
 import jp.co.riso.android.dialog.InfoDialogFragment
 import jp.co.riso.android.os.pauseablehandler.PauseableHandler
 import jp.co.riso.android.util.AppUtils.getScreenDimensions
+import jp.co.riso.smartdeviceapp.AppConstants
 import jp.co.riso.smartdeviceapp.SmartDeviceApp
 import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager
 import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager.Companion.getInstance
@@ -406,7 +407,9 @@ class PrintersScreenTabletView : ViewGroup, View.OnClickListener, Handler.Callba
         viewHolder.deleteButton = pView.findViewById(R.id.btn_delete)
         viewHolder.onlineIndicator = pView.findViewById(R.id.img_onOff)
         viewHolder.ipAddress = pView.findViewById(R.id.infoIpAddress)
+        viewHolder.macAddressLayout = pView.findViewById(R.id.macAddressLayout)
         viewHolder.macAddress = pView.findViewById(R.id.infoMacAddress)
+        viewHolder.separatorMacAddress = pView.findViewById(R.id.separatorMacAddress)
         viewHolder.printSettings = pView.findViewById(R.id.default_print_settings)
         viewHolder.port = pView.findViewById(R.id.input_port)
         viewHolder.defaultPrinter = pView.findViewById(R.id.default_printer_spinner)
@@ -421,25 +424,20 @@ class PrintersScreenTabletView : ViewGroup, View.OnClickListener, Handler.Callba
             true
         ) //yes
         else viewHolder.defaultPrinter!!.setSelection(1, true) //no
-        val portAdapter = ArrayAdapter<String>(context, R.layout.printerinfo_port_item)
-        // Assumption is that LPR is always available
-        portAdapter.add(context.getString(R.string.ids_lbl_port_lpr))
-        if (printer.config!!.isRawAvailable) {
-            portAdapter.add(context.getString(R.string.ids_lbl_port_raw))
-            portAdapter.setDropDownViewResource(R.layout.printerinfo_port_dropdownitem)
-        } else {
-            viewHolder.port?.visibility = GONE
-            // Port setting is always displayed as LPR
-            pView.findViewById<View>(R.id.defaultPort).visibility = VISIBLE
-        }
+        val portAdapter = initializePortAdapter(pView, printer, viewHolder.port!!)
         viewHolder.port!!.adapter = portAdapter
         viewHolder.port!!.setSelection(printer.portSetting!!.ordinal)
         viewHolder.printerName!!.text = printerName
         viewHolder.ipAddress!!.text = printer.ipAddress
-        if (printer.macAddress == null || printer.macAddress == "") {
-            viewHolder.macAddress!!.text = "-"
+        if (printerName.contains(AppConstants.PRINTER_MODEL_OGA)) {
+            if (printer.macAddress == null || printer.macAddress == "") {
+                viewHolder.macAddress!!.text = "-"
+            } else {
+                viewHolder.macAddress!!.text = printer.macAddress
+            }
         } else {
-            viewHolder.macAddress!!.text = printer.macAddress
+            viewHolder.macAddressLayout!!.visibility = View.GONE
+            viewHolder.separatorMacAddress!!.visibility = View.GONE
         }
         viewHolder.deleteButton!!.setOnClickListener(this)
         viewHolder.printSettings!!.setOnClickListener(this)
@@ -461,6 +459,29 @@ class PrintersScreenTabletView : ViewGroup, View.OnClickListener, Handler.Callba
             viewHolder.onlineIndicator!!.setImageResource(R.drawable.img_btn_printer_status_online)
         }
         setPrinterView(viewHolder)
+    }
+
+    // ================================================================================
+    // Private Methods
+    // ================================================================================
+    private fun initializePortAdapter(view: View, printer: Printer, port: Spinner): ArrayAdapter<String> {
+        val portAdapter = ArrayAdapter<String>(SmartDeviceApp.activity!!, R.layout.printerinfo_port_item)
+        // Assumption is that LPR is always available
+        portAdapter.add(SmartDeviceApp.appContext!!.getString(R.string.ids_lbl_port_lpr))
+        if (printer.config!!.isRawAvailable) {
+            portAdapter.add(SmartDeviceApp.appContext!!.getString(R.string.ids_lbl_port_raw))
+        }
+        if (printer.config!!.isIppsAvailable) {
+            portAdapter.add(SmartDeviceApp.appContext!!.getString(R.string.ids_lbl_port_ipps))
+        }
+        if (printer.config!!.isIppsAvailable || printer.config!!.isRawAvailable) {
+            portAdapter.setDropDownViewResource(R.layout.printerinfo_port_dropdownitem)
+        } else {
+            port.visibility = View.GONE
+            // Port setting is always displayed as LPR
+            view.findViewById<View>(R.id.defaultPort).visibility = View.VISIBLE
+        }
+        return portAdapter
     }
 
     // ================================================================================
@@ -555,6 +576,7 @@ class PrintersScreenTabletView : ViewGroup, View.OnClickListener, Handler.Callba
             var port = PortSetting.LPR
             when (position) {
                 1 -> port = PortSetting.RAW
+                2 -> port = PortSetting.IPPS
                 else -> {}
             }
             printer!!.portSetting = port
@@ -619,7 +641,9 @@ class PrintersScreenTabletView : ViewGroup, View.OnClickListener, Handler.Callba
         internal var printerName: TextView? = null
         internal var deleteButton: Button? = null
         internal var ipAddress: TextView? = null
+        internal var macAddressLayout: LinearLayout? = null
         internal var macAddress: TextView? = null
+        internal var separatorMacAddress: View? = null
         internal var port: Spinner? = null
         internal var defaultPrinter: Spinner? = null
         internal var defaultPrinterAdapter: DefaultPrinterArrayAdapter? = null

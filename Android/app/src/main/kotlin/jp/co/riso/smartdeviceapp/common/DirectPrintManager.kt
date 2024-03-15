@@ -10,6 +10,7 @@ package jp.co.riso.smartdeviceapp.common
 import androidx.preference.PreferenceManager
 import jp.co.riso.smartdeviceapp.AppConstants
 import jp.co.riso.smartdeviceapp.SmartDeviceApp
+import jp.co.riso.smartdeviceapp.controller.print.IppsPrintManager
 import java.lang.ref.WeakReference
 
 /**
@@ -20,6 +21,7 @@ import java.lang.ref.WeakReference
 class DirectPrintManager {
     private val mJob: Long = 0
     private var _callbackRef: WeakReference<DirectPrintCallback?>? = null
+    private var _ippsManager: IppsPrintManager? = null
 
     /**
      * @brief Initializes Direct Print.
@@ -66,6 +68,11 @@ class DirectPrintManager {
     private external fun rawPrint()
 
     /**
+     * @brief Executes generation of PDF+PJL file for printing
+     */
+    private external fun createPdfPjl()
+
+    /**
      * @brief Cancels Direct Print.
      */
     private external fun cancel()
@@ -82,6 +89,9 @@ class DirectPrintManager {
     /**
      * @brief Executes an LPR Print.
      *
+     * @param printerName Display name of the printer
+     * @param appName Name of the app
+     * @param appVersion Version of the app
      * @param userName To be sent as OwnerName in the PJL command.
      * @param jobName Name of the Print Job.
      * @param fileName File name of the PDF.
@@ -155,6 +165,9 @@ class DirectPrintManager {
     /**
      * @brief Executes a RAW Print.
      *
+     * @param printerName Display name of the printer
+     * @param appName Name of the app
+     * @param appVersion Version of the app
      * @param userName To be sent as OwnerName in the PJL command.
      * @param jobName Name of the Print Job.
      * @param fileName File name of the PDF.
@@ -193,7 +206,6 @@ class DirectPrintManager {
             || printerName.isEmpty() || appName.isEmpty() || appVersion.isEmpty() || jobName.isEmpty() || fileName.isEmpty() || printSetting.isEmpty() || ipAddress.isEmpty() || hostName.isEmpty()) {
             return false
         }
-
         // initializeDirectPrint(printerName, appName, appVersion, userName, jobName, fileName, printSetting, ipAddress, hostName);
         // Ver.2.0.4.2 End
         // Ver.2.2.0.0 Start
@@ -220,8 +232,75 @@ class DirectPrintManager {
     }
 
     /**
-     * @brief Checks if print is ongoing.
+     * @brief Executes an IPPS Print.
      *
+     * @param pageCount total page count of PDF
+     * @param printerName Name of printer selected
+     * @param appName Name of app
+     * @param userName To be sent as OwnerName in the PJL command.
+     * @param jobName Name of the Print Job.
+     * @param fileName File name of the PDF.
+     * @param printSetting Formatted string of the print settings.
+     * @param ipAddress IP address of the printer.
+     * @param hostName The name of the industrial design.
+     *
+     * @retval true Print execution is started
+     * @retval false Print not executed
+     */
+    fun executeIPPSPrint(
+        pageCount: Int,
+        printerName: String?,
+        appName: String?,
+        appVersion: String?,
+        userName: String?,
+        jobName: String?,
+        fileName: String?,
+        printSetting: String?,
+        ipAddress: String?,
+        macAddress: String?,
+        hostName: String?
+    ): Boolean {
+        if (pageCount <= 0 || printerName == null || appName == null || appVersion == null || userName == null || jobName == null || fileName == null || printSetting == null || ipAddress == null || hostName == null
+            // userName can be empty
+            || printerName.isEmpty() || appName.isEmpty() || appVersion.isEmpty() || jobName.isEmpty() || fileName.isEmpty() || printSetting.isEmpty() || ipAddress.isEmpty() || hostName.isEmpty()
+        ) {
+            return false
+        }
+
+        initializeDirectPrint(
+            printerName,
+            appName,
+            appVersion,
+            userName,
+            jobName,
+            fileName,
+            printSetting,
+            ipAddress,
+            macAddress,
+            hostName,
+            1
+        )
+
+        if (isPrinting) {
+            // Generate PDF + PJL file
+            createPdfPjl()
+
+            // Initialize IPPS Print Manager
+            _ippsManager = IppsPrintManager(
+                this,
+                pageCount,
+                ipAddress,
+                fileName,
+                jobName
+            )
+            return true
+        }
+        return false
+    }
+
+    /**
+     * @brief Checks if print is ongoing.
+     * 
      * @retval true Print is ongoing
      * @retval false No ongoing print job
      */
@@ -250,6 +329,7 @@ class DirectPrintManager {
         const val PRINT_STATUS_SENDING = 4 ///< Sending file to the printer
         const val PRINT_STATUS_SENT = 5 ///< File is successfully sent to the printer
         const val PRINT_STATUS_JOB_NUM_UPDATE = 6 ///< Update job number - LPR print retry
+        const val PRINT_STATUS_PDF_PJL_CREATED = 7 ///< PDF + PJL file is created
 
         init {
             System.loadLibrary("common")
@@ -262,10 +342,18 @@ class DirectPrintManager {
      * @param status Printing status
      * @param progress Printing progress percentage
      */
-    private fun onNotifyProgress(status: Int, progress: Float) {
+    fun onNotifyProgress(status: Int, progress: Float) {
         when (status) {
-            PRINT_STATUS_ERROR_CONNECTING, PRINT_STATUS_ERROR_SENDING, PRINT_STATUS_ERROR_FILE, PRINT_STATUS_ERROR, PRINT_STATUS_SENT -> finalizeDirectPrint()
-            PRINT_STATUS_JOB_NUM_UPDATE -> updateJobNumber()
+            PRINT_STATUS_ERROR_CONNECTING,
+            PRINT_STATUS_ERROR_SENDING,
+            PRINT_STATUS_ERROR_FILE,
+            PRINT_STATUS_ERROR,
+            PRINT_STATUS_SENT
+            -> finalizeDirectPrint()
+            PRINT_STATUS_JOB_NUM_UPDATE
+            -> updateJobNumber()
+            PRINT_STATUS_PDF_PJL_CREATED
+            -> _ippsManager?.print()
         }
         if (_callbackRef != null && _callbackRef!!.get() != null) {
             _callbackRef!!.get()!!.onNotifyProgress(this, status, progress)
@@ -315,12 +403,14 @@ class DirectPrintManager {
      *
      * @param _manager DirectPrint Manager
      */
-    inner class DirectPrintCancelTask (private val _manager: DirectPrintManager) : BaseTask<Void?, Void?>() {
+    inner class DirectPrintCancelTask (
+        private val _manager: DirectPrintManager
+    ) : BaseTask<Void?, Void?>() {
         override fun doInBackground(vararg params: Void?): Void? {
+            _ippsManager?.cancel()
             _manager.cancel()
             _manager.finalizeDirectPrint()
             return null
         }
-
     }
 }

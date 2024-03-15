@@ -231,7 +231,7 @@ class PrintSettings {
         }
 
     /**
-     * @brief Retrieves InputTray_FT_GL_CEREZONA_S setting value i.e. tray location of input paper.
+     * @brief Retrieves InputTray_FT_GL_CEREZONA_S_OGA setting value i.e. tray location of input paper.
      *
      * @retval AUTO
      * @retval STANDARD
@@ -240,8 +240,8 @@ class PrintSettings {
      * @retval TRAY3
      * @retval EXTERNAL_FEEDER
      */
-    val inputTray: InputTrayFtGlCerezonaS
-        get() = InputTrayFtGlCerezonaS.values()[settingValues[TAG_INPUT_TRAY]!!]
+    val inputTray: InputTrayFtGlCerezonaSOga
+        get() = InputTrayFtGlCerezonaSOga.values()[settingValues[TAG_INPUT_TRAY]!!]
 
     /**
      * @brief Retrieves ScaleToFit setting value i.e. whether PDF page will be scaled to fit the whole page.

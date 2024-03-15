@@ -262,6 +262,18 @@ class PrinterTest(name: String?) : TestCase(name) {
         assertEquals(printerType, AppConstants.PRINTER_MODEL_FT)
     }
 
+    fun testGetPrinterType_OGA() {
+        var printer = Printer("RISO IS950-OGA", "", "")
+        var printerType = printer.printerType
+        assertEquals(printerType, AppConstants.PRINTER_MODEL_GL)
+        printer = Printer("ORPHIS OGA", "", "")
+        printerType = printer.printerType
+        assertEquals(printerType, AppConstants.PRINTER_MODEL_GL)
+        printer = Printer("ComColor OGA", "", "")
+        printerType = printer.printerType
+        assertEquals(printerType, AppConstants.PRINTER_MODEL_GL)
+    }
+
     // ================================================================================
     // Tests - getPortSetting
     // ================================================================================

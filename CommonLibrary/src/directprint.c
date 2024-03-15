@@ -19,6 +19,8 @@
 #include <stdbool.h>
 #include "common.h"
 #include "printsettings.h"
+#include <sys/stat.h>
+#include <libgen.h>
 
 #define ENABLE_DEBUG_LOG 0 // enable to show debug logs (only confirmed to be displayed in Xcode)
 
@@ -29,8 +31,6 @@
 #define DUMP_EXT ""
 
 #include <sys/types.h>
-#include <sys/stat.h>
-#include <libgen.h>
 
 #endif // ENABLE_JOB_DUMP
 
@@ -61,6 +61,7 @@ size_t fread_mock(void *ptr, size_t size, size_t nmemb, FILE *stream);
  */
 #define PORT_LPR "515"
 #define PORT_RAW "9100"
+#define PORT_IPPS "631"
 #define PORT_WAKE "9" // UDP Port 9 is commonly used by default for Wake-On-LAN (other possible ports: UDP Port 0, UDP Port 7)
 
 #define TIMEOUT_CONNECT 10
@@ -87,6 +88,11 @@ size_t fread_mock(void *ptr, size_t size, size_t nmemb, FILE *stream);
 #define FT_PRINTER_TYPE "FT"
 #define GL_PRINTER_TYPE "GL"
 #define CEREZONA_PRINTER_TYPE "CEREZONA S"
+#define OGA_PRINTER_TYPE "OGA"
+
+#define PDF_PJL_FILE_DIR_NAME "PDF_PJL_TMP"
+#define PDF_PJL_FILENAME "PDF_PJL.pdf"
+#define DUMP_EXT ""
 
 /** @def
  * ホスト名UTF-8の16進数変換の際に使用する定数
@@ -116,6 +122,7 @@ enum kPrintType
     kPrintTypeUnknown = -1,
     kPrintTypeLPR = 0,
     kPrintTypeRAW = 1,
+    kPrintTypeIPPS = 2
 };
 
 /**
@@ -157,6 +164,7 @@ struct directprint_job_s
 // Main functions
 int directprint_job_lpr_print(directprint_job *print_job);
 int directprint_job_raw_print(directprint_job *print_job);
+int directprint_job_create_pdf_pjl(directprint_job *print_job);
 void directprint_job_cancel(directprint_job *print_job);
 
 // Direct print job accessors
@@ -175,6 +183,11 @@ int str_to_uint16(const char *str, uint16_t *res);
 // Thread functions
 void *do_lpr_print(void *parameter);
 void *do_raw_print(void *parameter);
+void *do_save_pdf_pjl(void *parameter);
+
+// Save PDF+PJL File functions
+FILE *create_pdf_pjl_file(directprint_job *print_job);
+void pdf_pjl_file_write(FILE *file, void *buffer, size_t buffer_len);
 
 #if ENABLE_JOB_DUMP
 
@@ -402,6 +415,18 @@ int directprint_job_raw_print(directprint_job *print_job)
     return kJobStatusStarted;
 }
 
+int directprint_job_create_pdf_pjl(directprint_job *print_job)
+{
+    if (can_start_print(print_job) != 1)
+    {
+        return kJobStatusError;
+    }
+
+    pthread_create(&print_job->main_thread, 0, do_save_pdf_pjl, (void *)print_job);
+
+    return kJobStatusStarted;
+}
+
 void directprint_job_cancel(directprint_job *print_job)
 {
     if (print_job == NULL) {
@@ -533,7 +558,7 @@ int connect_to_port(directprint_job *print_job, const char *port)
                 if (!DP_FD_ISSET(sock_fd, &write_fds))
                 {
                     // Timeout
-                    if (is_wakeonlan_done == false)
+                    if (is_wakeonlan_done == false && strstr(print_job->printer_name, OGA_PRINTER_TYPE) != NULL)
                     {
                         send_magic_packet(print_job, PORT_WAKE);
                         is_wakeonlan_done = true;
@@ -559,7 +584,7 @@ int connect_to_port(directprint_job *print_job, const char *port)
                 if (getsockopt(sock_fd, SOL_SOCKET, SO_ERROR, &error, &error_len) < 0 || error != 0)
                 {
                     // Unable to complete connection
-                    if (is_wakeonlan_done == false)
+                    if (is_wakeonlan_done == false && strstr(print_job->printer_name, OGA_PRINTER_TYPE) != NULL)
                     {
                         send_magic_packet(print_job, PORT_WAKE);
                         is_wakeonlan_done = true;
@@ -597,7 +622,7 @@ int connect_to_port(directprint_job *print_job, const char *port)
         }
     }
     
-    if (sock_fd == -1) {
+    if (sock_fd == -1 || strcmp(port, PORT_IPPS) == 0) {
         close(sock_fd);
 #if ENABLE_DEBUG_LOG
         printf("   socket closed -- print job\n");
@@ -703,7 +728,7 @@ void send_magic_packet(directprint_job *print_job, const char *port)
     }
     str_to_uint16(port, &sin_port);
     target_addr.sin_port = htons(sin_port);
-    
+
     // Create a client socket
     client_s = socket(target_addr.sin_family, SOCK_DGRAM, IPPROTO_UDP);
     if (client_s < 0)
@@ -734,12 +759,55 @@ void send_magic_packet(directprint_job *print_job, const char *port)
         }
     }
     pkt_len = 102;
-    
-    // Now send the Magic Packet to the target
+
+    /* 20240307 - V6.0.0.0 - START
+    / Updates to WakeOnLAN behavior
+    */
+
+    // Send magic packet first before checking engine init state
     notify_callback(print_job, kJobStatusWaking);
+#if ENABLE_DEBUG_LOG
+    printf("Sending Magic Packet to target... 1 of 3\n");
+#endif
+    retcode = (int) sendto(client_s, out_buf, pkt_len, 0,
+                    (struct sockaddr *)&target_addr, sizeof(target_addr));
+    if (retcode < 0)
+    {
+#if ENABLE_DEBUG_LOG
+        printf("*** ERROR - sendto() failed \n");
+#endif
+    }
+
+    // 初期通信完了ステータスを取得する (Check for engine init state first)
+    int engineState = performEngineStateChecks(print_job->ip_address, true, print_job->filename);
+    if (engineState == 1)
+    {
+        // Already initialized, no need to send magic packet
+        notify_callback(print_job, kJobStatusConnecting);
+
+        // Free mac address buffer
+        free(mac_address_copy);
+        mac_address_copy = NULL;
+
+        // Close client socket and clean-up
+        retcode = close(client_s);
+        if (retcode < 0)
+        {
+#if ENABLE_DEBUG_LOG
+            printf("*** ERROR - close() failed \n");
+#endif
+            return;
+        }
+#if ENABLE_DEBUG_LOG
+        printf("   socket closed -- magic packet\n");
+#endif
+        return;
+    }
+
+    // Send the succeeding magic packets if still needed
     for (i=0; i < 2; i++) {
 #if ENABLE_DEBUG_LOG
-        printf("Sending Magic Packet to target... %d of 2\n", i+1);
+        printf("Sending Magic Packet to target... %d of 3\n", i+2);
 #endif
         retcode = (int) sendto(client_s, out_buf, pkt_len, 0,
                          (struct sockaddr *)&target_addr, sizeof(target_addr));
@@ -751,24 +819,35 @@ void send_magic_packet(directprint_job *print_job, const char *port)
             break;
         }
         
-        // Wait for the packet to be sent
-        // 1st loop: 5 seconds, 2nd loop: 10 seconds
-#if ENABLE_DEBUG_LOG
-        printf("Start sleep for %d seconds \n", 5*(i+1));
-#endif
-        for(j=0; j<(5*(i+1)); j++)
+        if (i == 0)
         {
+            // Wait for the second packet to be sent then loop for 3 seconds
+            // No need to loop for 3 seconds after sending the third magic packet
+#if ENABLE_DEBUG_LOG
+            printf("Start sleep for 3 seconds \n");
+#endif
+            for(j =0; j<(3*(i+1)); j++)
+            {
+                if (is_cancelled(print_job) == 1)
+                {
+                    break;
+                }
+                sleep(1);
+            }
             if (is_cancelled(print_job) == 1)
             {
                 break;
             }
-            sleep(1);
-        }
-        if (is_cancelled(print_job) == 1)
-        {
-            break;
         }
     }
+
+    // 初期通信完了ステータスを取得する (Check for engine init state again after sending magic packets)
+    performEngineStateChecks(print_job->ip_address, false, print_job->filename);
+
+    /* 20240307 - V6.0.0.0 - END
+    / Updates to WakeOnLAN behavior
+    */
+
     notify_callback(print_job, kJobStatusConnecting);
     
     // Free mac address buffer
@@ -916,7 +995,8 @@ void *do_lpr_print(void *parameter)
         strcpy(queueName, QUEUE_NAME_FWGDFTGL);
     }
     else if (print_job->printer_name &&
-             (strstr(print_job->printer_name, GL_PRINTER_TYPE) != NULL)) // GL Series
+             ((strstr(print_job->printer_name, GL_PRINTER_TYPE) != NULL) ||
+              (strstr(print_job->printer_name, OGA_PRINTER_TYPE) != NULL))) // GL Series / OGA Series
     {
         create_pjl_gl(pjl_header, print_job->print_settings, print_job->printer_name, print_job->host_name, print_job->app_version);
         strcpy(queueName, QUEUE_NAME_FWGDFTGL);
@@ -1321,7 +1401,8 @@ void *do_raw_print(void *parameter)
         create_pjl_ft(pjl_header, print_job->print_settings, print_job->printer_name, print_job->app_version, print_job->host_name);
     }
     else if (print_job->printer_name &&
-             strstr(print_job->printer_name, GL_PRINTER_TYPE) != NULL) // GL Series
+             ((strstr(print_job->printer_name, GL_PRINTER_TYPE) != NULL) ||
+              (strstr(print_job->printer_name, OGA_PRINTER_TYPE) != NULL))) // GL Series / OGA Series
     {
         create_pjl_gl(pjl_header, print_job->print_settings, print_job->printer_name, print_job->app_version, print_job->host_name);
     }
@@ -1496,6 +1577,178 @@ void *do_raw_print(void *parameter)
     }
     
     return 0;
+}
+
+void *do_save_pdf_pjl(void *parameter)
+{
+    directprint_job *print_job = (directprint_job *)parameter;
+
+    if (is_cancelled(print_job) == 1)
+    {
+        directprint_job_free(print_job);
+        return 0;
+    }
+
+    // Set Print Type
+    print_job->print_type = kPrintTypeIPPS;
+
+    // Prepare PJL header
+    char pjl_header[2048];
+    pjl_header[0] = 0;
+    strcat(pjl_header, PJL_ESCAPE);
+    long pjl_header_size = strlen(pjl_header);
+    if (is_ISSeries(print_job->printer_name))   // IS
+    {
+        create_pjl(pjl_header, print_job->print_settings);
+    }
+    else if (is_FWSeries(print_job->printer_name)) // FW Series
+    {
+        create_pjl_fw(pjl_header, print_job->print_settings, print_job->printer_name, print_job->host_name, print_job->app_version);
+    }
+    else if (print_job->printer_name &&
+             ((strstr(print_job->printer_name, FT_PRINTER_TYPE) != NULL) ||
+              (strstr(print_job->printer_name, CEREZONA_PRINTER_TYPE) != NULL))) // FT Series / CEREZONA Series
+    {
+        create_pjl_ft(pjl_header, print_job->print_settings, print_job->printer_name, print_job->host_name, print_job->app_version);
+    }
+    else if (print_job->printer_name &&
+             ((strstr(print_job->printer_name, GL_PRINTER_TYPE) != NULL) ||
+              (strstr(print_job->printer_name, OGA_PRINTER_TYPE) != NULL))) // GL Series / OGA Series
+    {
+        create_pjl_gl(pjl_header, print_job->print_settings, print_job->printer_name, print_job->host_name, print_job->app_version);
+    }
+    else    // GD Series
+    {
+        create_pjl_gd(pjl_header, print_job->print_settings, print_job->printer_name, print_job->host_name, print_job->app_version);
+    }
+
+    if (strlen(pjl_header) == pjl_header_size) {
+        return 0;
+    }
+
+    strcat(pjl_header, PJL_LANGUAGE);
+
+    if (is_cancelled(print_job) == 1)
+    {
+        return 0;
+    }
+
+    FILE *fd = 0;
+    unsigned char *buffer = (unsigned char *)malloc(BUFFER_SIZE);
+    // Create PDF+PJL File
+    FILE *pdf_pjl_file_fd = create_pdf_pjl_file(print_job);
+#if ENABLE_JOB_DUMP
+    FILE *dump_fd = job_dump_create_file(print_job);
+#endif
+
+    do
+    {
+        // Try to establish preliminary connection first to send magic packets if necessary
+        notify_callback(print_job, kJobStatusConnecting);
+        connect_to_port(print_job, PORT_IPPS);
+
+        if (is_cancelled(print_job) == 1)
+        {
+            break;
+        }
+
+        // Open file
+        fd = fopen(print_job->filename, "rb");
+        if (!fd)
+        {
+            notify_callback(print_job, kJobStatusErrorFile);
+            break;
+        }
+
+        // Get file size
+        dp_fseek(fd, 0L, SEEK_END);
+        long file_size = dp_ftell(fd);
+        dp_fseek(fd, 0L, SEEK_SET);
+
+        // Write PJL header to GCP PDF+PJL
+        pdf_pjl_file_write(pdf_pjl_file_fd, pjl_header, strlen(pjl_header));
+#if ENABLE_JOB_DUMP
+        job_dump_write(dump_fd, pjl_header, strlen(pjl_header));
+#endif
+
+        // Send file
+        size_t read;
+        size_t sent;
+        int has_error = 0;
+        while(0 < (read = dp_fread(buffer, 1, BUFFER_SIZE, fd)))
+        {
+            if (is_cancelled(print_job) == 1)
+            {
+                break;
+            }
+            // Write PDF content to GCP PDF+PJL
+            pdf_pjl_file_write(pdf_pjl_file_fd, buffer, read);
+#if ENABLE_JOB_DUMP
+            job_dump_write(dump_fd, buffer, read);
+#endif
+        }
+
+        if (has_error == 1 || is_cancelled(print_job) == 1)
+        {
+            break;
+        }
+
+        notify_callback(print_job, kJobStatusPdfPjlCreated);
+    } while (0);
+
+    // Close PDF+PJL file pointer
+    if (pdf_pjl_file_fd != 0)
+    {
+        fclose(pdf_pjl_file_fd);
+    }
+
+#if ENABLE_JOB_DUMP
+    if (dump_fd != 0)
+    {
+        fclose(dump_fd);
+    }
+#endif
+
+    if (fd != 0)
+    {
+        fclose(fd);
+    }
+    free(buffer);
+    return 0;
+}
+
+// Save PDF+PJL File functions
+FILE *create_pdf_pjl_file(directprint_job *print_job)
+{
+    // Prepare directory
+    char *base_dir = dirname(print_job->filename);
+    char *dump_dir = (char *)calloc(1, strlen(base_dir) + strlen(PDF_PJL_FILE_DIR_NAME) + 2);
+    sprintf(dump_dir, "%s/%s", base_dir, PDF_PJL_FILE_DIR_NAME);
+    int result = mkdir(dump_dir, S_IRWXU | S_IRWXG | S_IRWXO);
+    if (result == -1 && errno != EEXIST)
+    {
+        return 0;
+    }
+
+    // Prepare file name
+    char *dump_file_name = (char *)calloc(1, strlen(dump_dir) + strlen(PDF_PJL_FILENAME) + strlen(DUMP_EXT) + 2);
+    sprintf(dump_file_name, "%s/%s%s", dump_dir, PDF_PJL_FILENAME, DUMP_EXT);
+
+    FILE *file = fopen(dump_file_name, "wb");
+
+    free(dump_file_name);
+    free(dump_dir);
+    return file;
+}
+
+void pdf_pjl_file_write(FILE *file, void *buffer, size_t buffer_len)
+{
+    if (file == 0)
+    {
+        return;
+    }
+
+    fwrite(buffer, buffer_len, 1, file);
 }
 
 #if ENABLE_JOB_DUMP

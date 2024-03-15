@@ -36,7 +36,8 @@ import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager.UpdateStatusC
 import jp.co.riso.smartdeviceapp.model.Printer
 import jp.co.riso.smartdeviceapp.model.printsettings.*
 import jp.co.riso.smartdeviceapp.model.printsettings.Preview.*
-import jp.co.riso.smartdeviceapp.model.printsettings.Preview.InputTrayFtGlCerezonaS.Companion.valuesFtCerezonaS
+import jp.co.riso.smartdeviceapp.model.printsettings.Preview.InputTrayFtGlCerezonaSOga.Companion.valuesFtCerezonaS
+import jp.co.riso.smartdeviceapp.model.printsettings.Preview.InputTrayFtGlCerezonaSOga.Companion.valuesGlOga
 import jp.co.riso.smartdeviceapp.model.printsettings.Preview.PaperSize.Companion.valuesDefault
 import jp.co.riso.smartprint.R
 import jp.co.riso.smartprint.R.drawable
@@ -271,21 +272,21 @@ class PrintSettingsView @JvmOverloads constructor(
                 OutputTray.FACEDOWN -> !isPunch && !isFold
             }
         }
-        if (printer!!.isPrinterFTorCEREZONA_S || printer!!.isPrinterGL) {
+        if (printer!!.isPrinterFTorCEREZONA_S || printer!!.isPrinterGLorOGA) {
 
             /* Specify the input tray and paper size arrays to be used */
-            val inputTrayOptions: Array<InputTrayFtGlCerezonaS>
+            val inputTrayOptions: Array<InputTrayFtGlCerezonaSOga>
             val paperSizeOptions: Array<PaperSize>
             if (printer!!.isPrinterFTorCEREZONA_S) {
                 inputTrayOptions = valuesFtCerezonaS()
                 paperSizeOptions = valuesDefault()
             } else {
-                inputTrayOptions = InputTrayFtGlCerezonaS.valuesGl()
+                inputTrayOptions = valuesGlOga()
                 paperSizeOptions = PaperSize.valuesGl()
             }
             if (tag == PrintSettings.TAG_PAPER_SIZE) {
                 val isExternal =
-                    inputTrayOptions[_printSettings!!.inputTray.ordinal] === InputTrayFtGlCerezonaS.EXTERNAL_FEEDER
+                    inputTrayOptions[_printSettings!!.inputTray.ordinal] === InputTrayFtGlCerezonaSOga.EXTERNAL_FEEDER
                 return when (paperSizeOptions[value]) {
                     PaperSize.A4, PaperSize.B5, PaperSize.LETTER, PaperSize.JUROKUKAI -> true
                     else -> !isExternal
@@ -297,9 +298,9 @@ class PrintSettingsView @JvmOverloads constructor(
                 val isPaperSupported =
                     paperSize === PaperSize.A4 || paperSize === PaperSize.B5 || paperSize === PaperSize.LETTER || paperSize === PaperSize.JUROKUKAI
                 return when (inputTrayOptions[value]) {
-                    InputTrayFtGlCerezonaS.AUTO, InputTrayFtGlCerezonaS.STANDARD, InputTrayFtGlCerezonaS.TRAY1, InputTrayFtGlCerezonaS.TRAY2 -> true
-                    InputTrayFtGlCerezonaS.TRAY3 -> printer!!.isPrinterGL
-                    InputTrayFtGlCerezonaS.EXTERNAL_FEEDER -> isPaperSupported
+                    InputTrayFtGlCerezonaSOga.AUTO, InputTrayFtGlCerezonaSOga.STANDARD, InputTrayFtGlCerezonaSOga.TRAY1, InputTrayFtGlCerezonaSOga.TRAY2 -> true
+                    InputTrayFtGlCerezonaSOga.TRAY3 -> printer!!.isPrinterGLorOGA
+                    InputTrayFtGlCerezonaSOga.EXTERNAL_FEEDER -> isPaperSupported
                 }
             }
         }
@@ -594,25 +595,25 @@ class PrintSettingsView @JvmOverloads constructor(
                 }
             }
         }
-        if (printer!!.isPrinterFTorCEREZONA_S || printer!!.isPrinterGL) {
+        if (printer!!.isPrinterFTorCEREZONA_S || printer!!.isPrinterGLorOGA) {
 
             /* Specify the input tray and paper size arrays to be used */
-            val inputTrayOptions: Array<InputTrayFtGlCerezonaS>
+            val inputTrayOptions: Array<InputTrayFtGlCerezonaSOga>
             val paperSizeOptions: Array<PaperSize>
             if (printer!!.isPrinterFTorCEREZONA_S) {
                 inputTrayOptions = valuesFtCerezonaS()
                 paperSizeOptions = valuesDefault()
             } else {
-                inputTrayOptions = InputTrayFtGlCerezonaS.valuesGl()
+                inputTrayOptions = valuesGlOga()
                 paperSizeOptions = PaperSize.valuesGl()
             }
             // Constraint #7 Paper Size - Input Tray (External) for FT or GL series
             if (tag == PrintSettings.TAG_PAPER_SIZE) {
                 val inputTrayValue = _printSettings!!.getValue(PrintSettings.TAG_INPUT_TRAY)
-                if (paperSizeOptions[value] !== PaperSize.A4 && paperSizeOptions[value] !== PaperSize.B5 && paperSizeOptions[value] !== PaperSize.LETTER && paperSizeOptions[value] !== PaperSize.JUROKUKAI && inputTrayOptions[inputTrayValue] === InputTrayFtGlCerezonaS.EXTERNAL_FEEDER) {
+                if (paperSizeOptions[value] !== PaperSize.A4 && paperSizeOptions[value] !== PaperSize.B5 && paperSizeOptions[value] !== PaperSize.LETTER && paperSizeOptions[value] !== PaperSize.JUROKUKAI && inputTrayOptions[inputTrayValue] === InputTrayFtGlCerezonaSOga.EXTERNAL_FEEDER) {
                     updateValueWithConstraints(
                         PrintSettings.TAG_INPUT_TRAY,
-                        InputTrayFtGlCerezonaS.AUTO.ordinal
+                        InputTrayFtGlCerezonaSOga.AUTO.ordinal
                     )
                 }
             }
@@ -620,7 +621,7 @@ class PrintSettingsView @JvmOverloads constructor(
             // Constraint #8 Input Tray (External) - Paper Size for FT or GL series
             if (tag == PrintSettings.TAG_INPUT_TRAY) {
                 val paperSize = _printSettings!!.paperSize
-                if (inputTrayOptions[value] === InputTrayFtGlCerezonaS.EXTERNAL_FEEDER) {
+                if (inputTrayOptions[value] === InputTrayFtGlCerezonaSOga.EXTERNAL_FEEDER) {
                     if (paperSize !== PaperSize.A4 && paperSize !== PaperSize.B5 && paperSize !== PaperSize.LETTER && paperSize !== PaperSize.JUROKUKAI) {
                         updateValueWithConstraints(
                             PrintSettings.TAG_PAPER_SIZE,
@@ -722,17 +723,17 @@ class PrintSettingsView @JvmOverloads constructor(
             if (name == PrintSettings.TAG_INPUT_TRAY) {
                 if (printer!!.isPrinterFTorCEREZONA_S) {
                     return when (valuesFtCerezonaS()[value]) {
-                        InputTrayFtGlCerezonaS.AUTO, InputTrayFtGlCerezonaS.STANDARD, InputTrayFtGlCerezonaS.TRAY1, InputTrayFtGlCerezonaS.TRAY2 -> true
-                        InputTrayFtGlCerezonaS.TRAY3 -> false
-                        InputTrayFtGlCerezonaS.EXTERNAL_FEEDER -> printer!!.config!!.isExternalFeederAvailable
+                        InputTrayFtGlCerezonaSOga.AUTO, InputTrayFtGlCerezonaSOga.STANDARD, InputTrayFtGlCerezonaSOga.TRAY1, InputTrayFtGlCerezonaSOga.TRAY2 -> true
+                        InputTrayFtGlCerezonaSOga.TRAY3 -> false
+                        InputTrayFtGlCerezonaSOga.EXTERNAL_FEEDER -> printer!!.config!!.isExternalFeederAvailable
 
                     }
                 }
-                if (printer!!.isPrinterGL) {
-                    return when (InputTrayFtGlCerezonaS.valuesGl()[value]) {
-                        InputTrayFtGlCerezonaS.AUTO, InputTrayFtGlCerezonaS.STANDARD, InputTrayFtGlCerezonaS.TRAY1, InputTrayFtGlCerezonaS.TRAY2 -> true
-                        InputTrayFtGlCerezonaS.TRAY3 -> printer!!.isPrinterGL
-                        InputTrayFtGlCerezonaS.EXTERNAL_FEEDER -> printer!!.config!!.isExternalFeederAvailable
+                if (printer!!.isPrinterGLorOGA) {
+                    return when (valuesGlOga()[value]) {
+                        InputTrayFtGlCerezonaSOga.AUTO, InputTrayFtGlCerezonaSOga.STANDARD, InputTrayFtGlCerezonaSOga.TRAY1, InputTrayFtGlCerezonaSOga.TRAY2 -> true
+                        InputTrayFtGlCerezonaSOga.TRAY3 -> printer!!.isPrinterGLorOGA
+                        InputTrayFtGlCerezonaSOga.EXTERNAL_FEEDER -> printer!!.config!!.isExternalFeederAvailable
                     }
                 }
             }

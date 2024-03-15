@@ -17,6 +17,8 @@ import jp.co.riso.android.util.NetUtils
 import jp.co.riso.smartdeviceapp.AppConstants
 import jp.co.riso.smartdeviceapp.SmartDeviceApp
 import jp.co.riso.smartdeviceapp.common.BaseTask
+import jp.co.riso.smartdeviceapp.common.DNSSDManager
+import jp.co.riso.smartdeviceapp.common.DNSSDManagerListener
 import jp.co.riso.smartdeviceapp.common.SNMPManager
 import jp.co.riso.smartdeviceapp.common.SNMPManager.SNMPManagerCallback
 import jp.co.riso.smartdeviceapp.controller.db.DatabaseManager
@@ -33,8 +35,9 @@ import java.util.*
  *
  * @brief Manager responsible for Printer management
  */
-class PrinterManager(context: Context?, databaseManager: DatabaseManager?) : SNMPManagerCallback {
+class PrinterManager(context: Context?, databaseManager: DatabaseManager?) : SNMPManagerCallback, DNSSDManagerListener {
     private val _printerList: MutableList<Printer?>?
+    private val _context = context
 
     /**
      * @brief Checks if there is an ongoing printer search.
@@ -54,6 +57,7 @@ class PrinterManager(context: Context?, databaseManager: DatabaseManager?) : SNM
     var isCancelled = false
         private set
     private val _snmpManager: SNMPManager
+    private val _dnssdManager: DNSSDManager
     private var _printerSearchCallback: WeakReference<PrinterSearchCallback?>? = null
     private var _printersCallback: WeakReference<PrintersCallback?>? = null
     private var _updateStatusCallback: WeakReference<UpdateStatusCallback?>? = null
@@ -236,6 +240,10 @@ class PrinterManager(context: Context?, databaseManager: DatabaseManager?) : SNM
                         cursor,
                         KeyConstants.KEY_SQL_PRINTER_RAW
                     )
+                    val ippsAvailable = DatabaseManager.getBooleanFromCursor(
+                        cursor,
+                        KeyConstants.KEY_SQL_PRINTER_IPPS
+                    )
                     val bookletFinishingAvailable = DatabaseManager.getBooleanFromCursor(
                         cursor,
                         KeyConstants.KEY_SQL_PRINTER_BOOKLET_FINISHING
@@ -274,6 +282,7 @@ class PrinterManager(context: Context?, databaseManager: DatabaseManager?) : SNM
                     )
                     printer.config!!.isLprAvailable = lprAvailable
                     printer.config!!.isRawAvailable = rawAvailable
+                    printer.config!!.isIppsAvailable = ippsAvailable
                     printer.config!!.isBookletFinishingAvailable = bookletFinishingAvailable
                     printer.config!!.isStaplerAvailable = staplerAvailable
                     printer.config!!.isPunch3Available = punch3Available
@@ -448,6 +457,34 @@ class PrinterManager(context: Context?, databaseManager: DatabaseManager?) : SNM
     }
 
     /**
+     * @brief Update the printer IPPS capabilities.
+     *
+     * @param ipAddress IP Address
+     */
+    override fun updatePrinterIPPSCapabilties(ipAddress: String) {
+        var printer: Printer? = null
+        val printerList = savedPrintersList
+        for (p in printerList) {
+            if (p!!.ipAddress == ipAddress) {
+                printer = p
+            }
+        }
+        if (printer != null && printer.isEnabledIPPS) {
+            printer.config!!.isIppsAvailable = true
+
+            val cv = ContentValues()
+            cv.put(KeyConstants.KEY_SQL_PRINTER_IPPS, true)
+            _databaseManager.update(
+                KeyConstants.KEY_SQL_PRINTER_TABLE,
+                cv,
+                KeyConstants.KEY_SQL_PRINTER_ID + "=?",
+                printer.id.toString()
+            )
+            _databaseManager.close()
+        }
+    }
+
+    /**
      * @brief Search for the Printer Devices using Device Discovery/Auto Search. <br></br>
      *
      * The search can be cancelled by calling cancelPrinterSearch()
@@ -457,6 +494,7 @@ class PrinterManager(context: Context?, databaseManager: DatabaseManager?) : SNM
         isCancelled = false
         _snmpManager.initializeSNMPManager(snmpCommunityNameFromSharedPrefs)
         _snmpManager.deviceDiscovery()
+        _dnssdManager.deviceDiscovery()
     }
 
     /**
@@ -474,6 +512,7 @@ class PrinterManager(context: Context?, databaseManager: DatabaseManager?) : SNM
         isCancelled = false
         _snmpManager.initializeSNMPManager(snmpCommunityNameFromSharedPrefs)
         _snmpManager.manualDiscovery(ipAddress)
+        _dnssdManager.deviceDiscovery()
     }
 
     /**
@@ -487,6 +526,7 @@ class PrinterManager(context: Context?, databaseManager: DatabaseManager?) : SNM
         Timer().schedule(object : TimerTask() {
             override fun run() {
                 _snmpManager.cancel()
+                _dnssdManager.cancel()
             }
         }, 0)
     }
@@ -631,6 +671,10 @@ class PrinterManager(context: Context?, databaseManager: DatabaseManager?) : SNM
         newPrinter.put(
             KeyConstants.KEY_SQL_PRINTER_RAW,
             if (printer.config!!.isRawAvailable) 1 else 0
+        )
+        newPrinter.put(
+            KeyConstants.KEY_SQL_PRINTER_IPPS,
+            if (printer.config!!.isIppsAvailable) 1 else 0
         )
         newPrinter.put(
             KeyConstants.KEY_SQL_PRINTER_BOOKLET_FINISHING,
@@ -926,17 +970,21 @@ class PrinterManager(context: Context?, databaseManager: DatabaseManager?) : SNM
                         capabilities[i]
                     SNMPManager.SNMP_CAPABILITY_RAW -> printer.config!!.isRawAvailable =
                         capabilities[i]
-                    SNMPManager.SNMP_CAPABILITY_EXTERNAL_FEEDER -> if (printer.isPrinterFTorCEREZONA_S || printer.isPrinterGL) {
+                    SNMPManager.SNMP_CAPABILITY_EXTERNAL_FEEDER -> if (printer.isPrinterFTorCEREZONA_S || printer.isPrinterGLorOGA) {
                         printer.config!!.isExternalFeederAvailable = capabilities[i]
                     } else {
                         printer.config!!.isExternalFeederAvailable = false
                     }
-                    SNMPManager.SNMP_CAPABILITY_FINISH_0 -> if (printer.isPrinterFTorCEREZONA_S || printer.isPrinterGL) {
+                    SNMPManager.SNMP_CAPABILITY_FINISH_0 -> if (printer.isPrinterFTorCEREZONA_S || printer.isPrinterGLorOGA) {
                         printer.config!!.isPunch0Available = capabilities[i]
                     } else {
                         printer.config!!.isPunch0Available = false // if false, punch is enabled. Refer to definition in Printer.kt
                     }
                 }
+            }
+            if (printer.isEnabledIPPS) {
+                printer.config!!.isIppsAvailable =
+                    sSharedMngr?._dnssdManager?.getIppsCapability(printer.ipAddress!!)!!
             }
         }
     }
@@ -951,5 +999,6 @@ class PrinterManager(context: Context?, databaseManager: DatabaseManager?) : SNM
         _printerList = ArrayList()
         _snmpManager = SNMPManager()
         _snmpManager.setCallback(this)
+        _dnssdManager = _context?.let { DNSSDManager(it, this) }!!
     }
 }

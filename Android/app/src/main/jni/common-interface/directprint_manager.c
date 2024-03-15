@@ -112,6 +112,19 @@ Java_jp_co_riso_smartdeviceapp_common_DirectPrintManager_rawPrint(JNIEnv *env, j
 }
 
 JNIEXPORT void
+Java_jp_co_riso_smartdeviceapp_common_DirectPrintManager_createPdfPjl(JNIEnv *env, jobject object)
+{
+    // Get job reference to Java object
+    jlong m_job = (*env)->GetLongField(env, object, dp_job_field_id);
+    if (m_job != 0)
+    {
+        directprint_job *job = (directprint_job *)m_job;
+
+        directprint_job_create_pdf_pjl(job);
+    }
+}
+
+JNIEXPORT void
 Java_jp_co_riso_smartdeviceapp_common_DirectPrintManager_cancel(JNIEnv *env, jobject object)
 {
     // Get job reference to Java object

@@ -77,6 +77,7 @@ dependencies {
 
     // 3rd-party libraries
     implementation project(':scanlibrary')
+    implementation project(':ipp-client-kotlin')
 
     // test dependencies
     implementation 'androidx.test.uiautomator:uiautomator:2.2.0'
