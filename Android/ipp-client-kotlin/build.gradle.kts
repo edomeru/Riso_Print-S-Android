@@ -8,7 +8,7 @@ plugins {
     // Error resolving plugin [id: 'org.jetbrains.kotlin.jvm', version: '1.5.32']
     id("org.jetbrains.kotlin.jvm")
     // aLINK edit - End
-    id("org.jetbrains.dokka") version "1.7.0"
+    id("org.jetbrains.dokka") version "1.9.20"
     id("org.sonarqube") version "3.3"
     id("maven-publish")
     id("signing")
