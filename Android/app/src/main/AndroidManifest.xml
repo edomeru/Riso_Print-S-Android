@@ -25,6 +25,7 @@
     < And based on Android documentation: >
     < https://developer.android.com/guide/topics/resources/runtime-changes#handle-size-based -->
 
+    <!-- Content Print - START -->
     <application
         android:name="jp.co.riso.smartdeviceapp.SmartDeviceApp"
         android:allowBackup="false"
@@ -35,7 +36,9 @@
         android:hardwareAccelerated="true"
         android:supportsRtl="false"
         android:usesCleartextTraffic="true"
+        tools:replace="android:supportsRtl"
         tools:ignore="UnusedAttribute">
+        <!-- Content Print - END -->
         <activity
             android:name="jp.co.riso.smartdeviceapp.view.SplashActivity"
             android:theme="@style/SplashTheme"
