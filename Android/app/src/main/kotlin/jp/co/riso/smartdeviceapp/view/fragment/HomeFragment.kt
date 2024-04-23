@@ -34,8 +34,14 @@ import jp.co.riso.android.util.FileUtils
 import jp.co.riso.android.util.ImageUtils
 import jp.co.riso.smartdeviceapp.AppConstants
 import jp.co.riso.smartdeviceapp.SmartDeviceApp
+// Content Print - START
+import jp.co.riso.smartdeviceapp.controller.print.ContentPrintManager
+// Content Print - END
 import jp.co.riso.smartdeviceapp.view.PDFHandlerActivity
 import jp.co.riso.smartdeviceapp.view.base.BaseFragment
+// Azure Notification Hub - START
+import jp.co.riso.smartdeviceapp.view.notification.NotificationHubListener
+// Azure Notification Hub - END
 import jp.co.riso.smartprint.R
 
 /**
@@ -49,6 +55,9 @@ open class HomeFragment : BaseFragment(), View.OnClickListener, ConfirmDialogLis
     private var _fileButton: LinearLayout? = null
     private var _photosButton: LinearLayout? = null
     // private var _cameraButton: LinearLayout? = null aLINK edit: HIDE_NEW_FEATURES: Capture Photo function is hidden. Hide camera permission declaration
+    // Content Print - START
+    private var _contentPrintButton: LinearLayout? = null
+    // Content Print - END
     private var _confirmDialogFragment: ConfirmDialogFragment? = null
     private var _buttonTapped: LinearLayout? = null
 
@@ -99,10 +108,24 @@ open class HomeFragment : BaseFragment(), View.OnClickListener, ConfirmDialogLis
         addActionMenuButton(view)
     }
 
+    // Azure Notification Hub - START
+    override fun onStart() {
+        super.onStart()
+
+        if (ContentPrintManager.filenameFromNotification != null) {
+            // Go to Content Print Screen
+            goToContentPrint()
+        }
+    }
+    // Azure Notification Hub - END
+
     override fun onClick(v: View) {
         super.onClick(v)
         val id = v.id
         if (id == R.id.fileButton) {
+            // Content Print - START
+            ContentPrintManager.isFileFromContentPrint = false
+            // Content Print - END
             _buttonTapped = _fileButton
             _checkPermission = checkPermission(true)
             if (_checkPermission && SystemClock.elapsedRealtime() - _lastClickTime > 1000) {
@@ -121,6 +144,9 @@ open class HomeFragment : BaseFragment(), View.OnClickListener, ConfirmDialogLis
                 )
             }
         } else if (id == R.id.photosButton) {
+            // Content Print - START
+            ContentPrintManager.isFileFromContentPrint = false
+            // Content Print - END
             _buttonTapped = _photosButton
             _checkPermission = checkPermission(true)
             if (_checkPermission && SystemClock.elapsedRealtime() - _lastClickTime > 1000) {
@@ -178,6 +204,14 @@ open class HomeFragment : BaseFragment(), View.OnClickListener, ConfirmDialogLis
                 }
             }
         }*/
+
+        // Content Print - START
+        else if (id == R.id.contentPrintButton) {
+            _buttonTapped = _contentPrintButton
+            // Go to Content Print Screen
+            goToContentPrint()
+        }
+        // Content Print - END
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
@@ -195,9 +229,15 @@ open class HomeFragment : BaseFragment(), View.OnClickListener, ConfirmDialogLis
         _fileButton = view.findViewById(R.id.fileButton)
         _photosButton = view.findViewById(R.id.photosButton)
         // _cameraButton = view.findViewById(R.id.cameraButton) aLINK edit: HIDE_NEW_FEATURES: Capture Photo function is hidden. Hide camera permission declaration
+        // Content Print - START
+        _contentPrintButton = view.findViewById(R.id.contentPrintButton)
+        // Content Print - END
         _fileButton!!.setOnClickListener(this)
         _photosButton!!.setOnClickListener(this)
         // _cameraButton!!.setOnClickListener(this) aLINK edit: HIDE_NEW_FEATURES: Capture Photo function is hidden. Hide camera permission declaration
+        // Content Print - START
+        _contentPrintButton!!.setOnClickListener(this)
+        // Content Print - END
     }
 
     private fun checkPermission(isStorageOnly: Boolean): Boolean {
@@ -304,6 +344,23 @@ open class HomeFragment : BaseFragment(), View.OnClickListener, ConfirmDialogLis
 
         startActivity(intent)
     }
+
+    // Content Print - START
+    private fun goToContentPrint() {
+        val fragment = ContentPrintFragment()
+        val fm = parentFragmentManager
+        val ft = fm.beginTransaction()
+        ft.setCustomAnimations(
+            R.animator.left_slide_in,
+            R.animator.left_slide_out,
+            R.animator.right_slide_in,
+            R.animator.right_slide_out
+        )
+        ft.addToBackStack(null)
+        ft.replace(R.id.mainLayout, fragment, ContentPrintFragment.FRAGMENT_TAG_CONTENT_PRINT)
+        ft.commit()
+    }
+    // Content Print - END
 
     // ================================================================================
     // INTERFACE - ConfirmDialogListener

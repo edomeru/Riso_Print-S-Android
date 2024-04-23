@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/menuContainer"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/home_menu_height"
+    android:gravity="center"
+    android:background="@drawable/selector_printsettings_print"
+    android:paddingRight="@dimen/printsettings_icon_setting_padding"
+    android:orientation="horizontal" >
+
+    <ImageView
+        android:layout_width="@dimen/printsettings_print_width"
+        android:layout_height="@dimen/printsettings_print_width"
+        android:src="@drawable/selector_printsettings_registertoboxbutton"
+        android:tint="@color/theme_color_2"
+        android:layout_gravity="center_vertical"
+        android:contentDescription="@string/default_content_description" />
+
+    <TextView
+        android:id="@+id/menuTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_marginLeft="@dimen/printsettings_input_padding_lr"
+        android:maxLines="1"
+        android:text="@string/ids_lbl_box_register"
+        android:textAllCaps="false"
+        android:textColor="@color/selector_printsettings_print_text" />
+
+</LinearLayout>

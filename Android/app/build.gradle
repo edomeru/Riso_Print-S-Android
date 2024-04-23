@@ -1,5 +1,8 @@
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
+// Azure Notification Hubs - START
+apply plugin: 'com.google.gms.google-services'
+// Azure Notification Hubs - END
 apply from: 'coverage.gradle'
 
 android {
@@ -55,6 +58,16 @@ android {
         disable 'GradleDependency', 'InconsistentLayout', 'InflateParams', 'SpUsage'
     }
 
+    // Azure Notification Hubs - START
+    // Prevent mockk from duplicating files
+    packaging {
+        resources.excludes.addAll(
+            "META-INF/LICENSE.md",
+            "META-INF/LICENSE-notice.md"
+        )
+    }
+    // Azure Notification Hubs - END
+
     // Gradle automatically adds 'android.test.runner' as a dependency.
     useLibrary 'android.test.runner'
     useLibrary 'android.test.base'
@@ -95,6 +108,25 @@ dependencies {
     implementation 'androidx.fragment:fragment-ktx:1.6.1'
     androidTestImplementation 'androidx.test:rules:1.6.0-alpha01'
     androidTestImplementation 'androidx.test:core:1.6.0-alpha02'
+
+    // Azure Notification Hubs - START
+    implementation 'com.microsoft.azure:notification-hubs-android-sdk-fcm:1.1.4'
+    implementation 'androidx.appcompat:appcompat:1.4.1'
+    implementation 'com.android.volley:volley:1.2.1'
+    implementation platform('com.google.firebase:firebase-bom:32.8.0')
+
+    androidTestImplementation 'io.mockk:mockk-android:1.13.10'
+    androidTestImplementation 'io.mockk:mockk-agent:1.13.10'
+    // Azure Notification Hubs - END
+
+    // Content Print - START
+    implementation 'com.microsoft.identity.client:msal:5.2.1'
+    implementation 'androidx.security:security-crypto-ktx:1.1.0-alpha06'
+    implementation 'com.squareup.retrofit2:retrofit:2.11.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.4.0'
+    implementation 'com.squareup.okhttp3:okhttp:4.2.1'
+    implementation 'androidx.cardview:cardview:1.0.0'
+    // Content Print - END
 }
 
 // Returns NDK build command based on development OS

@@ -38,6 +38,10 @@ import jp.co.riso.smartdeviceapp.common.BaseTask
 import jp.co.riso.smartdeviceapp.controller.db.DatabaseManager
 import jp.co.riso.smartdeviceapp.controller.pdf.PDFFileManager
 import jp.co.riso.smartdeviceapp.view.base.BaseActivity
+// Azure Notification Hub - START
+import jp.co.riso.smartdeviceapp.controller.print.ContentPrintManager
+import jp.co.riso.smartdeviceapp.view.notification.NotificationHubListener
+// Azure Notification Hub - END
 import jp.co.riso.smartdeviceapp.view.webkit.SDAWebView
 import jp.co.riso.smartprint.R
 import java.io.File
@@ -88,6 +92,20 @@ class SplashActivity : BaseActivity(), PauseableHandlerCallback, View.OnClickLis
             }
         }
     }
+
+    // Azure Notification Hub - START
+    override fun onStart() {
+        super.onStart()
+
+        val extras = intent.extras
+        if (extras != null) {
+            val message = extras.getString("body")
+            var filename = message?.substringAfter("「")?.substringBefore("」")
+            filename = filename?.substringAfter("\"")?.substringBefore("\"")
+            ContentPrintManager.filenameFromNotification = filename
+        }
+    }
+    // Azure Notification Hub - END
 
     override fun onResume() {
         super.onResume()

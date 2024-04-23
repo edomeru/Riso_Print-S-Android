@@ -59,6 +59,10 @@ import java.io.File
 import java.io.FileOutputStream
 import java.util.concurrent.TimeoutException
 import java.util.concurrent.atomic.AtomicReference
+// Azure Notification Hubs - START
+import android.Manifest.permission.POST_NOTIFICATIONS
+import androidx.test.rule.GrantPermissionRule
+// Azure Notification Hubs - END
 
 open class BaseActivityTestUtil {
 
@@ -69,6 +73,11 @@ open class BaseActivityTestUtil {
     var testRule = ActivityScenarioRule(
         MainActivity::class.java
     )
+
+    // Azure Notification Hubs - START
+    @get:Rule
+    var notificationPermission: GrantPermissionRule = GrantPermissionRule.grant(POST_NOTIFICATIONS)
+    // Azure Notification Hubs - END
 
     @Before
     fun initMainActivity() {

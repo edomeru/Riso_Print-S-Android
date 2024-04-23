@@ -187,5 +187,25 @@
     <string name="ids_err_msg_camera_permission_not_allowed">カメラとストレージへのアクセスは開くために必要です。\n\n表示される次のダイアログで[許可/ OK]ボタンをタップしてください。</string>
     <string name="ids_err_msg_camera_permission_not_granted">カメラおよび/またはストレージへのアクセス許可が付与されていません。 これらの権限は、画像をキャプチャして保存するために必要です。 [カメラ許可]と[ストレージの権限]がONになっていることを確認してください。</string>
     <string name="ids_err_msg_invalid_contents_android">アプリから送信されたデータが無効です。 別の方法でファイルを選択してください。</string>
-
+    <string name="ids_lbl_login">ログイン</string>
+    <string name="ids_lbl_logout">ログアウト</string>
+    <string name="ids_lbl_confirm_logout_title">ログアウトの確認</string>
+    <string name="ids_lbl_confirm_logout">本当にログアウトしますか？</string>
+    <string name="ids_lbl_download_file">ファイルのダウンロード</string>
+    <string name="ids_lbl_direct_print">ダイレクトプリント</string>
+    <string name="ids_lbl_box_registration">ボックス保存</string>
+    <string name="ids_lbl_box_register">ボックスレジスター</string>
+    <string name="ids_lbl_content_print">コンテンツ印刷</string>
+    <string name="ids_lbl_content_print_login_notification">コンテンツ配信サービスにログインしてください。</string>
+    <string name="ids_lbl_content_print_files_empty_notification">更新ボタンをタップしてクラウドから最新のファイルを取得します</string>
+    <string name="ids_info_msg_confirm_preview_title">プレビューを確認する</string>
+    <string name="ids_info_msg_confirm_preview">このファイルのプレビューを表示しますか?</string>
+    <string name="ids_info_msg_downloading" tools:ignore="TypographyEllipsis">プレビューを読み込んでいます...</string>
+    <string name="ids_lbl_previous">前へ</string>
+    <string name="ids_lbl_next">次へ</string>
+    <string name="ids_info_msg_print_mode_title">印刷モードの確認</string>
+    <string name="ids_info_msg_print_mode">ダイレクトプリントまたはボックス保存を選択してください。</string>
+    <string name="ids_info_msg_registering_box" tools:ignore="TypographyEllipsis">ボックス保存を実行中...</string>
+    <string name="ids_err_msg_download_failed">プレビューの読み込みに失敗しました。</string>
+    <string name="ids_err_msg_login_failed">ログインに失敗しました。もう一度試してください。</string>
 </resources>

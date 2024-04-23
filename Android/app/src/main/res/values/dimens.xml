@@ -105,4 +105,9 @@
     <dimen name="printersearchsettings_community_name_divider_top_margin">15dp</dimen>
     <dimen name="printersearchsettings_community_name_divider_bottom_margin">5dp</dimen>
 
+    <!-- Content Print - START -->
+    <dimen name="content_print_page_buttons_height">48dp</dimen>
+    <dimen name="content_print_row_height">86dp</dimen>
+    <dimen name="content_print_row_image_size">48dp</dimen>
+    <!-- Content Print - END -->
 </resources>

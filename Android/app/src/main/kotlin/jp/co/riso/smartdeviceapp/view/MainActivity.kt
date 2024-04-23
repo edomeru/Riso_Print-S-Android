@@ -40,6 +40,16 @@ import jp.co.riso.smartprint.R
 import java.io.File
 import java.io.IOException
 import kotlin.math.abs
+// Azure Notification Hubs - START
+import android.Manifest.permission.POST_NOTIFICATIONS
+import android.content.Intent
+import android.util.Log
+import androidx.core.app.ActivityCompat
+import com.google.firebase.messaging.FirebaseMessaging
+import com.microsoft.windowsazure.messaging.notificationhubs.NotificationHub
+import jp.co.riso.smartdeviceapp.controller.print.ContentPrintManager
+import jp.co.riso.smartdeviceapp.view.notification.NotificationHubListener
+// Azure Notification Hubs - END
 
 
 /**
@@ -147,6 +157,21 @@ class MainActivity : BaseActivity(), PauseableHandlerCallback {
         }
         NetUtils.registerNetworkCallback(this)
 
+        // Azure Notification Hubs - START
+        val channelName = getString(R.string.azure_notification_channel_name)
+        NotificationHubListener.createNotificationChannel(this, channelName)
+
+        NotificationHub.setListener(NotificationHubListener())
+        NotificationHub.start(
+            this.application,
+            getString(R.string.azure_notification_hubs_name),
+            getString(R.string.azure_notification_hubs_connection_string)
+        )
+        // Azure Notification Hubs - END
+
+        // Content Print - START
+        ContentPrintManager.newInstance(this)
+        // Content Print - End
     }
 
     override fun onDestroy() {

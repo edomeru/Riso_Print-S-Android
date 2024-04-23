@@ -116,6 +116,39 @@
                 android:textSize="@dimen/font_size_large" />
         </LinearLayout-->
 
+        <!-- Content Print - START -->
+        <LinearLayout
+            android:id="@+id/contentPrintButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="6dp"
+            android:layout_weight="1"
+            android:background="@android:color/background_light"
+            android:clickable="true"
+            android:focusable="true"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="center_vertical"
+                android:layout_weight="1"
+                android:importantForAccessibility="no"
+                android:scaleType="fitCenter"
+                android:src="@drawable/selector_home_contentprint"
+                android:tint="@color/theme_color_1" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="4"
+                android:gravity="center_vertical"
+                android:text="@string/ids_lbl_content_print"
+                android:textColor="@color/theme_color_1"
+                android:textSize="@dimen/font_size_large" />
+        </LinearLayout>
+        <!-- Content Print - END -->
+
         <Space
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

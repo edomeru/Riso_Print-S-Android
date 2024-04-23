@@ -54,6 +54,10 @@ import jp.co.riso.smartdeviceapp.controller.pdf.PDFFileManager.Companion.clearSa
 import jp.co.riso.smartdeviceapp.controller.pdf.PDFFileManager.Companion.getSandboxPDFName
 import jp.co.riso.smartdeviceapp.controller.pdf.PDFFileManagerInterface
 import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager
+// Content Print - START
+import jp.co.riso.smartdeviceapp.controller.print.ContentPrintManager
+import jp.co.riso.smartdeviceapp.model.ContentPrintPrintSettings
+// Content Print - END
 import jp.co.riso.smartdeviceapp.model.printsettings.PrintSettings
 import jp.co.riso.smartdeviceapp.view.MainActivity
 import jp.co.riso.smartdeviceapp.view.base.BaseFragment
@@ -103,6 +107,9 @@ class PrintPreviewFragment : BaseFragment(), Handler.Callback, PDFFileManagerInt
     private var _intentData: Uri? = null
     private var _inputStream: InputStream? = null
     private var _filenameFromContent: String? = null
+    // Content Print - START
+    private var _isBoxRegistrationDialog = false
+    // Content Print - END
 
     // BTS ID#20039: This flag controls if page index should reset to 1 on PDF
     // initialization. Currently only reset after allowing storage permission to
@@ -266,6 +273,19 @@ class PrintPreviewFragment : BaseFragment(), Handler.Callback, PDFFileManagerInt
             }
             _printSettings = PrintSettings(printerType)
         }
+
+        // Content Print - START
+        // If the selected file was from the Content Distribution System,
+        // get the print settings from the Content Print file
+        if (ContentPrintManager.isLoggedIn &&
+            ContentPrintManager.isFileFromContentPrint &&
+            ContentPrintManager.selectedFile != null) {
+            _printSettings = ContentPrintPrintSettings.convertToPrintSettings(
+                ContentPrintManager.selectedFile!!.printSettings!!
+            )
+        }
+        // Content Print - END
+
         if (_bmpCache == null) {
             var cacheSize = getCacheSizeBasedOnMemoryClass(requireActivity())
             cacheSize = cacheSize shr AppConstants.APP_BMP_CACHE_PART // 1/8
@@ -1006,7 +1026,13 @@ class PrintPreviewFragment : BaseFragment(), Handler.Callback, PDFFileManagerInt
     override fun processMessage(message: Message?) {
         val id = message!!.what
         if (id == R.id.view_id_print_button) {
-            togglePrintSettingsDrawer()
+            // Content Print - START
+            if (ContentPrintManager.isFileFromContentPrint) {
+                showBoxRegistrationConfirmDialog()
+            } else {
+                togglePrintSettingsDrawer()
+            }
+            // Content Print - END
         } else if (id == R.id.menu_id_action_button) {
             _pauseableHandler!!.pause()
             val activity = requireActivity() as MainActivity
@@ -1014,10 +1040,33 @@ class PrintPreviewFragment : BaseFragment(), Handler.Callback, PDFFileManagerInt
         }
     }
 
+    // Content Print - START
+    private fun showBoxRegistrationConfirmDialog() {
+        val confirm = ConfirmDialogFragment.newInstance(
+            resources.getString(R.string.ids_info_msg_print_mode_title),
+            resources.getString(R.string.ids_info_msg_print_mode),
+            resources.getString(R.string.ids_lbl_box_registration),
+            resources.getString(R.string.ids_lbl_direct_print),
+            KEY_CONTENT_PRINT_BOX_REGISTRATION_DIALOG
+        )
+        _isBoxRegistrationDialog = true
+        setResultListenerConfirmDialog(
+            requireActivity().supportFragmentManager,
+            this,
+            KEY_CONTENT_PRINT_BOX_REGISTRATION_DIALOG
+        )
+        displayDialog(requireActivity(),
+            KEY_CONTENT_PRINT_BOX_REGISTRATION_DIALOG, confirm)
+    }
+    // Content Print - END
+
     fun togglePrintSettingsDrawer() {
         _pauseableHandler!!.pause()
         val printerManager = PrinterManager.getInstance(appContext!!)
-        if (printerManager!!.defaultPrinter == PrinterManager.EMPTY_ID) {
+        // Content Print - START
+        if (!ContentPrintManager.isBoxRegistrationMode &&
+            printerManager!!.defaultPrinter == PrinterManager.EMPTY_ID) {
+        // Content Print - END
             val titleMsg = resources.getString(R.string.ids_lbl_print_settings)
             val strMsg = getString(R.string.ids_err_msg_no_selected_printer)
             val btnMsg = getString(R.string.ids_lbl_ok)
@@ -1076,25 +1125,42 @@ class PrintPreviewFragment : BaseFragment(), Handler.Callback, PDFFileManagerInt
     // INTERFACE - ConfirmDialogListener
     // ================================================================================
     override fun onConfirm() {
-        _confirmDialogFragment = null
-        _isPermissionDialogOpen = true
-        _resultLauncherPermissionStorage.launch(
-            arrayOf(_permissionType))
+        // Content Print - START
+        if (ContentPrintManager.isFileFromContentPrint && _isBoxRegistrationDialog) {
+            ContentPrintManager.isBoxRegistrationMode = true
+            _isBoxRegistrationDialog = false
+            togglePrintSettingsDrawer()
+        } else {
+            _confirmDialogFragment = null
+            _isPermissionDialogOpen = true
+            _resultLauncherPermissionStorage.launch(
+                arrayOf(_permissionType)
+            )
+        }
+        // Content Print - END
     }
 
     override fun onCancel() {
-        if (_waitingDialog != null) {
-            _pdfConverterManager!!.cancel()
-            val intent = requireActivity().intent
-            intent.action = null
-            intent.clipData = null
-            intent.data = null
-            intent.putExtra(AppConstants.EXTRA_FILE_FROM_PICKER, 1)
-            transitionToHomeScreen()
-        } else if (_confirmDialogFragment != null) {
-            _confirmDialogFragment = null
-            transitionToHomeScreen()
+        // Content Print - START
+        if (ContentPrintManager.isFileFromContentPrint && _isBoxRegistrationDialog) {
+            ContentPrintManager.isBoxRegistrationMode = false
+            _isBoxRegistrationDialog = false
+            togglePrintSettingsDrawer()
+        } else {
+            if (_waitingDialog != null) {
+                _pdfConverterManager!!.cancel()
+                val intent = requireActivity().intent
+                intent.action = null
+                intent.clipData = null
+                intent.data = null
+                intent.putExtra(AppConstants.EXTRA_FILE_FROM_PICKER, 1)
+                transitionToHomeScreen()
+            } else if (_confirmDialogFragment != null) {
+                _confirmDialogFragment = null
+                transitionToHomeScreen()
+            }
         }
+        // Content Print - END
     }
 
     // ================================================================================
@@ -1173,5 +1239,9 @@ class PrintPreviewFragment : BaseFragment(), Handler.Callback, PDFFileManagerInt
 
         /// Tag used to identify print setting update result
         const val TAG_RESULT_PRINT_PREVIEW = "result_print_preview"
+
+        // Content Print - START
+        const val KEY_CONTENT_PRINT_BOX_REGISTRATION_DIALOG = "content_print_box_registration_dialog"
+        // Content Print - END
     }
 }

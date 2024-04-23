@@ -31,6 +31,9 @@ import jp.co.riso.smartdeviceapp.common.DirectPrintManager
 import jp.co.riso.smartdeviceapp.common.DirectPrintManager.DirectPrintCallback
 import jp.co.riso.smartdeviceapp.controller.jobs.PrintJobManager
 import jp.co.riso.smartdeviceapp.controller.pdf.PDFFileManager.Companion.getSandboxPDFName
+// Content Print - START
+import jp.co.riso.smartdeviceapp.controller.print.ContentPrintManager
+// Content Print - END
 import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager
 import jp.co.riso.smartdeviceapp.model.PrintJob.JobResult
 import jp.co.riso.smartdeviceapp.model.Printer
@@ -51,8 +54,9 @@ import kotlin.math.min
  * @brief Fragment which contains the Print Settings Screen
  */
 class PrintSettingsFragment : BaseFragment(), PrintSettingsViewInterface, PauseableHandlerCallback,
-    DirectPrintCallback, WaitingDialogListener {
-
+    // Content Print - START
+    DirectPrintCallback, WaitingDialogListener, ContentPrintManager.IRegisterToBoxCallback {
+    // Content Print - END
     private var _directPrintManager: DirectPrintManager? = null
     private var _fragmentForPrinting = false
     private var _printerId = PrinterManager.EMPTY_ID
@@ -86,6 +90,9 @@ class PrintSettingsFragment : BaseFragment(), PrintSettingsViewInterface, Pausea
     override fun initializeView(view: View, savedInstanceState: Bundle?) {
         _printSettingsView = view.findViewById(R.id.rootView)
         _printSettingsView!!.setValueChangedListener(this)
+        // Content Print - START
+        _printSettingsView!!.setRegisterToBoxCallback(this)
+        // Content Print - END
         _printSettingsView!!.setInitialValues(_printerId, _printSettings!!)
         _printSettingsView!!.setShowPrintControls(_fragmentForPrinting)
         val textView = view.findViewById<TextView>(R.id.titleTextView)
@@ -416,6 +423,35 @@ class PrintSettingsFragment : BaseFragment(), PrintSettingsViewInterface, Pausea
             _directPrintManager = null
         }
     }
+
+    // Content Print - START
+    // ================================================================================
+    // INTERFACE - ContentPrintManager.IRegisterToBoxCallback
+    // ================================================================================
+    override fun onStartBoxRegistration() {
+        val message = resources.getString(R.string.ids_info_msg_registering_box)
+        _waitingDialog = newInstance(null, message, false, null, TAG_WAITING_DIALOG)
+        setResultListenerWaitingDialog(
+            requireActivity().supportFragmentManager,
+            this,
+            TAG_WAITING_DIALOG
+        )
+        displayDialog(requireActivity(), TAG_WAITING_DIALOG, _waitingDialog!!)
+    }
+
+    override fun onBoxRegistered(success: Boolean) {
+        var message = getString(R.string.ids_info_msg_print_job_failed)
+        if (success) {
+            message = getString(R.string.ids_info_msg_print_job_successful)
+        }
+
+        dismissDialog(requireActivity(), TAG_WAITING_DIALOG)
+        displayDialog(requireActivity(), TAG_MESSAGE_DIALOG, newInstance(
+            message,
+            getString(R.string.ids_lbl_ok)
+        ))
+    }
+    // Content Print - END
 
     companion object {
         const val TAG_WAITING_DIALOG = "dialog_printing"

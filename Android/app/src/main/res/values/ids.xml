@@ -6,6 +6,11 @@
     <item name="menu_id_action_print_settings_button" type="id"/>
     <item name="menu_id_printer_search_settings_button" type="id"/>
     <item name="menu_id_back_button" type="id"/>
+    <!-- Content Print - START -->
+    <item name="menu_id_action_login_button" type="id"/>
+    <item name="menu_id_action_logout_button" type="id"/>
+    <item name="menu_id_action_refresh_button" type="id"/>
+    <!-- Content Print - END -->
 
     <item name="view_id_print_button" type="id"/>
     <item name="view_id_disclosure" type="id"/>

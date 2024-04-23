@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<jp.co.riso.smartdeviceapp.view.widget.SDALinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:splitMotionEvents="false" >
+
+    <include layout="@layout/actionbar_sub" />
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
+
+        <FrameLayout
+            android:id="@+id/rootView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <eu.erikw.PullToRefreshListView
+                android:id="@+id/content_list"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginBottom="@dimen/content_print_page_buttons_height"
+                android:divider="@null" />
+
+            <TextView
+                android:id="@+id/loggedOutText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="@string/ids_lbl_content_print_login_notification"
+                android:textColor="@color/theme_dark_1"
+                android:textSize="@dimen/font_size_large"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/emptyListText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="@string/ids_lbl_content_print_files_empty_notification"
+                android:textColor="@color/theme_dark_1"
+                android:textSize="@dimen/font_size_large"
+                android:visibility="gone" />
+
+            <RelativeLayout
+                android:id="@+id/pageButtons"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/content_print_page_buttons_height"
+                android:layout_gravity="bottom"
+                android:background="@color/theme_light_3"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/previousButton"
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:text="@string/ids_lbl_previous"
+                    android:textColor="@color/theme_color_2"
+                    android:layout_alignParentLeft="true"
+                    android:backgroundTint="@color/theme_light_3"
+                    android:visibility="gone"/>
+
+                <TextView
+                    android:id="@+id/pageLabel"
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:textColor="@color/theme_dark_1"
+                    android:layout_centerInParent="true"
+                    android:visibility="gone"/>
+
+                <Button
+                    android:id="@+id/nextButton"
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:text="@string/ids_lbl_next"
+                    android:textColor="@color/theme_color_2"
+                    android:layout_alignParentRight="true"
+                    android:backgroundTint="@color/theme_light_3"
+                    android:visibility="gone"/>
+
+            </RelativeLayout>
+        </FrameLayout>
+    </FrameLayout>
+</jp.co.riso.smartdeviceapp.view.widget.SDALinearLayout>

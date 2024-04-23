@@ -33,6 +33,11 @@ import jp.co.riso.smartdeviceapp.AppConstants
 import jp.co.riso.smartdeviceapp.SmartDeviceApp
 import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager
 import jp.co.riso.smartdeviceapp.controller.printer.PrinterManager.UpdateStatusCallback
+// Content Print - START
+import jp.co.riso.smartdeviceapp.controller.print.ContentPrintManager
+import jp.co.riso.smartdeviceapp.model.ContentPrintPrintSettings
+import jp.co.riso.smartdeviceapp.model.ContentPrintPrinter
+// Content Print - END
 import jp.co.riso.smartdeviceapp.model.Printer
 import jp.co.riso.smartdeviceapp.model.printsettings.*
 import jp.co.riso.smartdeviceapp.model.printsettings.Preview.*
@@ -78,6 +83,10 @@ class PrintSettingsView @JvmOverloads constructor(
     private var _printerManager: PrinterManager? = null
     
     private lateinit var _listener: PrintSettingsViewInterface
+
+    // Content Print - START
+    private lateinit var _registerToBox: ContentPrintManager.IRegisterToBoxCallback
+    // Content Print - END
 
     /**
      * @brief Constructs the PrintSettingsView
@@ -164,7 +173,12 @@ class PrintSettingsView @JvmOverloads constructor(
      * @brief Gets the list of printers from manager
      */
     private fun loadPrintersList() {
-        _printersList = PrinterManager.getInstance(SmartDeviceApp.appContext!!)!!.savedPrintersList
+        // Content Print - START
+        if (!ContentPrintManager.isBoxRegistrationMode) {
+            _printersList =
+                PrinterManager.getInstance(SmartDeviceApp.appContext!!)!!.savedPrintersList
+        }
+        // Content Print - END
     }
     // ================================================================================
     // Save/Restore State
@@ -595,12 +609,17 @@ class PrintSettingsView @JvmOverloads constructor(
                 }
             }
         }
-        if (printer!!.isPrinterFTorCEREZONA_S || printer!!.isPrinterGLorOGA) {
-
+        // Content Print - START
+        if ((ContentPrintManager.isBoxRegistrationMode && (cdsPrinter?.isPrinterFTorCEREZONA_S == true || cdsPrinter?.isPrinterGLorOGA == true)) ||
+           (!ContentPrintManager.isBoxRegistrationMode && (printer!!.isPrinterFTorCEREZONA_S || printer!!.isPrinterGLorOGA))) {
+        // Content Print - END
             /* Specify the input tray and paper size arrays to be used */
             val inputTrayOptions: Array<InputTrayFtGlCerezonaSOga>
             val paperSizeOptions: Array<PaperSize>
-            if (printer!!.isPrinterFTorCEREZONA_S) {
+            // Content Print - START
+            if ((ContentPrintManager.isBoxRegistrationMode && cdsPrinter?.isPrinterFTorCEREZONA_S == true) ||
+                (!ContentPrintManager.isBoxRegistrationMode && printer!!.isPrinterFTorCEREZONA_S)) {
+            // Content Print - END
                 inputTrayOptions = valuesFtCerezonaS()
                 paperSizeOptions = valuesDefault()
             } else {
@@ -642,23 +661,30 @@ class PrintSettingsView @JvmOverloads constructor(
         if (_printControls == null) {
             return
         }
-        val targetPrinter = printer
         val v = _printControls!!.findViewById<View>(R.id.view_id_print_selected_printer)
         val nameTextView = v.findViewById<TextView>(R.id.listValueTextView)
         val ipAddressTextView = v.findViewById<TextView>(R.id.listValueSubTextView)
         val menuContainer = v.findViewById<View>(R.id.menuContainer)
         var height = resources.getDimensionPixelSize(R.dimen.home_menu_height)
         ipAddressTextView.visibility = GONE
+
+        // Content Print - START
+        val targetPrinter = if (ContentPrintManager.isBoxRegistrationMode) cdsPrinter else printer
+        // Content Print - END
         if (targetPrinter == null) {
             nameTextView.setText(string.ids_lbl_choose_printer)
         } else {
-            var printerName = targetPrinter.name
+            // Content Print - START
+            var printerName = if (ContentPrintManager.isBoxRegistrationMode) cdsPrinter?.model else printer?.name
+            // Content Print - END
             if (printerName!!.isEmpty()) {
                 printerName = context.resources.getString(string.ids_lbl_no_name)
             }
             nameTextView.text = printerName
             ipAddressTextView.visibility = VISIBLE
-            ipAddressTextView.text = targetPrinter.ipAddress
+            // Content Print - START
+            ipAddressTextView.text = if (ContentPrintManager.isBoxRegistrationMode) cdsPrinter?.printerName else printer?.ipAddress
+            // Content Print - END
             height = resources.getDimensionPixelSize(R.dimen.printsettings_option_with_sub_height)
         }
         menuContainer.layoutParams.height = height
@@ -680,15 +706,30 @@ class PrintSettingsView @JvmOverloads constructor(
      * @brief Hide the settings disabled based on the printer capabilities
      */
     private fun hideDisabledPrintSettings() {
-        val printer = printer
-        val isStapleAvailable = printer == null || printer.config!!.isStaplerAvailable
-        setViewVisible(PrintSettings.TAG_STAPLE, isStapleAvailable)
-        val isPunchAvailable = printer == null || printer.config!!.isPunchAvailable
-        setViewVisible(PrintSettings.TAG_PUNCH, isPunchAvailable)
-        val isBookletFinishingAvailable =
-            printer == null || printer.config!!.isBookletFinishingAvailable
-        setViewVisible(PrintSettings.TAG_BOOKLET_FINISH, isBookletFinishingAvailable)
-        setViewVisible(PrintSettings.TAG_ORIENTATION, !AppConstants.USE_PDF_ORIENTATION)
+        // Content Print - START
+        if (ContentPrintManager.isBoxRegistrationMode) {
+            val printerCapabilities = cdsPrinter?.printerCapabilities
+            val isStapleAvailable = printerCapabilities == null || printerCapabilities.staple
+            setViewVisible(PrintSettings.TAG_STAPLE, isStapleAvailable)
+            val isPunchAvailable = printerCapabilities == null || printerCapabilities.finisher0Holes ||
+                    printerCapabilities.finisher23Holes || printerCapabilities.finisher24Holes
+            setViewVisible(PrintSettings.TAG_PUNCH, isPunchAvailable)
+            val isBookletFinishingAvailable =
+                printerCapabilities == null || printerCapabilities.booklet
+            setViewVisible(PrintSettings.TAG_BOOKLET_FINISH, isBookletFinishingAvailable)
+            setViewVisible(PrintSettings.TAG_ORIENTATION, !AppConstants.USE_PDF_ORIENTATION)
+        } else {
+            val printer = printer
+            val isStapleAvailable = printer == null || printer.config!!.isStaplerAvailable
+            setViewVisible(PrintSettings.TAG_STAPLE, isStapleAvailable)
+            val isPunchAvailable = printer == null || printer.config!!.isPunchAvailable
+            setViewVisible(PrintSettings.TAG_PUNCH, isPunchAvailable)
+            val isBookletFinishingAvailable =
+                printer == null || printer.config!!.isBookletFinishingAvailable
+            setViewVisible(PrintSettings.TAG_BOOKLET_FINISH, isBookletFinishingAvailable)
+            setViewVisible(PrintSettings.TAG_ORIENTATION, !AppConstants.USE_PDF_ORIENTATION)
+        }
+        // Content Print - END
     }
 
     /**
@@ -702,22 +743,33 @@ class PrintSettingsView @JvmOverloads constructor(
      * @retval false Printer option should not be displayed.
      */
     private fun shouldDisplayOptionFromPrinter(name: String, value: Int): Boolean {
-        if (printer != null) {
+        // Content Print - START
+        if ((ContentPrintManager.isBoxRegistrationMode && cdsPrinter != null) ||
+            (!ContentPrintManager.isBoxRegistrationMode && printer != null)) {
+        // Content Print - END
             if (name == PrintSettings.TAG_OUTPUT_TRAY) {
                 return when (OutputTray.values()[value]) {
                     OutputTray.AUTO -> true
                     OutputTray.FACEDOWN ->                         //ver.2.0.1.2 We always display "Facedown" in the Output tray list(20160707 RISO Saito)
                         //return getPrinter().getConfig().isTrayFaceDownAvailable();
                         true
-                    OutputTray.TOP -> printer!!.config!!.isTrayTopAvailable
-                    OutputTray.STACKING -> printer!!.config!!.isTrayStackAvailable
+                    // Content Print - START
+                    OutputTray.TOP -> if (ContentPrintManager.isBoxRegistrationMode)
+                        cdsPrinter!!.printerCapabilities?.outputTrayTop == true else printer!!.config!!.isTrayTopAvailable
+                    OutputTray.STACKING -> if (ContentPrintManager.isBoxRegistrationMode)
+                        cdsPrinter!!.printerCapabilities?.outputTrayStacking == true else printer!!.config!!.isTrayStackAvailable
+                    // Content Print - END
                 }
             }
             if (name == PrintSettings.TAG_PUNCH) {
                 return when (Punch.values()[value]) {
                     Punch.OFF, Punch.HOLES_2 -> true
-                    Punch.HOLES_3 -> printer!!.config!!.isPunch3Available
-                    Punch.HOLES_4 -> printer!!.config!!.isPunch4Available
+                    // Content Print - START
+                    Punch.HOLES_3 -> if (ContentPrintManager.isBoxRegistrationMode)
+                        cdsPrinter!!.printerCapabilities?.finisher23Holes == true else printer!!.config!!.isPunch3Available
+                    Punch.HOLES_4 -> if (ContentPrintManager.isBoxRegistrationMode)
+                        cdsPrinter!!.printerCapabilities?.finisher24Holes == true else printer!!.config!!.isPunch4Available
+                    // Content Print - END
                 }
             }
             if (name == PrintSettings.TAG_INPUT_TRAY) {
@@ -725,15 +777,22 @@ class PrintSettingsView @JvmOverloads constructor(
                     return when (valuesFtCerezonaS()[value]) {
                         InputTrayFtGlCerezonaSOga.AUTO, InputTrayFtGlCerezonaSOga.STANDARD, InputTrayFtGlCerezonaSOga.TRAY1, InputTrayFtGlCerezonaSOga.TRAY2 -> true
                         InputTrayFtGlCerezonaSOga.TRAY3 -> false
-                        InputTrayFtGlCerezonaSOga.EXTERNAL_FEEDER -> printer!!.config!!.isExternalFeederAvailable
+                        // Content Print - START
+                        InputTrayFtGlCerezonaSOga.EXTERNAL_FEEDER -> if (ContentPrintManager.isBoxRegistrationMode)
+                            cdsPrinter!!.printerCapabilities?.inputTrayExternal == true else printer!!.config!!.isExternalFeederAvailable
+                        // Content Print - END
 
                     }
                 }
                 if (printer!!.isPrinterGLorOGA) {
                     return when (valuesGlOga()[value]) {
                         InputTrayFtGlCerezonaSOga.AUTO, InputTrayFtGlCerezonaSOga.STANDARD, InputTrayFtGlCerezonaSOga.TRAY1, InputTrayFtGlCerezonaSOga.TRAY2 -> true
-                        InputTrayFtGlCerezonaSOga.TRAY3 -> printer!!.isPrinterGLorOGA
-                        InputTrayFtGlCerezonaSOga.EXTERNAL_FEEDER -> printer!!.config!!.isExternalFeederAvailable
+                        // Content Print - START
+                        InputTrayFtGlCerezonaSOga.TRAY3 -> if (ContentPrintManager.isBoxRegistrationMode)
+                            cdsPrinter!!.isPrinterGLorOGA else printer!!.isPrinterGLorOGA
+                        InputTrayFtGlCerezonaSOga.EXTERNAL_FEEDER -> if (ContentPrintManager.isBoxRegistrationMode)
+                            cdsPrinter!!.printerCapabilities?.inputTrayExternal == true else printer!!.config!!.isExternalFeederAvailable
+                        // Content Print - END
                     }
                 }
             }
@@ -907,6 +966,23 @@ class PrintSettingsView @JvmOverloads constructor(
      */
     val printer: Printer?
         get() = getPrinterFromList(_printerId)
+
+    // Content Print - START
+    private fun getPrinterFromList(): ContentPrintPrinter? {
+        if (ContentPrintManager.isBoxRegistrationMode) {
+            if (ContentPrintManager.selectedPrinter != null) {
+                return ContentPrintManager.selectedPrinter
+            } else if (ContentPrintManager.printerList.isNotEmpty()) {
+                return ContentPrintManager.printerList.first()
+            }
+        }
+        return null
+    }
+
+    val cdsPrinter: ContentPrintPrinter?
+        get() = getPrinterFromList()
+    // Content Print - END
+
     // ================================================================================
     // Printer controls functions
     // ================================================================================
@@ -919,7 +995,12 @@ class PrintSettingsView @JvmOverloads constructor(
 
         // Create Header
         val li = LayoutInflater.from(context)
-        val header = li.inflate(R.layout.printsettings_print, null) as LinearLayout
+        // Content Print - START
+        val header = li.inflate(
+            if (ContentPrintManager.isBoxRegistrationMode) R.layout.printsettings_registertobox else R.layout.printsettings_print,
+            null
+        ) as LinearLayout
+        // Content Print - END
         var height = resources.getDimensionPixelSize(R.dimen.home_menu_height)
         var params = LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, height)
         params.gravity = Gravity.CENTER
@@ -1341,23 +1422,47 @@ class PrintSettingsView @JvmOverloads constructor(
         if (v.tag.toString() == KEY_TAG_PRINTER) {
             val title = resources.getString(string.ids_lbl_printers)
             addSubviewOptionsTitle(title, false, -1)
-            for (i in _printersList!!.indices) {
-                val printer = _printersList!![i]
-                val showSeparator = i != _printersList!!.size - 1
-                var printerName = printer!!.name
-                if (printerName!!.isEmpty()) {
-                    printerName = context.resources.getString(string.ids_lbl_no_name)
+            // Content Print - START
+            if (ContentPrintManager.isBoxRegistrationMode) {
+                for (i in ContentPrintManager.printerList.indices) {
+                    val printerList = ContentPrintManager.printerList
+                    val printer = printerList[i]
+                    val showSeparator = i != ContentPrintManager.printerList.size - 1
+                    var printerName = printer.printerName
+                    if (printerName!!.isEmpty()) {
+                        printerName = context.resources.getString(string.ids_lbl_no_name)
+                    }
+                    val selectedIndex = printerList.indexOf(ContentPrintManager.selectedPrinter)
+                    addSubviewOptionsList(
+                        printer.model ?: context.resources.getString(string.ids_lbl_no_name),
+                        printerName,
+                        selectedIndex,
+                        i,
+                        showSeparator,
+                        R.id.view_id_subview_printer_item,
+                        drawable.img_btn_printer_status_offline
+                    )
                 }
-                addSubviewOptionsList(
-                    printerName,
-                    printer.ipAddress,
-                    _printerId,
-                    printer.id,
-                    showSeparator,
-                    R.id.view_id_subview_printer_item,
-                    drawable.img_btn_printer_status_offline
-                )
+            } else {
+                for (i in _printersList!!.indices) {
+                    val printer = _printersList!![i]
+                    val showSeparator = i != _printersList!!.size - 1
+                    var printerName = printer!!.name
+                    if (printerName!!.isEmpty()) {
+                        printerName = context.resources.getString(string.ids_lbl_no_name)
+                    }
+                    addSubviewOptionsList(
+                        printerName,
+                        printer.ipAddress,
+                        _printerId,
+                        printer.id,
+                        showSeparator,
+                        R.id.view_id_subview_printer_item,
+                        drawable.img_btn_printer_status_offline
+                    )
+                }
             }
+            // Content Print - END
         } else {
             _subView!!.setTag(ID_TAG_TEXT, v.getTag(ID_TAG_TEXT))
             _subView!!.setTag(ID_TAG_ICON, v.getTag(ID_TAG_ICON))
@@ -1490,11 +1595,32 @@ class PrintSettingsView @JvmOverloads constructor(
                 // Some views may be hidden
                 if (view != null) {
                     val subView = view.findViewById<View>(R.id.view_id_subview_status)
-                    subView.isSelected = id == i
+                    // Content Print - START
+                    if (ContentPrintManager.isBoxRegistrationMode) {
+                        subView.isSelected = ContentPrintManager.selectedPrinter === ContentPrintManager.printerList[i]
+                    } else {
+                        subView.isSelected = id == i
+                    }
+                    // Content Print - END
                 }
             }
         } else if (v.id == R.id.view_id_subview_printer_item) {
-            if (_printerId != id) {
+            // Content Print - START
+            if (ContentPrintManager.isBoxRegistrationMode) {
+                val printerList = ContentPrintManager.printerList
+                ContentPrintManager.selectedPrinter = printerList[id]
+
+                for (i in printerList.indices) {
+                    val printer = printerList[i]
+                    val view = _subView!!.findViewWithTag<View>(i)
+                    val subView = view.findViewById<View>(R.id.view_id_subview_status)
+                    subView.isSelected = ContentPrintManager.selectedPrinter === printer
+                }
+
+                updateHighlightedPrinter()
+                hideDisabledPrintSettings()
+            } else if (_printerId != id) {
+            // Content Print - END
                 // TODO: get new printer settings
                 setPrintSettings(
                     PrintSettings(
@@ -1942,7 +2068,19 @@ class PrintSettingsView @JvmOverloads constructor(
                 _printerManager!!.createUpdateStatusThread()
             }
         } else if (id == R.id.view_id_print_header) {
-            executePrint()
+            // Content Print - START
+            if (ContentPrintManager.isBoxRegistrationMode) {
+                val contentPrintManager = ContentPrintManager.getInstance()
+                contentPrintManager?.registerToBox(
+                    ContentPrintManager.selectedFile!!.fileId,
+                    ContentPrintManager.selectedPrinter!!.serialNo!!,
+                    ContentPrintPrintSettings.convertToContentPrintPrintSettings(_printSettings!!),
+                    _registerToBox
+                )
+            } else {
+                executePrint()
+            }
+            // Content Print - END
         }
     }
 
@@ -2008,17 +2146,21 @@ class PrintSettingsView @JvmOverloads constructor(
     // INTERFACE - Callback
     // ================================================================================
     override fun updateOnlineStatus() {
-        for (i in _printersList!!.indices) {
-            val printer = _printersList!![i]
-            if (_subView == null) {
-                return
-            }
-            val view = _subView!!.findViewWithTag<View>(printer!!.id)
-            if (view != null) {
-                val imageView = view.findViewById<View>(R.id.menuIcon)
-                _printerManager!!.updateOnlineStatus(printer.ipAddress, imageView)
+        // Content Print - START
+        if (!ContentPrintManager.isBoxRegistrationMode) {
+            for (i in _printersList!!.indices) {
+                val printer = _printersList!![i]
+                if (_subView == null) {
+                    return
+                }
+                val view = _subView!!.findViewWithTag<View>(printer!!.id)
+                if (view != null) {
+                    val imageView = view.findViewById<View>(R.id.menuIcon)
+                    _printerManager!!.updateOnlineStatus(printer.ipAddress, imageView)
+                }
             }
         }
+        // Content Print - END
     }
 
     // ================================================================================
@@ -2044,6 +2186,16 @@ class PrintSettingsView @JvmOverloads constructor(
         }
         return false
     }
+
+    // Content Print - START
+    // ================================================================================
+    // ContentPrintManager IRegisterToBoxCallback
+    // ================================================================================
+    fun setRegisterToBoxCallback(callback: ContentPrintManager.IRegisterToBoxCallback) {
+        _registerToBox = callback
+    }
+    // Content Print - END
+
     // ================================================================================
     // Internal classes
     // ================================================================================

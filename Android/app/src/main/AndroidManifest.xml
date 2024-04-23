@@ -12,6 +12,10 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
 
+    <!-- Azure Notification Hubs - START -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+    <!-- Azure Notification Hubs - END -->
+
     <!-- HIDE_NEW_FEATURES: Capture Photo function is hidden. Hide camera feature declaration >
     <uses-feature
         android:name="android.hardware.camera2"
@@ -105,6 +109,20 @@
                 <data android:mimeType="image/avif" />
             </intent-filter>
         </activity>
+
+        <!-- Content Print - START -->
+        <activity android:name="com.microsoft.identity.client.BrowserTabActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data
+                    android:host="jp.co.riso.smartprint"
+                    android:path="/b9H4UbJYJvVjtc+hxWUzjb+GuD0="
+                    android:scheme="msauth" />
+            </intent-filter>
+        </activity>
+        <!-- Content Print - END -->
     </application>
 
 </manifest>
