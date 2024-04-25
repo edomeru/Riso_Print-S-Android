@@ -218,8 +218,6 @@ open class ContentPrintFragment : BaseFragment(),
         // UI updates should be called on the main thread,
         // in case the authentication is refreshed from the background
         CoroutineScope(Dispatchers.Main).launch {
-            // End the loading indicator
-            _listView?.onRefreshComplete()
             // Update the action bar
             updateActionBar()
             // Display error
@@ -264,6 +262,11 @@ open class ContentPrintFragment : BaseFragment(),
             hideLoadingPreviewDialog()
         }
 
+        // UI updates should be called on the main thread,
+        CoroutineScope(Dispatchers.Main).launch {
+            _listView?.onRefreshComplete()
+        }
+
         if (list.isEmpty()) {
             this._emptyListText?.visibility = View.VISIBLE
         } else {
@@ -278,7 +281,6 @@ open class ContentPrintFragment : BaseFragment(),
             _contentPrintAdapter?.addAll(list)
             _contentPrintAdapter?.notifyDataSetChanged()
         }
-        _listView?.onRefreshComplete()
         Log.d("TEST", "===== onFileListUpdated - END =====")
     }
 
@@ -313,23 +315,22 @@ open class ContentPrintFragment : BaseFragment(),
             // Display download error message
             showDownloadError()
         }
+
+        // UI updates should be called on the main thread,
+        CoroutineScope(Dispatchers.Main).launch {
+            _listView?.onRefreshComplete()
+        }
     }
 
     override fun onPrinterListUpdated(success: Boolean) {
         hideLoadingPreviewDialog()
 
         if (success && ContentPrintManager.filePath != null) {
-            //val fragment = PrintPreviewFragment()
-            //val fm = parentFragmentManager
-            //val ft = fm.beginTransaction()
-            //ft.replace(R.id.mainLayout, fragment, MenuFragment.FRAGMENT_TAGS[MenuFragment.STATE_PRINTPREVIEW])
-            //ft.commit()
-
             val intent = Intent(activity, PDFHandlerActivity::class.java)
             intent.action = Intent.ACTION_VIEW
             intent.data = Uri.fromFile(File(ContentPrintManager.filePath!!))
             intent.flags =
-                Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_GRANT_READ_URI_PERMISSION
+                Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             startActivity(intent)
         } else {
             showDownloadError()

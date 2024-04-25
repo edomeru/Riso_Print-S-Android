@@ -232,6 +232,13 @@ class PrintPreviewFragment : BaseFragment(), Handler.Callback, PDFFileManagerInt
         if (_pdfManager == null) {
             _pdfManager = PDFFileManager(this)
 
+            // Content Print - START
+            // If the file was downloaded from the Content Distribution Service, it should have been
+            // downloaded to the App cache, so storage permissions are not necessary.
+            if (ContentPrintManager.isFileFromContentPrint) {
+                initializePdfManagerAndRunAsync()
+            } else
+            // Content Print - END
             // if has PDF to open and the Android permission dialog is not yet opened, check permission
             if (hasPdfFile() && !_isPermissionDialogOpen) {
                 if (ContextCompat.checkSelfPermission(
