@@ -1,5 +1,6 @@
 package jp.co.riso.smartdeviceapp.model
 
+import android.util.Log
 import com.google.gson.annotations.SerializedName
 import jp.co.riso.smartdeviceapp.model.printsettings.PrintSettings
 
@@ -61,6 +62,9 @@ class ContentPrintPrintSettings {
     @SerializedName("loginId")
     var loginId: String? = null
 
+    override fun toString(): String {
+        return "{\n\tcolorMode: $colorMode,\n\torientation: $orientation,\n\tcopies: $copies,\n\tduplex: $duplex,\n\tpaperSize: $paperSize,\n\tscaleToFit: $scaleToFit,\n\tpaperType: $paperType,\n\tinputTray: $inputTray,\n\timposition: $imposition,\n\timpositionOrder: $impositionOrder,\n\tsort: $sort,\n\tbooklet: $booklet,\n\tbookletFinish: $bookletFinish,\n\tbookletLayout: $bookletLayout,\n\tfinishingSide: $finishingSide,\n\tstaple: $staple,\n\tpunch: $punch,\n\toutputTray: $outputTray,\n\tloginId: $loginId\n}"
+    }
     companion object {
         fun convertToPrintSettings(contentPrintPrintSettings: ContentPrintPrintSettings): PrintSettings {
             val printSettings = PrintSettings()
@@ -70,7 +74,7 @@ class ContentPrintPrintSettings {
             printSettings.setValue(PrintSettings.TAG_DUPLEX, contentPrintPrintSettings.duplex)
             printSettings.setValue(PrintSettings.TAG_PAPER_SIZE, contentPrintPrintSettings.paperSize)
             printSettings.setValue(PrintSettings.TAG_SCALE_TO_FIT, if (contentPrintPrintSettings.scaleToFit) 1 else 0)
-            //printSettings.setValue(PrintSettings.TAG_PAPER_TYPE, contentPrintPrintSettings.paperType)
+            printSettings.setValue(PrintSettings.TAG_PAPER_TYPE, contentPrintPrintSettings.paperType)
             printSettings.setValue(PrintSettings.TAG_INPUT_TRAY, contentPrintPrintSettings.inputTray)
             printSettings.setValue(PrintSettings.TAG_IMPOSITION, contentPrintPrintSettings.imposition)
             printSettings.setValue(PrintSettings.TAG_IMPOSITION_ORDER, contentPrintPrintSettings.impositionOrder)
@@ -82,10 +86,11 @@ class ContentPrintPrintSettings {
             printSettings.setValue(PrintSettings.TAG_STAPLE, contentPrintPrintSettings.staple)
             printSettings.setValue(PrintSettings.TAG_PUNCH, contentPrintPrintSettings.punch)
             printSettings.setValue(PrintSettings.TAG_OUTPUT_TRAY, contentPrintPrintSettings.outputTray)
+            Log.d("TEST", "[convertToPrintSettings] $contentPrintPrintSettings => $printSettings")
             return printSettings
         }
 
-        fun convertToContentPrintPrintSettings(printSettings: PrintSettings): ContentPrintPrintSettings {
+        fun convertToContentPrintPrintSettings(printSettings: PrintSettings, loginId: String): ContentPrintPrintSettings {
             val contentPrintPrintSettings = ContentPrintPrintSettings()
             contentPrintPrintSettings.colorMode = printSettings.getValue(PrintSettings.TAG_COLOR_MODE)
             contentPrintPrintSettings.orientation = printSettings.getValue(PrintSettings.TAG_ORIENTATION)
@@ -93,7 +98,7 @@ class ContentPrintPrintSettings {
             contentPrintPrintSettings.duplex = printSettings.getValue(PrintSettings.TAG_DUPLEX)
             contentPrintPrintSettings.paperSize = printSettings.getValue(PrintSettings.TAG_PAPER_SIZE)
             contentPrintPrintSettings.scaleToFit = (printSettings.getValue(PrintSettings.TAG_SCALE_TO_FIT) == 1)
-            //contentPrintPrintSettings.paperType = printSettings.getValue(PrintSettings.TAG_PAPER_TYPE)
+            contentPrintPrintSettings.paperType = printSettings.getValue(PrintSettings.TAG_PAPER_TYPE)
             contentPrintPrintSettings.inputTray = printSettings.getValue(PrintSettings.TAG_INPUT_TRAY)
             contentPrintPrintSettings.imposition = printSettings.getValue(PrintSettings.TAG_IMPOSITION)
             contentPrintPrintSettings.impositionOrder = printSettings.getValue(PrintSettings.TAG_IMPOSITION_ORDER)
@@ -105,6 +110,8 @@ class ContentPrintPrintSettings {
             contentPrintPrintSettings.staple = printSettings.getValue(PrintSettings.TAG_STAPLE)
             contentPrintPrintSettings.punch = printSettings.getValue(PrintSettings.TAG_PUNCH)
             contentPrintPrintSettings.outputTray = printSettings.getValue(PrintSettings.TAG_OUTPUT_TRAY)
+            contentPrintPrintSettings.loginId = loginId
+            Log.d("TEST", "[convertToContentPrintPrintSettings] $printSettings => $contentPrintPrintSettings")
             return contentPrintPrintSettings
         }
     }

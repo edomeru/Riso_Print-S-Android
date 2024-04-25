@@ -362,6 +362,16 @@ class PrintSettings {
         return manager!!.saveToDB(printerId, this)
     }
 
+    // Content Print - START
+    override fun toString(): String {
+        var value = "{"
+        for (key in settingValues.keys) {
+            value += "\n\t$key: ${settingValues[key]},"
+        }
+        return "$value\n}"
+    }
+    // Content Print - END
+
     companion object {
         const val TAG_COLOR_MODE = "colorMode" ///< Tag used to identify ColorMode settings
         const val TAG_ORIENTATION = "orientation" ///< Tag used to identify Orientation settings
@@ -369,7 +379,9 @@ class PrintSettings {
         const val TAG_DUPLEX = "duplex" ///< Tag used to identify Duplex settings
         const val TAG_PAPER_SIZE = "paperSize" ///< Tag used to identify PaperSize settings
         const val TAG_SCALE_TO_FIT = "scaleToFit" ///< Tag used to identify ScaleToFit settings
-        // const val TAG_PAPER_TYPE = "paperType" ///< Tag used to identify PaperType settings
+        // Content Print - START
+        const val TAG_PAPER_TYPE = "paperType" ///< Tag used to identify PaperType settings
+        // Content Print - END
         const val TAG_INPUT_TRAY = "inputTray" ///< Tag used to identify InputTray settings
         const val TAG_IMPOSITION = "imposition" ///< Tag used to identify Imposition settings
         const val TAG_IMPOSITION_ORDER =

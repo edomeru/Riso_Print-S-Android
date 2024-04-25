@@ -37,6 +37,9 @@ import java.lang.ref.WeakReference
 import java.util.*
 import kotlin.math.ceil
 import jp.co.riso.gestureListener.GestureDetectorListenerWrapper
+// Content Print - START
+import jp.co.riso.smartdeviceapp.controller.print.ContentPrintManager
+// Content Print - END
 
 /**
  * @class PrintPreviewView
@@ -78,6 +81,10 @@ class PrintPreviewView @JvmOverloads constructor(
     private var _ptrIdx = INVALID_IDX
     private val _ptrDownPos = PointF()
     private val _ptrLastPos = PointF()
+
+    // Content Print - START
+    private var _isBoxRegistrationMode: Boolean = ContentPrintManager.isBoxRegistrationMode
+    // Content Print - END
 
     /**
      * @brief Initializes the resources needed by the PrintPreviewView
@@ -231,7 +238,11 @@ class PrintPreviewView @JvmOverloads constructor(
      * @param printSettings Print settings to be applied
      */
     fun setPrintSettings(printSettings: PrintSettings?) {
-        if (_printSettings == null || isPrintSettingsChanged(printSettings)) {
+        // Content Print - START
+        var isPrintModeChanged = _isBoxRegistrationMode != ContentPrintManager.isBoxRegistrationMode
+        _isBoxRegistrationMode = ContentPrintManager.isBoxRegistrationMode
+        if (isPrintModeChanged || _printSettings == null || isPrintSettingsChanged(printSettings)) {
+        // Content Print - END
             _printSettings = printSettings
             reconfigureCurlView()
             displayValidPage()
@@ -505,7 +516,10 @@ class PrintPreviewView @JvmOverloads constructor(
         buffer.append(side)
         buffer.append(shouldDisplayColor())
         buffer.append(_printSettings!!.isScaleToFit)
-        if (!AppConstants.USE_PDF_ORIENTATION) {
+        // Content Print - START
+        _isBoxRegistrationMode = ContentPrintManager.isBoxRegistrationMode
+        if (_isBoxRegistrationMode || !AppConstants.USE_PDF_ORIENTATION) {
+        // Content Print - END
             buffer.append(_printSettings!!.orientation.ordinal)
         }
         buffer.append(_printSettings!!.paperSize.ordinal)
@@ -574,7 +588,9 @@ class PrintPreviewView @JvmOverloads constructor(
      */
     private fun shouldDisplayLandscape(): Boolean {
         var flipToLandscape: Boolean
-        flipToLandscape = if (AppConstants.USE_PDF_ORIENTATION) {
+        // Content Print - START
+        flipToLandscape = if (!ContentPrintManager.isBoxRegistrationMode && AppConstants.USE_PDF_ORIENTATION) {
+        // Content Print - END
             _pdfManager!!.isPDFLandscape
         } else {
             _printSettings!!.orientation == Orientation.LANDSCAPE
@@ -637,7 +653,9 @@ class PrintPreviewView @JvmOverloads constructor(
             if (_printSettings!!.isBooklet) {
                 return 1
             }
-            if (AppConstants.USE_PDF_ORIENTATION) {
+            // Content Print - START
+            if (!_isBoxRegistrationMode && AppConstants.USE_PDF_ORIENTATION) {
+            // Content Print - END
                 if (_pdfManager!!.isPDFLandscape) {
                     return _printSettings!!.imposition.rows
                 }
@@ -659,7 +677,9 @@ class PrintPreviewView @JvmOverloads constructor(
             if (_printSettings!!.isBooklet) {
                 return 1
             }
-            if (AppConstants.USE_PDF_ORIENTATION) {
+            // Content Print - START
+            if (!_isBoxRegistrationMode && AppConstants.USE_PDF_ORIENTATION) {
+            // Content Print - END
                 if (_pdfManager!!.isPDFLandscape) {
                     return _printSettings!!.imposition.cols
                 }

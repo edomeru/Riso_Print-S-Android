@@ -49,4 +49,8 @@ class ContentPrintPrinterCapabilities {
 
     @SerializedName("outputTray_stacking")
     var outputTrayStacking: Boolean = false
+
+    override fun toString(): String {
+        return "{\n\tpaperType_lightweight: $paperTypeLightweight,\n\tinputTray_standard: $inputTrayStandard,\n\tinputTray_tray1: $inputTrayTray1,\n\tinputTray_tray2: $inputTrayTray2,\n\tinputTray_tray3: $inputTrayTray3,\n\tinputTray_external: $inputTrayExternal,\n\tbooklet: $booklet,\n\tfinisher_0holes: $finisher0Holes,\n\tfinisher_23holes: $finisher23Holes,\n\tfinisher_24holes: $finisher24Holes,\n\tstaple: $staple,\n\toutputTray_face_down: $outputTrayFacedown,\n\toutputTray_top: $outputTrayTop,\n\toutputTray_stacking: $outputTrayStacking\n}"
+    }
 }

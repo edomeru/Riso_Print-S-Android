@@ -447,6 +447,7 @@ class PrintSettingsFragment : BaseFragment(), PrintSettingsViewInterface, Pausea
 
         dismissDialog(requireActivity(), TAG_WAITING_DIALOG)
         displayDialog(requireActivity(), TAG_MESSAGE_DIALOG, newInstance(
+            getString(R.string.ids_lbl_content_print),
             message,
             getString(R.string.ids_lbl_ok)
         ))

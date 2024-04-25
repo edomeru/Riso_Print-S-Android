@@ -21,7 +21,7 @@
             android:id="@+id/buttonLabelText"
             android:gravity="center_vertical"
             android:textAllCaps="false"
-            android:textColor="@color/theme_light_1"
+            android:textColor="@color/selector_contentprint_actionbar"
             android:textSize="@dimen/font_size_large" />
 
         <ImageView xmlns:android="http://schemas.android.com/apk/res/android"

@@ -34,7 +34,7 @@ class ContentPrintPrinter {
      * @return True if the printers if of the FT or CEREZONA S series, false otherwise
      */
     val isPrinterFTorCEREZONA_S: Boolean
-        get() = printerName?.contains(AppConstants.PRINTER_MODEL_FT) == true // Classify CEREZONA S as FT model
+        get() = model?.contains(AppConstants.PRINTER_MODEL_FT) == true // Classify CEREZONA S as FT model
 
     /**
      * @brief Determines if the printer is of the GL or OGA series
@@ -42,5 +42,5 @@ class ContentPrintPrinter {
      * @return True if the printers if of the GL or OGA series, false otherwise
      */
     val isPrinterGLorOGA: Boolean
-        get() = printerName?.contains(AppConstants.PRINTER_MODEL_GL) == true // Classify OGA as GL model
+        get() = model?.contains(AppConstants.PRINTER_MODEL_GL) == true // Classify OGA as GL model
 }

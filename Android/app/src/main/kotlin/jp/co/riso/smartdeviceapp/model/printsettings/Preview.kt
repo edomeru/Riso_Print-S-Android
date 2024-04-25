@@ -127,6 +127,23 @@ class Preview {
         }
     }
 
+    // Content Print - START
+    /**
+     * @brief PaperType print settings that determines the paper types to be used during print.
+     */
+    enum class PaperType {
+        ANY,
+        PLAIN,
+        IJ_PAPER,
+        MATT_COATED,
+        HIGH_QUALITY,
+        CARD_IJ,
+        LW_PAPER,
+        ROUGH_PAPER,
+        PLAIN_PREMIUM
+    }
+    // Content Print - END
+
     /**
      * @brief InputTrayFtGlCerezonaS print settings for FT / GL / CEREZONA S / OGA series that refers to the tray location of input paper.
      */
