@@ -22,18 +22,20 @@ import android.widget.LinearLayout
 import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.core.content.ContextCompat
+import androidx.preference.PreferenceManager
 import eu.erikw.PullToRefreshListView
 import jp.co.riso.android.dialog.ConfirmDialogFragment
 import jp.co.riso.android.dialog.DialogUtils
 import jp.co.riso.android.dialog.InfoDialogFragment
 import jp.co.riso.android.dialog.WaitingDialogFragment
+import jp.co.riso.smartdeviceapp.AppConstants
+import jp.co.riso.smartdeviceapp.SmartDeviceApp
 
 import jp.co.riso.smartdeviceapp.controller.print.ContentPrintManager
 import jp.co.riso.smartdeviceapp.model.ContentPrintFile
 import jp.co.riso.smartdeviceapp.view.PDFHandlerActivity
 import jp.co.riso.smartdeviceapp.view.base.BaseFragment
 import jp.co.riso.smartdeviceapp.view.contentprint.ContentPrintFileAdapter
-import jp.co.riso.smartdeviceapp.view.notification.NotificationHubListener
 import jp.co.riso.smartprint.R
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -331,6 +333,7 @@ open class ContentPrintFragment : BaseFragment(),
             intent.data = Uri.fromFile(File(ContentPrintManager.filePath!!))
             intent.flags =
                 Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            intent.putExtra(AppConstants.VAL_KEY_CONTENT_PRINT, ContentPrintManager.filePath)
             startActivity(intent)
         } else {
             showDownloadError()

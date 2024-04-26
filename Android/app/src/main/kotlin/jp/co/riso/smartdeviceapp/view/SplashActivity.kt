@@ -61,6 +61,22 @@ class SplashActivity : BaseActivity(), PauseableHandlerCallback, View.OnClickLis
     private var _webView: SDAWebView? = null
 
     override fun onCreateContent(savedInstanceState: Bundle?) {
+        // Azure Notification Hub - START
+        val extras = intent.extras
+        if (extras != null) {
+            val message = extras.getString(AppConstants.VAL_KEY_CONTENT_PRINT)
+            var filename = message?.substringAfter("「")?.substringBefore("」")
+            filename = filename?.substringAfter("\"")?.substringBefore("\"")
+            if (intent.data == null) {
+                ContentPrintManager.filenameFromNotification = filename
+            }
+            if (filename != null) {
+                runMainActivity()
+                return
+            }
+        }
+        // Azure Notification Hub - END
+
         setContentView(R.layout.activity_splash)
         if (_handler == null) {
             _handler = PauseableHandler(Looper.myLooper(), this)
@@ -92,20 +108,6 @@ class SplashActivity : BaseActivity(), PauseableHandlerCallback, View.OnClickLis
             }
         }
     }
-
-    // Azure Notification Hub - START
-    override fun onStart() {
-        super.onStart()
-
-        val extras = intent.extras
-        if (extras != null) {
-            val message = extras.getString("body")
-            var filename = message?.substringAfter("「")?.substringBefore("」")
-            filename = filename?.substringAfter("\"")?.substringBefore("\"")
-            ContentPrintManager.filenameFromNotification = filename
-        }
-    }
-    // Azure Notification Hub - END
 
     override fun onResume() {
         super.onResume()

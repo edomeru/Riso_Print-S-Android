@@ -230,4 +230,8 @@ object AppConstants {
     // For checking if chromebook
     const val CHROME_BOOK = "org.chromium.arc.device_management"
 
+    // Content Print - START
+    /// Content Print key for saving value to intent
+    const val VAL_KEY_CONTENT_PRINT = "body"
+    // Content Print - END
 }
