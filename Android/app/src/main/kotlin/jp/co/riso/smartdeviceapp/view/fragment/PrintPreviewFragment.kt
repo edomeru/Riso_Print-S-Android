@@ -433,6 +433,13 @@ class PrintPreviewFragment : BaseFragment(), Handler.Callback, PDFFileManagerInt
         newMessage.arg1 = _printPreviewView!!.visibility
         _printPreviewView!!.visibility = View.GONE
         _handler!!.sendMessage(newMessage)
+
+        // Content Print - START
+        if (ContentPrintManager.isFileFromContentPrint && AppConstants.USE_PDF_ORIENTATION) {
+            // Update the orientation based on the document orientation during initialization
+            _printSettings!!.setValue(PrintSettings.TAG_ORIENTATION, if (_pdfManager!!.isPDFLandscape) 1 else 0)
+        }
+        // Content Print - END
     }
 
     override fun onDestroyView() {

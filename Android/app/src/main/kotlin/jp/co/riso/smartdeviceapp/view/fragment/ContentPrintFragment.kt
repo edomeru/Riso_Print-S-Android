@@ -22,14 +22,12 @@ import android.widget.LinearLayout
 import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.core.content.ContextCompat
-import androidx.preference.PreferenceManager
 import eu.erikw.PullToRefreshListView
 import jp.co.riso.android.dialog.ConfirmDialogFragment
 import jp.co.riso.android.dialog.DialogUtils
 import jp.co.riso.android.dialog.InfoDialogFragment
 import jp.co.riso.android.dialog.WaitingDialogFragment
 import jp.co.riso.smartdeviceapp.AppConstants
-import jp.co.riso.smartdeviceapp.SmartDeviceApp
 
 import jp.co.riso.smartdeviceapp.controller.print.ContentPrintManager
 import jp.co.riso.smartdeviceapp.model.ContentPrintFile
@@ -85,17 +83,6 @@ open class ContentPrintFragment : BaseFragment(),
 
     override fun initializeFragment(savedInstanceState: Bundle?) {
         _contentPrintManager = ContentPrintManager.getInstance()
-
-        Log.d("TEST", "========== [ContentPrintFragment] filenameFromNotification = ${ContentPrintManager.filenameFromNotification}")
-        if (ContentPrintManager.filenameFromNotification != null) {
-            if (!ContentPrintManager.isLoggedIn) {
-                _contentPrintManager?.login(activity, this)
-            } else {
-                val filename = ContentPrintManager.filenameFromNotification
-                Log.d("TEST", "Download $filename from CDS")
-                _contentPrintManager?.downloadFile(filename, this)
-            }
-        }
     }
 
     override fun initializeView(view: View, savedInstanceState: Bundle?) {
@@ -164,11 +151,11 @@ open class ContentPrintFragment : BaseFragment(),
                 }
             }
             R.id.menu_id_action_login_button -> {
-                _lastAuthentication = Authentication.LOGIN
+                lastAuthentication = Authentication.LOGIN
                 _contentPrintManager?.login(this.activity, this)
             }
             R.id.menu_id_action_logout_button -> {
-                _lastAuthentication = Authentication.LOGOUT
+                lastAuthentication = Authentication.LOGOUT
                 showLogoutConfirmDialog()
             }
             R.id.menu_id_action_refresh_button -> refreshFileList()
@@ -223,7 +210,7 @@ open class ContentPrintFragment : BaseFragment(),
             // Update the action bar
             updateActionBar()
             // Display error
-            if (_lastAuthentication == Authentication.LOGIN && !ContentPrintManager.isLoggedIn) {
+            if (lastAuthentication == Authentication.LOGIN && !ContentPrintManager.isLoggedIn) {
                 showLoginError()
             }
         }
@@ -269,19 +256,21 @@ open class ContentPrintFragment : BaseFragment(),
             _listView?.onRefreshComplete()
         }
 
-        if (list.isEmpty()) {
-            this._emptyListText?.visibility = View.VISIBLE
-        } else {
-            this._emptyListText?.visibility = View.GONE
-            _previousButton?.visibility = View.VISIBLE
-            _pageLabel?.visibility = View.VISIBLE
-            _nextButton?.visibility = View.VISIBLE
-            _pageLabel?.text = "$_page / ${getTotalNumberOfPages()}"
+        if (isLoggedIn) {
+            if (list.isEmpty()) {
+                this._emptyListText?.visibility = View.VISIBLE
+            } else {
+                this._emptyListText?.visibility = View.GONE
+                _previousButton?.visibility = View.VISIBLE
+                _pageLabel?.visibility = View.VISIBLE
+                _nextButton?.visibility = View.VISIBLE
+                _pageLabel?.text = "$_page / ${getTotalNumberOfPages()}"
 
-            // Repopulate the list
-            _contentPrintAdapter?.clear()
-            _contentPrintAdapter?.addAll(list)
-            _contentPrintAdapter?.notifyDataSetChanged()
+                // Repopulate the list
+                _contentPrintAdapter?.clear()
+                _contentPrintAdapter?.addAll(list)
+                _contentPrintAdapter?.notifyDataSetChanged()
+            }
         }
         Log.d("TEST", "===== onFileListUpdated - END =====")
     }
@@ -334,6 +323,7 @@ open class ContentPrintFragment : BaseFragment(),
             intent.flags =
                 Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
             intent.putExtra(AppConstants.VAL_KEY_CONTENT_PRINT, ContentPrintManager.filePath)
+            intent.putExtra(AppConstants.EXTRA_FILE_FROM_PICKER, HomeFragment.PDF_FROM_PICKER)
             startActivity(intent)
         } else {
             showDownloadError()
@@ -537,6 +527,7 @@ open class ContentPrintFragment : BaseFragment(),
             _downloadingDialog = null
         }
     }
+
     private fun showLoginError() {
         DialogUtils.displayDialog(
             requireActivity(),
@@ -547,6 +538,7 @@ open class ContentPrintFragment : BaseFragment(),
             )
         )
     }
+
     private fun showDownloadError() {
         DialogUtils.displayDialog(
             requireActivity(),
@@ -570,7 +562,7 @@ open class ContentPrintFragment : BaseFragment(),
         const val KEY_CONTENT_PRINT_DOWNLOAD_ERROR_DIALOG = "content_print_download_error_dialog"
         const val ITEMS_PER_PAGE = 10
 
-        private var _lastAuthentication = Authentication.LOGIN
+        var lastAuthentication = Authentication.LOGIN
         private var _lastConfirmation = Confirmation.LOGOUT
     }
 }

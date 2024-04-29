@@ -7,7 +7,6 @@
  */
 package jp.co.riso.smartdeviceapp.view.fragment
 
-import android.Manifest
 import android.Manifest.permission.*
 import android.app.Activity
 import android.content.ClipData
@@ -19,6 +18,7 @@ import android.os.Build
 import android.os.Build.VERSION.SDK_INT
 import android.os.Bundle
 import android.os.SystemClock
+import android.util.Log
 import android.view.View
 import android.widget.LinearLayout
 import android.widget.TextView
@@ -28,38 +28,50 @@ import androidx.core.content.ContextCompat
 import androidx.preference.PreferenceManager
 import jp.co.riso.android.dialog.ConfirmDialogFragment
 import jp.co.riso.android.dialog.ConfirmDialogFragment.ConfirmDialogListener
+import jp.co.riso.android.dialog.DialogUtils
 import jp.co.riso.android.dialog.DialogUtils.displayDialog
+import jp.co.riso.android.dialog.InfoDialogFragment
 import jp.co.riso.android.dialog.InfoDialogFragment.Companion.newInstance
+import jp.co.riso.android.dialog.WaitingDialogFragment
 import jp.co.riso.android.util.FileUtils
 import jp.co.riso.android.util.ImageUtils
 import jp.co.riso.smartdeviceapp.AppConstants
 import jp.co.riso.smartdeviceapp.SmartDeviceApp
 // Content Print - START
 import jp.co.riso.smartdeviceapp.controller.print.ContentPrintManager
+import jp.co.riso.smartdeviceapp.model.ContentPrintFile
 // Content Print - END
 import jp.co.riso.smartdeviceapp.view.PDFHandlerActivity
 import jp.co.riso.smartdeviceapp.view.base.BaseFragment
 // Azure Notification Hub - START
-import jp.co.riso.smartdeviceapp.view.notification.NotificationHubListener
 // Azure Notification Hub - END
 import jp.co.riso.smartprint.R
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import java.io.File
 
 /**
  * @class HomeFragment
  *
  * @brief Fragment which contains the Home Screen
  */
-open class HomeFragment : BaseFragment(), View.OnClickListener, ConfirmDialogListener {
+open class HomeFragment : BaseFragment(), View.OnClickListener, ConfirmDialogListener,
+    // Content Print - START
+    ContentPrintManager.IAuthenticationCallback, ContentPrintManager.IContentPrintCallback {
+    // Content Print - END
 
     private var _homeButtons: LinearLayout? = null
     private var _fileButton: LinearLayout? = null
     private var _photosButton: LinearLayout? = null
     // private var _cameraButton: LinearLayout? = null aLINK edit: HIDE_NEW_FEATURES: Capture Photo function is hidden. Hide camera permission declaration
-    // Content Print - START
-    private var _contentPrintButton: LinearLayout? = null
-    // Content Print - END
     private var _confirmDialogFragment: ConfirmDialogFragment? = null
     private var _buttonTapped: LinearLayout? = null
+    // Content Print - START
+    private var _contentPrintButton: LinearLayout? = null
+    private var _downloadingDialog: WaitingDialogFragment? = null
+    private var _contentPrintManager: ContentPrintManager? = null
+    // Content Print - END
 
     private val _permissionsStorage = arrayOf(
         WRITE_EXTERNAL_STORAGE)
@@ -95,6 +107,14 @@ open class HomeFragment : BaseFragment(), View.OnClickListener, ConfirmDialogLis
                 }
             }
         }
+        // Content Print - START
+        _contentPrintManager = ContentPrintManager.getInstance()
+        // Content Print - END
+        // Azure Notification Hub - START
+        if (ContentPrintManager.filenameFromNotification != null) {
+            downloadFileFromNotification()
+        }
+        // Azure Notification Hub - END
     }
 
     override fun initializeView(view: View, savedInstanceState: Bundle?) {
@@ -108,23 +128,13 @@ open class HomeFragment : BaseFragment(), View.OnClickListener, ConfirmDialogLis
         addActionMenuButton(view)
     }
 
-    // Azure Notification Hub - START
-    override fun onStart() {
-        super.onStart()
-
-        if (ContentPrintManager.filenameFromNotification != null) {
-            // Go to Content Print Screen
-            goToContentPrint()
-        }
-    }
-    // Azure Notification Hub - END
-
     override fun onClick(v: View) {
         super.onClick(v)
         val id = v.id
         if (id == R.id.fileButton) {
             // Content Print - START
             ContentPrintManager.isFileFromContentPrint = false
+            ContentPrintManager.isBoxRegistrationMode = false
             // Content Print - END
             _buttonTapped = _fileButton
             _checkPermission = checkPermission(true)
@@ -146,6 +156,7 @@ open class HomeFragment : BaseFragment(), View.OnClickListener, ConfirmDialogLis
         } else if (id == R.id.photosButton) {
             // Content Print - START
             ContentPrintManager.isFileFromContentPrint = false
+            ContentPrintManager.isBoxRegistrationMode = false
             // Content Print - END
             _buttonTapped = _photosButton
             _checkPermission = checkPermission(true)
@@ -225,6 +236,79 @@ open class HomeFragment : BaseFragment(), View.OnClickListener, ConfirmDialogLis
         setOnClickListeners(_homeButtons!!)
     }
 
+    // ================================================================================
+    // INTERFACE - ContentPrintManager.IAuthenticationCallback
+    // ================================================================================
+    override fun onAuthenticationStarted() {
+        // Do nothing
+    }
+
+    override fun onAuthenticationFinished() {
+        if (!ContentPrintManager.isLoggedIn) {
+            showLoginError()
+        }
+
+        if (ContentPrintManager.isLoggedIn && ContentPrintManager.filenameFromNotification != null) {
+            // Download the file from the notification
+            _contentPrintManager?.downloadFile(
+                ContentPrintManager.filenameFromNotification,
+                this
+            )
+        }
+    }
+
+    // ================================================================================
+    // INTERFACE - ContentPrintManager.IContentPrintCallback
+    // ================================================================================
+    override fun onFileListUpdated(success: Boolean) {
+        // Do nothing
+    }
+
+    override fun onThumbnailDownloaded(contentPrintFile: ContentPrintFile, filePath: String, success: Boolean) {
+        // Do nothing
+    }
+
+    override fun onStartFileDownload() {
+        // Do nothing
+    }
+
+    override fun onFileDownloaded(contentPrintFile: ContentPrintFile, filePath: String, success: Boolean) {
+        if (success) {
+            ContentPrintManager.filePath = filePath
+            ContentPrintManager.isFileFromContentPrint = true
+
+            // Get the printer list before displaying the preview screen
+            _contentPrintManager?.updatePrinterList(this)
+        } else {
+            ContentPrintManager.filePath = null
+            ContentPrintManager.isFileFromContentPrint = false
+
+            hideLoadingPreviewDialog()
+            // Display download error message
+            showDownloadError()
+        }
+    }
+
+    override fun onPrinterListUpdated(success: Boolean) {
+        hideLoadingPreviewDialog()
+
+        if (success && ContentPrintManager.filePath != null) {
+            val intent = Intent(activity, PDFHandlerActivity::class.java)
+            intent.action = Intent.ACTION_VIEW
+            intent.data = Uri.fromFile(File(ContentPrintManager.filePath!!))
+            intent.flags =
+                Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            intent.putExtra(AppConstants.VAL_KEY_CONTENT_PRINT, ContentPrintManager.filePath)
+            intent.putExtra(AppConstants.EXTRA_FILE_FROM_PICKER, PDF_FROM_PICKER)
+            startActivity(intent)
+        } else {
+            showDownloadError()
+        }
+    }
+
+    // ================================================================================
+    // Private Methods
+    // ================================================================================
     private fun setOnClickListeners(view: View) {
         _fileButton = view.findViewById(R.id.fileButton)
         _photosButton = view.findViewById(R.id.photosButton)
@@ -359,6 +443,76 @@ open class HomeFragment : BaseFragment(), View.OnClickListener, ConfirmDialogLis
         ft.addToBackStack(null)
         ft.replace(R.id.mainLayout, fragment, ContentPrintFragment.FRAGMENT_TAG_CONTENT_PRINT)
         ft.commit()
+    }
+
+    private fun downloadFileFromNotification() {
+        showLoadingPreviewDialog()
+
+        if (!ContentPrintManager.isLoggedIn) {
+            _contentPrintManager?.login(activity, this)
+        } else {
+            val filename = ContentPrintManager.filenameFromNotification
+            Log.d("TEST", "Download $filename from CDS")
+            _contentPrintManager?.downloadFile(filename, this)
+        }
+    }
+
+    private fun showLoadingPreviewDialog() {
+        CoroutineScope(Dispatchers.Main).launch {
+            if (_downloadingDialog == null) {
+                _downloadingDialog = WaitingDialogFragment.newInstance(
+                    null,
+                    context?.resources?.getString(R.string.ids_info_msg_downloading),
+                    false,
+                    null,
+                    ContentPrintFragment.TAG_DOWNLOADING_DIALOG
+                )
+                displayDialog(
+                    requireActivity(),
+                    ContentPrintFragment.TAG_DOWNLOADING_DIALOG,
+                    _downloadingDialog!!
+                )
+            }
+        }
+    }
+
+    private fun hideLoadingPreviewDialog() {
+        CoroutineScope(Dispatchers.Main).launch {
+            if (_downloadingDialog != null) {
+                DialogUtils.dismissDialog(
+                    requireActivity(),
+                    ContentPrintFragment.TAG_DOWNLOADING_DIALOG
+                )
+                _downloadingDialog = null
+            }
+        }
+    }
+
+    private fun showLoginError() {
+        CoroutineScope(Dispatchers.Main).launch {
+            displayDialog(
+                requireActivity(),
+                ContentPrintFragment.KEY_CONTENT_PRINT_LOGIN_ERROR_DIALOG,
+                newInstance(
+                    context?.resources?.getString(R.string.ids_err_msg_login_failed),
+                    context?.resources?.getString(R.string.ids_lbl_ok)
+                )
+            )
+        }
+    }
+
+    private fun showDownloadError() {
+        CoroutineScope(Dispatchers.Main).launch {
+            displayDialog(
+                requireActivity(),
+                ContentPrintFragment.KEY_CONTENT_PRINT_DOWNLOAD_ERROR_DIALOG,
+                newInstance(
+                    context?.resources?.getString(R.string.ids_lbl_content_print),
+                    context?.resources?.getString(R.string.ids_err_msg_download_failed),
+                    context?.resources?.getString(R.string.ids_lbl_ok)
+                )
+            )
+        }
     }
     // Content Print - END
 

@@ -9,6 +9,7 @@ package jp.co.riso.smartdeviceapp.controller.print
 
 import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.content.SharedPreferences
 import android.util.Log
 import androidx.security.crypto.EncryptedSharedPreferences
@@ -23,6 +24,7 @@ import com.microsoft.identity.client.ISingleAccountPublicClientApplication
 import com.microsoft.identity.client.PublicClientApplication
 import com.microsoft.identity.client.SilentAuthenticationCallback
 import com.microsoft.identity.client.exception.MsalException
+import jp.co.riso.smartdeviceapp.AppConstants
 import jp.co.riso.smartdeviceapp.model.ContentPrintFile
 import jp.co.riso.smartdeviceapp.model.ContentPrintPrintSettings
 import jp.co.riso.smartdeviceapp.model.ContentPrintPrinter
@@ -440,6 +442,16 @@ class ContentPrintManager(context: Context?) {
 
         fun getInstance(): ContentPrintManager? {
             return _manager
+        }
+
+        fun getFilename(intent: Intent): String? {
+            val extras = intent.extras
+            if (extras != null) {
+                val message = extras.getString(AppConstants.VAL_KEY_CONTENT_PRINT)
+                var filename = message?.substringAfter("「")?.substringBefore("」")
+                return filename?.substringAfter("\"")?.substringBefore("\"")
+            }
+            return null
         }
 
         private fun refreshToken(authenticationCallback: IAuthenticationCallback?) {

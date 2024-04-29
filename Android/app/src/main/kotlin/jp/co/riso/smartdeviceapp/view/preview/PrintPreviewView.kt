@@ -82,10 +82,6 @@ class PrintPreviewView @JvmOverloads constructor(
     private val _ptrDownPos = PointF()
     private val _ptrLastPos = PointF()
 
-    // Content Print - START
-    private var _isBoxRegistrationMode: Boolean = ContentPrintManager.isBoxRegistrationMode
-    // Content Print - END
-
     /**
      * @brief Initializes the resources needed by the PrintPreviewView
      */
@@ -238,11 +234,7 @@ class PrintPreviewView @JvmOverloads constructor(
      * @param printSettings Print settings to be applied
      */
     fun setPrintSettings(printSettings: PrintSettings?) {
-        // Content Print - START
-        var isPrintModeChanged = _isBoxRegistrationMode != ContentPrintManager.isBoxRegistrationMode
-        _isBoxRegistrationMode = ContentPrintManager.isBoxRegistrationMode
-        if (isPrintModeChanged || _printSettings == null || isPrintSettingsChanged(printSettings)) {
-        // Content Print - END
+        if (printSettings == null || isPrintSettingsChanged(printSettings)) {
             _printSettings = printSettings
             reconfigureCurlView()
             displayValidPage()
@@ -517,8 +509,7 @@ class PrintPreviewView @JvmOverloads constructor(
         buffer.append(shouldDisplayColor())
         buffer.append(_printSettings!!.isScaleToFit)
         // Content Print - START
-        _isBoxRegistrationMode = ContentPrintManager.isBoxRegistrationMode
-        if (_isBoxRegistrationMode || !AppConstants.USE_PDF_ORIENTATION) {
+        if (ContentPrintManager.isBoxRegistrationMode || !AppConstants.USE_PDF_ORIENTATION) {
         // Content Print - END
             buffer.append(_printSettings!!.orientation.ordinal)
         }
@@ -588,9 +579,7 @@ class PrintPreviewView @JvmOverloads constructor(
      */
     private fun shouldDisplayLandscape(): Boolean {
         var flipToLandscape: Boolean
-        // Content Print - START
-        flipToLandscape = if (!ContentPrintManager.isBoxRegistrationMode && AppConstants.USE_PDF_ORIENTATION) {
-        // Content Print - END
+        flipToLandscape = if (AppConstants.USE_PDF_ORIENTATION) {
             _pdfManager!!.isPDFLandscape
         } else {
             _printSettings!!.orientation == Orientation.LANDSCAPE
@@ -653,9 +642,7 @@ class PrintPreviewView @JvmOverloads constructor(
             if (_printSettings!!.isBooklet) {
                 return 1
             }
-            // Content Print - START
-            if (!_isBoxRegistrationMode && AppConstants.USE_PDF_ORIENTATION) {
-            // Content Print - END
+            if (AppConstants.USE_PDF_ORIENTATION) {
                 if (_pdfManager!!.isPDFLandscape) {
                     return _printSettings!!.imposition.rows
                 }
@@ -677,9 +664,7 @@ class PrintPreviewView @JvmOverloads constructor(
             if (_printSettings!!.isBooklet) {
                 return 1
             }
-            // Content Print - START
-            if (!_isBoxRegistrationMode && AppConstants.USE_PDF_ORIENTATION) {
-            // Content Print - END
+            if (AppConstants.USE_PDF_ORIENTATION) {
                 if (_pdfManager!!.isPDFLandscape) {
                     return _printSettings!!.imposition.cols
                 }

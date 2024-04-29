@@ -62,18 +62,13 @@ class SplashActivity : BaseActivity(), PauseableHandlerCallback, View.OnClickLis
 
     override fun onCreateContent(savedInstanceState: Bundle?) {
         // Azure Notification Hub - START
-        val extras = intent.extras
-        if (extras != null) {
-            val message = extras.getString(AppConstants.VAL_KEY_CONTENT_PRINT)
-            var filename = message?.substringAfter("「")?.substringBefore("」")
-            filename = filename?.substringAfter("\"")?.substringBefore("\"")
+        val filename = ContentPrintManager.getFilename(intent)
+        if (filename != null) {
             if (intent.data == null) {
                 ContentPrintManager.filenameFromNotification = filename
             }
-            if (filename != null) {
-                runMainActivity()
-                return
-            }
+            runMainActivity()
+            return
         }
         // Azure Notification Hub - END
 

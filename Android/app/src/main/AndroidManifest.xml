@@ -36,6 +36,7 @@
         android:hardwareAccelerated="true"
         android:supportsRtl="false"
         android:usesCleartextTraffic="true"
+        android:noHistory="true"
         tools:replace="android:supportsRtl"
         tools:ignore="UnusedAttribute">
         <!-- Content Print - END -->
