@@ -37,9 +37,6 @@ import java.lang.ref.WeakReference
 import java.util.*
 import kotlin.math.ceil
 import jp.co.riso.gestureListener.GestureDetectorListenerWrapper
-// Content Print - START
-import jp.co.riso.smartdeviceapp.controller.print.ContentPrintManager
-// Content Print - END
 
 /**
  * @class PrintPreviewView
@@ -508,9 +505,7 @@ class PrintPreviewView @JvmOverloads constructor(
         buffer.append(side)
         buffer.append(shouldDisplayColor())
         buffer.append(_printSettings!!.isScaleToFit)
-        // Content Print - START
-        if (ContentPrintManager.isBoxRegistrationMode || !AppConstants.USE_PDF_ORIENTATION) {
-        // Content Print - END
+        if (!AppConstants.USE_PDF_ORIENTATION) {
             buffer.append(_printSettings!!.orientation.ordinal)
         }
         buffer.append(_printSettings!!.paperSize.ordinal)

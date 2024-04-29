@@ -724,7 +724,6 @@ class PrintSettingsView @JvmOverloads constructor(
             val isBookletFinishingAvailable =
                 printerCapabilities == null || printerCapabilities.booklet
             setViewVisible(PrintSettings.TAG_BOOKLET_FINISH, isBookletFinishingAvailable)
-            setViewVisible(PrintSettings.TAG_ORIENTATION, true)
         } else {
             val printer = printer
             val isStapleAvailable = printer == null || printer.config!!.isStaplerAvailable
@@ -734,9 +733,9 @@ class PrintSettingsView @JvmOverloads constructor(
             val isBookletFinishingAvailable =
                 printer == null || printer.config!!.isBookletFinishingAvailable
             setViewVisible(PrintSettings.TAG_BOOKLET_FINISH, isBookletFinishingAvailable)
-            setViewVisible(PrintSettings.TAG_ORIENTATION, !AppConstants.USE_PDF_ORIENTATION)
         }
         // Content Print - END
+        setViewVisible(PrintSettings.TAG_ORIENTATION, !AppConstants.USE_PDF_ORIENTATION)
     }
 
     /**
