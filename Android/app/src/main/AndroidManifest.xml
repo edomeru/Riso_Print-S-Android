@@ -56,10 +56,13 @@
             android:configChanges="orientation|screenSize|screenLayout"
             android:colorMode="wideColorGamut" >
         </activity>
+        <!-- Content Print - START -->
         <activity
             android:name="jp.co.riso.smartdeviceapp.view.PDFHandlerActivity"
+            android:theme="@style/Transparent"
             android:autoRemoveFromRecents="true"
             android:exported="true">
+            <!-- Content Print - END -->
             <intent-filter tools:ignore="AppLinkUrlError,GoogleAppIndexingWarning">
                 <action android:name="android.intent.action.VIEW" />
 
