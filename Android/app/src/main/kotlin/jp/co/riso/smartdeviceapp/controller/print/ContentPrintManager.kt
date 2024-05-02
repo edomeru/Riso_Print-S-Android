@@ -107,7 +107,7 @@ class ContentPrintManager(context: Context?) {
      */
     interface IContentPrintService {
         @GET(API_LIST_FILES)
-        fun listFiles(@Query("limit") limit: Int, @Query("page") page: Int): Call<ContentPrintFileResult>
+        fun listFiles(@Query("limit") limit: Int, @Query("page") page: Int, @Query("printer_type") printerType: Int): Call<ContentPrintFileResult>
 
         @Streaming
         @GET(API_DOWNLOAD_FILE)
@@ -255,7 +255,7 @@ class ContentPrintManager(context: Context?) {
     fun updateFileList(limit: Int, page: Int, callback: IContentPrintCallback?) {
         Log.d(TAG, "updateFileList - START")
         CoroutineScope(Dispatchers.IO).launch {
-            _contentPrintService?.listFiles(limit, page)
+            _contentPrintService?.listFiles(limit, page, PRINTER_TYPE)
                 ?.enqueue(object : Callback<ContentPrintFileResult> {
                     override fun onFailure(call: Call<ContentPrintFileResult>, t: Throwable) {
                         Log.e(TAG, "updateFileList - Error ${t.message}")
@@ -280,7 +280,7 @@ class ContentPrintManager(context: Context?) {
             callback?.onStartFileDownload()
 
             // Get the file from the file list
-            _contentPrintService?.listFiles(0, 0)
+            _contentPrintService?.listFiles(0, 0, PRINTER_TYPE)
                 ?.enqueue(object : Callback<ContentPrintFileResult> {
                     override fun onFailure(call: Call<ContentPrintFileResult>, t: Throwable) {
                         Log.e(TAG, "listFiles - Error ${t.message}")
@@ -593,6 +593,7 @@ class ContentPrintManager(context: Context?) {
         private const val TIME_ZONE = "UTC"
         private const val BUFFER_SIZE = 1024 * 4
 
+        private const val PRINTER_TYPE = 1 // IJ printers only
         private const val API_LIST_FILES = "api/content/list"
         private const val API_DOWNLOAD_FILE = "api/content/preview/{file_id}"
         private const val API_LIST_PRINTERS = "api/device/printerList"
