@@ -51,12 +51,13 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <!-- Content Print - START -->
         <activity
             android:name="jp.co.riso.smartdeviceapp.view.MainActivity"
             android:configChanges="orientation|screenSize|screenLayout"
+            android:theme="@style/Transparent"
             android:colorMode="wideColorGamut" >
         </activity>
-        <!-- Content Print - START -->
         <activity
             android:name="jp.co.riso.smartdeviceapp.view.PDFHandlerActivity"
             android:theme="@style/Transparent"
