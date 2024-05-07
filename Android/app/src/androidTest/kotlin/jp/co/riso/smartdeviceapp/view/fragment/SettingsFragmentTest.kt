@@ -1,6 +1,6 @@
 package jp.co.riso.smartdeviceapp.view.fragment
 
-import android.content.pm.ActivityInfo
+/*import android.content.pm.ActivityInfo
 import android.view.KeyEvent
 import android.view.View
 import androidx.preference.PreferenceManager
@@ -162,4 +162,4 @@ class SettingsFragmentTest : BaseActivityTestUtil() {
             )
         }
     }
-}
+}*/

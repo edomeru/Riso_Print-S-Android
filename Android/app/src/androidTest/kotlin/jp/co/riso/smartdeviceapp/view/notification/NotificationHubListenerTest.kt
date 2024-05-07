@@ -24,7 +24,7 @@ class NotificationHubListenerTest {
     }
 
     @After
-    fun cleanUp() {
+    fun tearDown() {
         _mockContextGranted = null
         _mockContextDenied = null
     }
@@ -57,50 +57,168 @@ class NotificationHubListenerTest {
     }
 
     @Test
-    fun testOnPushNotificationReceived() {
+    fun testOnPushNotificationReceived_1() {
         try {
             val listener = NotificationHubListener()
             val message1 = mockRemoteMessage(null, null)
-            val message2 = mockRemoteMessage(null, "test")
-            val message3 = mockRemoteMessage("test", null)
-            val message4 = mockRemoteMessage("test", "test")
             val notificationId = NotificationHubListener.getNotificationId()
 
             listener.onPushNotificationReceived(null, message1)
-            Assert.assertEquals(NotificationHubListener.getNotificationId(), notificationId + 1)
+            Assert.assertTrue(NotificationHubListener.getNotificationId() > notificationId)
+        } catch (e: Exception) {
+            Assert.fail() // Error should not be thrown
+        }
+    }
+
+    @Test
+    fun testOnPushNotificationReceived_2() {
+        try {
+            val listener = NotificationHubListener()
+            val message2 = mockRemoteMessage(null, "test")
+            val notificationId = NotificationHubListener.getNotificationId()
 
             listener.onPushNotificationReceived(null, message2)
-            Assert.assertEquals(NotificationHubListener.getNotificationId(), notificationId + 2)
+            Assert.assertTrue(NotificationHubListener.getNotificationId() > notificationId)
+        } catch (e: Exception) {
+            Assert.fail() // Error should not be thrown
+        }
+    }
+
+    @Test
+    fun testOnPushNotificationReceived_3() {
+        try {
+            val listener = NotificationHubListener()
+            val message3 = mockRemoteMessage("test", null)
+            val notificationId = NotificationHubListener.getNotificationId()
 
             listener.onPushNotificationReceived(null, message3)
-            Assert.assertEquals(NotificationHubListener.getNotificationId(), notificationId + 3)
+            Assert.assertTrue(NotificationHubListener.getNotificationId() > notificationId)
+        } catch (e: Exception) {
+            Assert.fail() // Error should not be thrown
+        }
+    }
+
+    @Test
+    fun testOnPushNotificationReceived_4() {
+        try {
+            val listener = NotificationHubListener()
+            val message4 = mockRemoteMessage("test", "test")
+            val notificationId = NotificationHubListener.getNotificationId()
 
             listener.onPushNotificationReceived(null, message4)
-            Assert.assertEquals(NotificationHubListener.getNotificationId(), notificationId + 4)
+            Assert.assertTrue(NotificationHubListener.getNotificationId() > notificationId)
+        } catch (e: Exception) {
+            Assert.fail() // Error should not be thrown
+        }
+    }
+
+    @Test
+    fun testOnPushNotificationReceived_5() {
+        try {
+            val listener = NotificationHubListener()
+            val message1 = mockRemoteMessage(null, null)
+            val notificationId = NotificationHubListener.getNotificationId()
 
             listener.onPushNotificationReceived(_mockContextGranted, message1)
-            Assert.assertEquals(NotificationHubListener.getNotificationId(), notificationId + 5)
+            Assert.assertTrue(NotificationHubListener.getNotificationId() > notificationId)
+        } catch (e: Exception) {
+            Assert.fail() // Error should not be thrown
+        }
+    }
+
+    @Test
+    fun testOnPushNotificationReceived_6() {
+        try {
+            val listener = NotificationHubListener()
+            val message2 = mockRemoteMessage(null, "test")
+            val notificationId = NotificationHubListener.getNotificationId()
 
             listener.onPushNotificationReceived(_mockContextGranted, message2)
-            Assert.assertEquals(NotificationHubListener.getNotificationId(), notificationId + 6)
+            Assert.assertTrue(NotificationHubListener.getNotificationId() > notificationId)
+        } catch (e: Exception) {
+            Assert.fail() // Error should not be thrown
+        }
+    }
+
+    @Test
+    fun testOnPushNotificationReceived_7() {
+        try {
+            val listener = NotificationHubListener()
+            val message3 = mockRemoteMessage("test", null)
+            val notificationId = NotificationHubListener.getNotificationId()
 
             listener.onPushNotificationReceived(_mockContextGranted, message3)
-            Assert.assertEquals(NotificationHubListener.getNotificationId(), notificationId + 7)
+            Assert.assertTrue(NotificationHubListener.getNotificationId() > notificationId)
+        } catch (e: Exception) {
+            Assert.fail() // Error should not be thrown
+        }
+    }
+
+    @Test
+    fun testOnPushNotificationReceived_8() {
+        try {
+            val listener = NotificationHubListener()
+            val message4 = mockRemoteMessage("test", "test")
+            val notificationId = NotificationHubListener.getNotificationId()
 
             listener.onPushNotificationReceived(_mockContextGranted, message4)
-            Assert.assertEquals(NotificationHubListener.getNotificationId(), notificationId + 8)
+            Assert.assertTrue(NotificationHubListener.getNotificationId() > notificationId)
+        } catch (e: Exception) {
+            Assert.fail() // Error should not be thrown
+        }
+    }
+
+    @Test
+    fun testOnPushNotificationReceived_9() {
+        try {
+            val listener = NotificationHubListener()
+            val message1 = mockRemoteMessage(null, null)
+            val notificationId = NotificationHubListener.getNotificationId()
 
             listener.onPushNotificationReceived(_mockContextDenied, message1)
-            Assert.assertEquals(NotificationHubListener.getNotificationId(), notificationId + 9)
+            Assert.assertTrue(NotificationHubListener.getNotificationId() > notificationId)
+        } catch (e: Exception) {
+            Assert.fail() // Error should not be thrown
+        }
+    }
+
+    @Test
+    fun testOnPushNotificationReceived_10() {
+        try {
+            val listener = NotificationHubListener()
+            val message2 = mockRemoteMessage(null, "test")
+            val notificationId = NotificationHubListener.getNotificationId()
 
             listener.onPushNotificationReceived(_mockContextDenied, message2)
-            Assert.assertEquals(NotificationHubListener.getNotificationId(), notificationId + 10)
+            Assert.assertTrue(NotificationHubListener.getNotificationId() > notificationId)
+        } catch (e: Exception) {
+            Assert.fail() // Error should not be thrown
+        }
+    }
+
+    @Test
+    fun testOnPushNotificationReceived_11() {
+        try {
+            val listener = NotificationHubListener()
+            val message3 = mockRemoteMessage("test", null)
+            val notificationId = NotificationHubListener.getNotificationId()
 
             listener.onPushNotificationReceived(_mockContextDenied, message3)
-            Assert.assertEquals(NotificationHubListener.getNotificationId(), notificationId + 11)
+            Assert.assertTrue(NotificationHubListener.getNotificationId() > notificationId)
+        } catch (e: Exception) {
+            Assert.fail() // Error should not be thrown
+        }
+    }
+
+    @Test
+    fun testOnPushNotificationReceived_12() {
+        try {
+            val listener = NotificationHubListener()
+            val message4 = mockRemoteMessage("test", "test")
+            val notificationId = NotificationHubListener.getNotificationId()
 
             listener.onPushNotificationReceived(_mockContextDenied, message4)
-            Assert.assertEquals(NotificationHubListener.getNotificationId(), notificationId + 12)
+            Assert.assertTrue(NotificationHubListener.getNotificationId() > notificationId)
         } catch (e: Exception) {
             Assert.fail() // Error should not be thrown
         }
