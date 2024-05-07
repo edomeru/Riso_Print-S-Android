@@ -286,7 +286,7 @@ class ContentPrintManager(context: Context?) {
             val masterKey: MasterKey = MasterKey.Builder(context)
                 .setKeyScheme(MasterKey.KeyScheme.AES256_GCM)
                 .build()
-            _preferences = EncryptedSharedPreferences.create(
+            preferences = EncryptedSharedPreferences.create(
                 context,
                 KEY_STORE,
                 masterKey,
@@ -561,25 +561,25 @@ class ContentPrintManager(context: Context?) {
         }
 
         fun saveKeyValue(key: String, value: String?) {
-            val editor = _preferences?.edit()
+            val editor = preferences?.edit()
             editor?.putString(key, value)
             editor?.commit()
             Log.d("TEST", "saveKeyValue $key = $value")
         }
 
         fun getKeyValue(key: String): String? {
-            val value = _preferences?.getString(key, null)
+            val value = preferences?.getString(key, null)
             Log.d("TEST", "getKeyValue $key = $value")
             return value
         }
 
         fun removeKey(key: String?) {
-            val editor = _preferences?.edit()
+            val editor = preferences?.edit()
             editor?.remove(key)
             editor?.commit()
         }
 
-        private fun isExpired(dateTime: ZonedDateTime?): Boolean {
+        fun isExpired(dateTime: ZonedDateTime?): Boolean {
             if (dateTime != null) {
                 val localZone = dateTime.withZoneSameInstant(ZoneId.systemDefault())
                 val expiresOn = localZone.toLocalDateTime()
@@ -610,8 +610,8 @@ class ContentPrintManager(context: Context?) {
         const val KEY_AUTHORITY = "ContentPrintKeyAuthority"
         const val KEY_EXPIRES_ON = "ContentPrintKeyExpiresOn"
         const val ISO_FORMAT = "yyyy-MM-dd'T'HH:mm:ss'Z'"
+        const val TIME_ZONE = "UTC"
 
-        private const val TIME_ZONE = "UTC"
         private const val BUFFER_SIZE = 1024 * 4
 
         private const val PRINTER_TYPE = 1 // IJ printers only
@@ -622,13 +622,13 @@ class ContentPrintManager(context: Context?) {
 
         val TAG: String = ContentPrintManager::class.java.simpleName ?: "Content Print"
 
-        private var _preferences: SharedPreferences? = null
         private var _manager: ContentPrintManager? = null
         private var _cacheDir: String? = null
         private var _uri: String? = null
         private var _authority: String? = null
         private var _accessToken: String? = null
 
+        var preferences: SharedPreferences? = null
         var application: ISingleAccountPublicClientApplication? = null
         var contentPrintService: IContentPrintService? = null
         var scopes: ArrayList<String>? = null

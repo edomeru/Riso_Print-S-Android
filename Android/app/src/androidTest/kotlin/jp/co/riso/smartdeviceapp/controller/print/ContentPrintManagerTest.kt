@@ -1,6 +1,9 @@
 package jp.co.riso.smartdeviceapp.controller.print
 
 import android.app.Activity
+import android.content.Intent
+import android.content.SharedPreferences
+import android.os.Bundle
 import com.microsoft.identity.client.AcquireTokenParameters
 import com.microsoft.identity.client.IAccount
 import com.microsoft.identity.client.IAuthenticationResult
@@ -13,7 +16,8 @@ import io.mockk.coEvery
 import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
-import jp.co.riso.smartdeviceapp.MockUtil
+import jp.co.riso.smartdeviceapp.AppConstants
+import jp.co.riso.smartdeviceapp.MockTestUtil
 import jp.co.riso.smartdeviceapp.model.ContentPrintFile
 import jp.co.riso.smartdeviceapp.model.ContentPrintPrintSettings
 import jp.co.riso.smartdeviceapp.model.ContentPrintPrinter
@@ -30,6 +34,7 @@ import retrofit2.Call
 import java.io.InputStream
 import java.time.LocalDateTime
 import java.time.ZoneId
+import java.time.format.DateTimeFormatter
 import java.util.Date
 import java.util.UUID
 
@@ -200,6 +205,7 @@ class ContentPrintManagerTest {
 
     @Test
     fun testRefreshAuthenticationCallback_onSuccessNull() {
+        ContentPrintManager.application = application
         val callback = ContentPrintManager.RefreshAuthenticationCallback(null)
         callback.onSuccess(null)
         Assert.assertTrue(ContentPrintManager.isLoggedIn)
@@ -979,6 +985,183 @@ class ContentPrintManagerTest {
     }
 
     // ================================================================================
+    // Tests - ContentPrintManager.getFilename
+    // ================================================================================
+    @Test
+    fun testGetFilename_NullExtras() {
+        val mockIntent = mockk<Intent>()
+        every { mockIntent.extras } returns null
+        val filename = ContentPrintManager.getFilename(mockIntent)
+        Assert.assertNull(filename)
+    }
+
+    @Test
+    fun testGetFilename_NullMessage() {
+        val mockIntent = mockk<Intent>()
+        val mockBundle = mockk<Bundle>()
+        every { mockBundle.getString(AppConstants.VAL_KEY_CONTENT_PRINT) } returns null
+        every { mockIntent.extras } returns mockBundle
+        val filename = ContentPrintManager.getFilename(mockIntent)
+        Assert.assertNull(filename)
+    }
+
+    @Test
+    fun testGetFilename_English() {
+        val mockIntent = mockk<Intent>()
+        val mockBundle = mockk<Bundle>()
+        val message = "The filename is \"$TEST_FILE\""
+        every { mockBundle.getString(AppConstants.VAL_KEY_CONTENT_PRINT) } returns message
+        every { mockIntent.extras } returns mockBundle
+        val filename = ContentPrintManager.getFilename(mockIntent)
+        Assert.assertNotNull(filename)
+        Assert.assertEquals(filename, TEST_FILE)
+    }
+
+    @Test
+    fun testGetFilename_Japanese() {
+        val mockIntent = mockk<Intent>()
+        val mockBundle = mockk<Bundle>()
+        val message = "ファイル名は「${TEST_FILE}」です"
+        every { mockBundle.getString(AppConstants.VAL_KEY_CONTENT_PRINT) } returns message
+        every { mockIntent.extras } returns mockBundle
+        val filename = ContentPrintManager.getFilename(mockIntent)
+        Assert.assertNotNull(filename)
+        Assert.assertEquals(filename, TEST_FILE)
+    }
+
+    // ================================================================================
+    // Tests - ContentPrintManager.checkAccessToken
+    // ================================================================================
+    @Test
+    fun testCheckAccessToken_NullAccessToken() {
+        val testCallback = TestAuthenticationCallback()
+        ContentPrintManager.isLoggedIn = false
+        // Set the access token to null
+        val refreshCallback = ContentPrintManager.RefreshAuthenticationCallback(testCallback)
+        refreshCallback.onSuccess(null)
+        // Perform the test
+        val callback = TestAuthenticationCallback()
+        ContentPrintManager.checkAccessToken(callback)
+        Assert.assertFalse(callback.isAuthenticationFinished)
+    }
+
+    @Test
+    fun testCheckAccessToken_NullExpireString() {
+        // Set the expire string to null
+        val mockPreferences = mockk<SharedPreferences>()
+        every { mockPreferences.getString(any(), any()) } returns null
+        val mockEditor = mockk<SharedPreferences.Editor>()
+        every { mockPreferences.edit() } returns mockEditor
+        every { mockEditor.putString(any(), any()) } returns mockEditor
+        every { mockEditor.remove(any()) } returns mockEditor
+        every { mockEditor.commit() } returns true
+        every { mockEditor.apply() } just Runs
+        ContentPrintManager.preferences = mockPreferences
+        // Set the access token
+        val testCallback = TestAuthenticationCallback()
+        val refreshCallback = ContentPrintManager.RefreshAuthenticationCallback(testCallback)
+        val mockResult = mockAuthenticationResult()
+        refreshCallback.onSuccess(mockResult)
+        // Perform the test
+        val callback = TestAuthenticationCallback()
+        ContentPrintManager.checkAccessToken(callback)
+        // Revert the expire string
+        ContentPrintManager.preferences = MockTestUtil.mockSharedPreferences()
+        Assert.assertFalse(callback.isAuthenticationFinished)
+    }
+
+    @Test
+    fun testCheckAccessToken_NullExpiredString() {
+        ContentPrintManager.isLoggedIn = true
+        // Set the expired date string
+        val formatter = DateTimeFormatter.ofPattern(ContentPrintManager.ISO_FORMAT)
+        val yesterday = LocalDateTime.now().minusDays(1)
+        val expired = yesterday.format(formatter)
+        val mockPreferences = mockk<SharedPreferences>()
+        every { mockPreferences.getString(any(), any()) } returns expired
+        val mockEditor = mockk<SharedPreferences.Editor>()
+        every { mockPreferences.edit() } returns mockEditor
+        every { mockEditor.putString(any(), any()) } returns mockEditor
+        every { mockEditor.remove(any()) } returns mockEditor
+        every { mockEditor.commit() } returns true
+        every { mockEditor.apply() } just Runs
+        ContentPrintManager.preferences = mockPreferences
+        // Set the access token
+        val testCallback = TestAuthenticationCallback()
+        val refreshCallback = ContentPrintManager.RefreshAuthenticationCallback(testCallback)
+        val mockResult = mockAuthenticationResult()
+        refreshCallback.onSuccess(mockResult)
+        // Perform the test
+        val callback = TestAuthenticationCallback()
+        ContentPrintManager.checkAccessToken(callback)
+        // Revert the expire string
+        ContentPrintManager.preferences = MockTestUtil.mockSharedPreferences()
+        Assert.assertFalse(callback.isAuthenticationFinished)
+        Assert.assertFalse(ContentPrintManager.isLoggedIn)
+    }
+
+    // ================================================================================
+    // Tests - ContentPrintManager.saveKeyValue
+    // ================================================================================
+    @Test
+    fun testSaveKeyValue_NullPreferences() {
+        ContentPrintManager.preferences = null
+        val key = ContentPrintManager.KEY_TOKEN
+        val value = ACCESS_TOKEN
+        ContentPrintManager.saveKeyValue(key, value)
+        ContentPrintManager.preferences = MockTestUtil.mockSharedPreferences()
+    }
+
+    // ================================================================================
+    // Tests - ContentPrintManager.getKeyValue
+    // ================================================================================
+    @Test
+    fun testGetKeyValue_NullPreferences() {
+        ContentPrintManager.preferences = null
+        val key = ContentPrintManager.KEY_TOKEN
+        ContentPrintManager.getKeyValue(key)
+        ContentPrintManager.preferences = MockTestUtil.mockSharedPreferences()
+    }
+
+    // ================================================================================
+    // Tests - ContentPrintManager.removeKey
+    // ================================================================================
+    @Test
+    fun testRemoveKey_NullPreferences() {
+        ContentPrintManager.preferences = null
+        val key = ContentPrintManager.KEY_TOKEN
+        ContentPrintManager.removeKey(key)
+        ContentPrintManager.preferences = MockTestUtil.mockSharedPreferences()
+    }
+
+    // ================================================================================
+    // Tests - ContentPrintManager.isExpired
+    // ================================================================================
+    @Test
+    fun testIsExpired_Expired() {
+        val dateTime = LocalDateTime.now().minusDays(1).atZone(ZoneId.of(
+            ContentPrintManager.TIME_ZONE
+        ))
+        val expired = ContentPrintManager.isExpired(dateTime)
+        Assert.assertTrue(expired)
+    }
+
+    @Test
+    fun testIsExpired_NotExpired() {
+        val dateTime = LocalDateTime.now().plusDays(1).atZone(ZoneId.of(
+            ContentPrintManager.TIME_ZONE
+        ))
+        val expired = ContentPrintManager.isExpired(dateTime)
+        Assert.assertFalse(expired)
+    }
+
+    @Test
+    fun testIsExpired_Null() {
+        val expired = ContentPrintManager.isExpired(null)
+        Assert.assertTrue(expired)
+    }
+
+    // ================================================================================
     // Private Methods
     // ================================================================================
     private fun waitForCondition(condition: Boolean) {
@@ -1004,7 +1187,7 @@ class ContentPrintManagerTest {
         private const val EXCEPTION_MESSAGE = "test exception"
         private const val LIMIT = 10
         private const val PAGE = 1
-        private val SCOPE = arrayOf(MockUtil.SCOPE)
+        private val SCOPE = arrayOf(MockTestUtil.SCOPE)
 
         private var activity: Activity? = null
         private var application: ISingleAccountPublicClientApplication? = null
@@ -1054,10 +1237,10 @@ class ContentPrintManagerTest {
         @JvmStatic
         @BeforeClass
         fun set() {
-            activity = MockUtil.mockActivity()
+            activity = MockTestUtil.mockActivity()
             application = mockApplication()
-            service = MockUtil.mockContentPrintService()
-            MockUtil.mockConfiguration()
+            service = MockTestUtil.mockContentPrintService()
+            MockTestUtil.mockConfiguration()
 
             ContentPrintManager.newInstance(activity)
         }
@@ -1065,7 +1248,7 @@ class ContentPrintManagerTest {
         @JvmStatic
         @AfterClass
         fun tearDown() {
-            MockUtil.unMockConfiguration()
+            MockTestUtil.unMockConfiguration()
         }
     }
 }

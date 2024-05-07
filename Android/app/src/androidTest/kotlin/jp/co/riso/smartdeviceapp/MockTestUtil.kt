@@ -48,7 +48,7 @@ import java.io.InputStream
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
-class MockUtil {
+class MockTestUtil {
     companion object {
         private const val PACKAGE_NAME = "jp.co.riso.smartprint"
         private const val CLIENT_ID = "00000000-0000-0000-0000-000000000000"
@@ -80,14 +80,13 @@ class MockUtil {
             return nextDay.format(formatter)
         }
 
-        private fun cacheDir() : File {
+        fun cacheDir() : File {
             val context = InstrumentationRegistry.getInstrumentation().targetContext
             return context.cacheDir
         }
 
-        private fun mockSharedPreferences(): SharedPreferences {
+        fun mockSharedPreferences(): SharedPreferences {
             val mockSharedPrefs = mockk<SharedPreferences>()
-            every { mockSharedPrefs.getString(any(), any()) } returns TEST_EXPIRATION
             every { mockSharedPrefs.getString(any(), any()) } returns TEST_EXPIRATION
             val mockEditor = mockk<SharedPreferences.Editor>()
             every { mockSharedPrefs.edit() } returns mockEditor
@@ -175,9 +174,8 @@ class MockUtil {
             val mockResponseResult = mockk<retrofit2.Response<ResponseBody>>()
             every { mockResponseResult.code() } returns 200
             val mockResponseBody = mockk<ResponseBody>()
-            val mockInputStream = mockk<InputStream>()
-            every { mockInputStream.read(any()) } returns -1
-            every { mockResponseBody.byteStream() } returns mockInputStream
+            val inputStream = ByteArrayInputStream(TEST_CONFIG.toByteArray())
+            every { mockResponseBody.byteStream() } returns inputStream
             every { mockResponseResult.body() } returns mockResponseBody
             every { mockService.listFiles(any(), any(), any()) } returns mockFileResult
             coEvery { mockService.downloadFile(any()) } returns mockResponseResult
