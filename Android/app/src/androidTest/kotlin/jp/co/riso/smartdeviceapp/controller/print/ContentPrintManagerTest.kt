@@ -1162,6 +1162,51 @@ class ContentPrintManagerTest {
     }
 
     // ================================================================================
+    // Tests - ContentPrintManager static variables
+    // ================================================================================
+    @Test
+    fun testStaticVariables() {
+        val preferences = ContentPrintManager.preferences
+        Assert.assertNotNull(preferences)
+        ContentPrintManager.preferences = null
+        ContentPrintManager.preferences = preferences
+
+        val application = ContentPrintManager.application
+        Assert.assertNotNull(application)
+        ContentPrintManager.application = null
+        ContentPrintManager.application = application
+
+        val service = ContentPrintManager.contentPrintService
+        Assert.assertNotNull(service)
+        ContentPrintManager.contentPrintService = null
+        ContentPrintManager.contentPrintService = service
+
+        val scopes = ContentPrintManager.scopes
+        ContentPrintManager.scopes = scopes
+        val isLoggedIn = ContentPrintManager.isLoggedIn
+        ContentPrintManager.isLoggedIn = isLoggedIn
+        val filenameFromNotification = ContentPrintManager.filenameFromNotification
+        ContentPrintManager.filenameFromNotification = filenameFromNotification
+        val selectedFile = ContentPrintManager.selectedFile
+        ContentPrintManager.selectedFile = selectedFile
+        val selectedPrinter = ContentPrintManager.selectedPrinter
+        ContentPrintManager.selectedPrinter = selectedPrinter
+        val filePath = ContentPrintManager.filePath
+        ContentPrintManager.filePath = filePath
+        val isFileFromContentPrint = ContentPrintManager.isFileFromContentPrint
+        ContentPrintManager.isFileFromContentPrint = isFileFromContentPrint
+        val isBoxRegistrationMode = ContentPrintManager.isBoxRegistrationMode
+        ContentPrintManager.isBoxRegistrationMode = isBoxRegistrationMode
+        val fileCount = ContentPrintManager.fileCount
+        ContentPrintManager.fileCount = fileCount
+        val fileList = ContentPrintManager.fileList
+        ContentPrintManager.fileList = fileList
+        val printerList = ContentPrintManager.printerList
+        ContentPrintManager.printerList = printerList
+    }
+
+
+    // ================================================================================
     // Private Methods
     // ================================================================================
     private fun waitForCondition(condition: Boolean) {
