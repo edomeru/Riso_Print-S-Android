@@ -904,10 +904,79 @@ class ContentPrintManagerTest {
     // ================================================================================
     // Tests - updatePrinterList
     // ================================================================================
+    @Test
+    fun testUpdatePrinterList_WithCallback() {
+        ContentPrintManager.application = application
+        ContentPrintManager.contentPrintService = service
+        val manager = ContentPrintManager.getInstance()
+        val testCallback = TestContentPrintCallback()
+        manager?.updatePrinterList(testCallback)
+        // Call the callback since the content print service is mocked
+        testCallback.onPrinterListUpdated(true)
+        Assert.assertTrue(testCallback.printerListUpdatedResult)
+    }
+
+    @Test
+    fun testUpdatePrinterList_WithoutCallback() {
+        ContentPrintManager.application = application
+        ContentPrintManager.contentPrintService = service
+        val manager = ContentPrintManager.getInstance()
+        val testCallback = TestContentPrintCallback()
+        manager?.updatePrinterList(testCallback)
+        Assert.assertFalse(testCallback.printerListUpdatedResult)
+    }
+
+    @Test
+    fun testUpdatePrinterList_NullService() {
+        ContentPrintManager.application = application
+        ContentPrintManager.contentPrintService = null
+        val manager = ContentPrintManager.getInstance()
+        val testCallback = TestContentPrintCallback()
+        manager?.updatePrinterList(testCallback)
+        // Call the callback since the content print service is null
+        testCallback.onFileListUpdated(true)
+        Assert.assertTrue(testCallback.fileListUpdatedResult)
+    }
 
     // ================================================================================
     // Tests - registerToBox
     // ================================================================================
+    @Test
+    fun testRegisterToBox_WithCallback() {
+        ContentPrintManager.application = application
+        ContentPrintManager.contentPrintService = service
+        val manager = ContentPrintManager.getInstance()
+        val testCallback = TestRegisterToBoxCallback()
+        val printSettings = ContentPrintPrintSettings()
+        manager?.registerToBox(1, TEST_SERIAL_NO, printSettings, testCallback)
+        // Call the callback since the content print service is mocked
+        testCallback.onBoxRegistered(true)
+        Assert.assertTrue(testCallback.boxRegistrationResult)
+    }
+
+    @Test
+    fun testRegisterToBox_WithoutCallback() {
+        ContentPrintManager.application = application
+        ContentPrintManager.contentPrintService = service
+        val manager = ContentPrintManager.getInstance()
+        val testCallback = TestRegisterToBoxCallback()
+        val printSettings = ContentPrintPrintSettings()
+        manager?.registerToBox(1, TEST_SERIAL_NO, printSettings, null)
+        Assert.assertFalse(testCallback.boxRegistrationResult)
+    }
+
+    @Test
+    fun testRegisterToBox_NullService() {
+        ContentPrintManager.application = application
+        ContentPrintManager.contentPrintService = null
+        val manager = ContentPrintManager.getInstance()
+        val testCallback = TestRegisterToBoxCallback()
+        val printSettings = ContentPrintPrintSettings()
+        manager?.registerToBox(1, TEST_SERIAL_NO, printSettings, testCallback)
+        // Call the callback since the content print service is null
+        testCallback.onBoxRegistered(true)
+        Assert.assertTrue(testCallback.boxRegistrationResult)
+    }
 
     // ================================================================================
     // Private Methods
