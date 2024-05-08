@@ -35,7 +35,6 @@ class ContentPrintFileAdapter(
             val inflater =
                 context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater?
             convertView = inflater!!.inflate(_layoutId, parent, false)
-            // AppUtils.changeChildrenFont((ViewGroup) convertView, SmartDeviceApp.getAppFont());
             viewHolder = ViewHolder()
         } else {
             viewHolder = (convertView.tag as ViewHolder?)!!

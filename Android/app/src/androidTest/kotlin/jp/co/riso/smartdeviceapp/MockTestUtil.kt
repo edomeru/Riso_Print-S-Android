@@ -148,7 +148,7 @@ class MockTestUtil {
             return mockAct
         }
 
-        private fun mockContext(): Context {
+        fun mockContext(): Context {
             val mockCtx = mockk<Context>()
             every { mockCtx.applicationContext } returns mockCtx
             every { mockCtx.packageName } returns PACKAGE_NAME
@@ -189,6 +189,9 @@ class MockTestUtil {
             return mockService
         }
 
+        /**
+         * MockK the Configuration for MSAL libraries
+         */
         fun mockConfiguration() {
             mockkConstructor(Retrofit.Builder::class)
             val mockRetrofit = mockk<Retrofit>()
@@ -209,6 +212,9 @@ class MockTestUtil {
             } returns mockSharedPrefs
         }
 
+        /**
+         * UnMockK the Configuration for MSAL libraries
+         */
         fun unMockConfiguration() {
             unmockkConstructor(Retrofit.Builder::class)
             unmockkStatic(EncryptedSharedPreferences::class)

@@ -58,7 +58,18 @@ android {
         disable 'GradleDependency', 'InconsistentLayout', 'InflateParams', 'SpUsage'
     }
 
-    // Azure Notification Hubs - START
+    // Content Print - START
+    // Prevent MockKAgentException: MockK could not self-attach a jvmti agent to the current VM
+    // Note: The error can also occur if the device is not unlocked before running the tests.
+    // https://github.com/mockk/mockk/issues/297#issuecomment-901924678
+    testOptions {
+        packagingOptions {
+            jniLibs {
+                useLegacyPackaging = true
+            }
+        }
+    }
+
     // Prevent mockk from duplicating files
     packaging {
         resources.excludes.addAll(
@@ -66,7 +77,7 @@ android {
             "META-INF/LICENSE-notice.md"
         )
     }
-    // Azure Notification Hubs - END
+    // Content Print - END
 
     // Gradle automatically adds 'android.test.runner' as a dependency.
     useLibrary 'android.test.runner'
