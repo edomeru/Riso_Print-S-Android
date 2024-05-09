@@ -1,31 +1,19 @@
 package jp.co.riso.smartdeviceapp
 
 import android.accounts.AccountManager
+import android.animation.ValueAnimator
 import android.app.Activity
 import android.content.Context
 import android.content.SharedPreferences
 import android.content.pm.ApplicationInfo
 import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
+import android.content.res.Configuration
 import android.content.res.Resources
+import android.util.DisplayMetrics
+import android.widget.ArrayAdapter
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.test.platform.app.InstrumentationRegistry
-import com.google.gson.Gson
-import com.google.gson.GsonBuilder
-import com.microsoft.identity.client.Logger
-import com.microsoft.identity.client.PublicClientApplication
-import com.microsoft.identity.client.PublicClientApplicationConfiguration
-import com.microsoft.identity.client.PublicClientApplicationConfigurationFactory
-import com.microsoft.identity.client.configuration.AccountMode
-import com.microsoft.identity.client.configuration.LoggerConfiguration
-import com.microsoft.identity.common.internal.telemetry.TelemetryConfiguration
-import com.microsoft.identity.common.java.authorities.Authority
-import com.microsoft.identity.common.java.authorities.Environment
-import com.microsoft.identity.common.java.cache.MsalOAuth2TokenCache
-import com.microsoft.identity.common.java.commands.parameters.CommandParameters
-import com.microsoft.identity.common.java.interfaces.INameValueStorage
-import com.microsoft.identity.common.java.interfaces.IPlatformComponents
-import com.microsoft.identity.common.java.interfaces.IStorageSupplier
 import io.mockk.Runs
 import io.mockk.coEvery
 import io.mockk.every
@@ -36,6 +24,8 @@ import io.mockk.mockkStatic
 import io.mockk.unmockkConstructor
 import io.mockk.unmockkStatic
 import jp.co.riso.smartdeviceapp.controller.print.ContentPrintManager
+import jp.co.riso.smartdeviceapp.model.ContentPrintFile
+import jp.co.riso.smartdeviceapp.view.contentprint.ContentPrintFileAdapter
 import jp.co.riso.smartprint.R
 import okhttp3.ResponseBody
 import retrofit2.Call
@@ -43,8 +33,6 @@ import retrofit2.Retrofit
 import retrofit2.create
 import java.io.ByteArrayInputStream
 import java.io.File
-import java.io.FileOutputStream
-import java.io.InputStream
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
@@ -69,8 +57,8 @@ class MockTestUtil {
                 "\"type\": \"PersonalMicrosoftAccount\" }," +
                 "\"default\": true } ] }"
 
-        private const val TEST_VERSION = "0.0.1"
         private const val TEST_URI = "http://test"
+        private const val PIXEL_SIZE = 100
         private val TEST_EXPIRATION = tomorrow()
         const val SCOPE = "test scope"
 
@@ -99,13 +87,27 @@ class MockTestUtil {
 
         private fun mockResources(): Resources {
             val mockRes = mockk<Resources>()
-            every { mockRes.getString(R.string.content_print_uri) } returns TEST_URI
-            every { mockRes.getString(R.string.content_print_scope) } returns SCOPE
-            every { mockRes.getString(R.string.content_print_scope) } returns SCOPE
+            every { mockRes.getString(any()) } answers {
+                val id = firstArg<Int>()
+                if (id == R.string.content_print_uri) {
+                    TEST_URI
+                } else if (id == R.string.content_print_scope) {
+                    SCOPE
+                } else {
+                    ""
+                }
+            }
             every { mockRes.openRawResource(any()) } answers {
                 // Always return a new stream, since the calling function should close the old stream
                 ByteArrayInputStream(TEST_CONFIG.toByteArray())
             }
+            every { mockRes.getValue(any<Int>(), any(), any()) } just Runs
+            every { mockRes.getInteger(any()) } returns 0
+            every { mockRes.getBoolean(any()) } returns false
+            every { mockRes.getColor(any()) } returns 0
+            every { mockRes.displayMetrics } returns DisplayMetrics()
+            every { mockRes.configuration } returns Configuration()
+            every { mockRes.getDimensionPixelSize(any()) } returns PIXEL_SIZE
             return mockRes
         }
 
@@ -187,6 +189,35 @@ class MockTestUtil {
             every { mockRegisterResult.enqueue(any()) } just Runs
             every { mockService.registerToBox(any()) } returns mockRegisterResult
             return mockService
+        }
+
+        /**
+         * MockK UI components that can cause errors during testing
+         */
+        fun mockUI() {
+            // The ValueAnimator class can only run on a looper thread
+            mockkStatic(ValueAnimator::class)
+            val mockAnimator = mockk<ValueAnimator>(relaxed = true)
+            every { mockAnimator.animatedValue } returns 1
+            every { mockAnimator.addUpdateListener(any()) } answers {
+                val listener = firstArg<ValueAnimator.AnimatorUpdateListener>()
+                listener.onAnimationUpdate(mockAnimator)
+            }
+            every { ValueAnimator.ofInt(any(), any()) } returns mockAnimator
+
+            mockkConstructor(ContentPrintFileAdapter::class)
+            // ArrayAdapter.clear calls AbstractList.remove, which generates an UnsupportedOperationException
+            every { anyConstructed<ContentPrintFileAdapter>().clear() } just Runs
+            // ArrayAdapter.addAll calls AbstractList.add, which generates an UnsupportedOperationException
+            every { anyConstructed<ContentPrintFileAdapter>().addAll(any<Collection<ContentPrintFile>>()) } just Runs
+        }
+
+        /**
+         * UnMockK UI components that can cause errors during testing
+         */
+        fun unMockUI() {
+            unmockkStatic(ValueAnimator::class)
+            unmockkConstructor(ContentPrintFileAdapter::class)
         }
 
         /**

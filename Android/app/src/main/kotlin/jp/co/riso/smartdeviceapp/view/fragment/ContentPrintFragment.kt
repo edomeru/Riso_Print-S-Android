@@ -180,14 +180,16 @@ open class ContentPrintFragment : BaseFragment(),
     }
 
     override fun onBounceBackHeader(duration: Int) {
-        val params = _emptyListText!!.layoutParams as FrameLayout.LayoutParams?
-        val animation = ValueAnimator.ofInt(params!!.topMargin, 0)
-        animation.addUpdateListener { valueAnimator ->
-            params.topMargin = (valueAnimator.animatedValue as Int?)!!
-            _emptyListText?.requestLayout()
+        if (_emptyListText != null) {
+            val params = _emptyListText!!.layoutParams as FrameLayout.LayoutParams?
+            val animation = ValueAnimator.ofInt(params!!.topMargin, 0)
+            animation.addUpdateListener { valueAnimator ->
+                params.topMargin = (valueAnimator.animatedValue as Int?)!!
+                _emptyListText?.requestLayout()
+            }
+            animation.duration = duration.toLong()
+            animation.start()
         }
-        animation.duration = duration.toLong()
-        animation.start()
     }
 
     // ================================================================================
@@ -346,14 +348,11 @@ open class ContentPrintFragment : BaseFragment(),
     // INTERFACE - ConfirmDialogFragment.ConfirmDialogListener
     // ================================================================================
     override fun onConfirm() {
-        when (_lastConfirmation) {
-            Confirmation.LOGOUT -> {
-                _contentPrintManager?.logout(this)
-            }
-            Confirmation.PREVIEW -> {
-                if (ContentPrintManager.selectedFile != null) {
-                    _contentPrintManager?.downloadFile(ContentPrintManager.selectedFile!!, this)
-                }
+        if (_lastConfirmation == Confirmation.LOGOUT) {
+            _contentPrintManager?.logout(this)
+        } else { // _lastConfirmation == Confirmation.PREVIEW
+            if (ContentPrintManager.selectedFile != null) {
+                _contentPrintManager?.downloadFile(ContentPrintManager.selectedFile!!, this)
             }
         }
     }
@@ -487,6 +486,7 @@ open class ContentPrintFragment : BaseFragment(),
         )
         DialogUtils.displayDialog(requireActivity(), KEY_CONTENT_PRINT_LOGOUT_DIALOG, confirm)
     }
+
     private fun showContentPrintConfirmDialog() {
         val confirm = ConfirmDialogFragment.newInstance(
             resources.getString(R.string.ids_info_msg_confirm_preview_title),

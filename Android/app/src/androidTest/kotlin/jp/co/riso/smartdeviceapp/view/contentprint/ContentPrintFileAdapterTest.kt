@@ -116,6 +116,9 @@ class ContentPrintFileAdapterTest {
         val adapter = ContentPrintFileAdapter(_context, layoutId, values)
 
         val testViewHolder = TestViewHolder()
+        val mockImageView = mockk<ImageView>()
+        every { mockImageView.setImageBitmap(any()) } just Runs
+        testViewHolder.imageView = mockImageView
         val viewHolder = mockViewHolder(testViewHolder)
         val convertView = mockView()
         val contentPrintFile = ContentPrintFile(0, TEST_FILE_NAME, null)
@@ -232,7 +235,7 @@ class ContentPrintFileAdapterTest {
             return mockViewHolder
         }
 
-        private fun mockView(): View {
+        fun mockView(): View {
             val mockView = mockk<View>()
             val testViewHolder = TestViewHolder()
             val mockViewHolder = mockViewHolder(testViewHolder)
