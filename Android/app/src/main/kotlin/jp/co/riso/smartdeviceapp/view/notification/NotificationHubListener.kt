@@ -9,6 +9,7 @@ package jp.co.riso.smartdeviceapp.view.notification
 
 import android.Manifest.permission.POST_NOTIFICATIONS
 import android.app.Activity
+import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
@@ -135,9 +136,13 @@ class NotificationHubListener: NotificationListener {
                         }
                     }
 
-                    notify(notificationId, builder.build())
+                    notify(notificationId, getNotification(builder))
                 }
             }
+        }
+
+        fun getNotification(builder: NotificationCompat.Builder) : Notification {
+            return builder.build()
         }
     }
 }

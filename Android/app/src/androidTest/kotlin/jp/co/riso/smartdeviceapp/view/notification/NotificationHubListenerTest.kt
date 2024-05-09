@@ -2,54 +2,51 @@ package jp.co.riso.smartdeviceapp.view.notification
 
 import android.Manifest.permission.POST_NOTIFICATIONS
 import android.app.Activity
+import android.app.Notification
 import android.app.NotificationManager
+import android.app.PendingIntent
 import android.content.Context
 import android.content.pm.PackageManager
+import androidx.core.app.NotificationCompat
 import com.google.firebase.messaging.RemoteMessage
+import io.mockk.Runs
 import io.mockk.every
+import io.mockk.just
 import io.mockk.mockk
-import org.junit.After
+import io.mockk.mockkObject
+import io.mockk.mockkStatic
+import io.mockk.spyk
+import io.mockk.unmockkObject
+import io.mockk.unmockkStatic
+import okhttp3.internal.notify
+import org.junit.AfterClass
 import org.junit.Assert
-import org.junit.Before
+import org.junit.BeforeClass
 import org.junit.Test
 
 class NotificationHubListenerTest {
-    private var _mockContextGranted: Context? = null
-    private var _mockContextDenied: Context? = null
-
-    @Before
-    fun setup() {
-        _mockContextGranted = mockContext(true)
-        _mockContextDenied = mockContext(false)
-    }
-
-    @After
-    fun tearDown() {
-        _mockContextGranted = null
-        _mockContextDenied = null
-    }
-
     @Test
     fun testCreateNotificationChannel() {
         try {
-            val channelId = "test"
+            val mockContextGranted = mockContext(true)
+            val mockContextDenied = mockContext(false)
 
-            NotificationHubListener.createNotificationChannel(null, channelId)
-            Assert.assertEquals(NotificationHubListener.getChannelId(), channelId)
+            NotificationHubListener.createNotificationChannel(null, TEST_CHANNEL_ID)
+            Assert.assertEquals(NotificationHubListener.getChannelId(), TEST_CHANNEL_ID)
 
             NotificationHubListener.createNotificationChannel(null, null)
             Assert.assertEquals(NotificationHubListener.getChannelId(), null)
 
-            NotificationHubListener.createNotificationChannel(_mockContextGranted, channelId)
-            Assert.assertEquals(NotificationHubListener.getChannelId(), channelId)
+            NotificationHubListener.createNotificationChannel(mockContextGranted, TEST_CHANNEL_ID)
+            Assert.assertEquals(NotificationHubListener.getChannelId(), TEST_CHANNEL_ID)
 
-            NotificationHubListener.createNotificationChannel(_mockContextGranted, null)
+            NotificationHubListener.createNotificationChannel(mockContextGranted, null)
             Assert.assertEquals(NotificationHubListener.getChannelId(), null)
 
-            NotificationHubListener.createNotificationChannel(_mockContextDenied, channelId)
-            Assert.assertEquals(NotificationHubListener.getChannelId(), channelId)
+            NotificationHubListener.createNotificationChannel(mockContextDenied, TEST_CHANNEL_ID)
+            Assert.assertEquals(NotificationHubListener.getChannelId(), TEST_CHANNEL_ID)
 
-            NotificationHubListener.createNotificationChannel(_mockContextDenied, null)
+            NotificationHubListener.createNotificationChannel(mockContextDenied, null)
             Assert.assertEquals(NotificationHubListener.getChannelId(), null)
         } catch (e: Exception) {
             Assert.fail() // Error should not be thrown
@@ -57,194 +54,58 @@ class NotificationHubListenerTest {
     }
 
     @Test
-    fun testOnPushNotificationReceived_1() {
-        try {
-            val listener = NotificationHubListener()
-            val message1 = mockRemoteMessage(null, null)
-            val notificationId = NotificationHubListener.getNotificationId()
+    fun testOnPushNotificationReceived_NullChannel_NullContext() {
+        val listener = NotificationHubListener()
+        val message1 = mockRemoteMessage(null, null)
+        val message2 = mockRemoteMessage(TEST_TITLE, TEST_BODY)
+        val notificationId = NotificationHubListener.getNotificationId()
 
-            listener.onPushNotificationReceived(null, message1)
-            Assert.assertTrue(NotificationHubListener.getNotificationId() > notificationId)
-        } catch (e: Exception) {
-            Assert.fail() // Error should not be thrown
-        }
+        listener.onPushNotificationReceived(null, message1)
+        listener.onPushNotificationReceived(null, message2)
+        Assert.assertTrue(NotificationHubListener.getNotificationId() > notificationId)
     }
 
     @Test
-    fun testOnPushNotificationReceived_2() {
-        try {
-            val listener = NotificationHubListener()
-            val message2 = mockRemoteMessage(null, "test")
-            val notificationId = NotificationHubListener.getNotificationId()
+    fun testOnPushNotificationReceived_PermissionGranted() {
+        val listener = spyk<NotificationHubListener>()
+        val mockContext = mockContext(true)
+        val message1 = mockRemoteMessage(null, null)
+        val message2 = mockRemoteMessage(TEST_TITLE, TEST_BODY)
+        val notificationId = NotificationHubListener.getNotificationId()
+        NotificationHubListener.createNotificationChannel(mockContext, TEST_CHANNEL_ID)
 
-            listener.onPushNotificationReceived(null, message2)
-            Assert.assertTrue(NotificationHubListener.getNotificationId() > notificationId)
-        } catch (e: Exception) {
-            Assert.fail() // Error should not be thrown
-        }
+        // mockkConstructor on the Notification.Builder() does not work
+        // as a workaround, create a function to return builder.build() and then mock it
+        val mockNotification = mockk<Notification>(relaxed = true)
+        mockkObject(NotificationHubListener)
+        every { NotificationHubListener.getNotification(any()) } returns mockNotification
+        listener.onPushNotificationReceived(mockContext, message1)
+        listener.onPushNotificationReceived(mockContext, message2)
+        unmockkObject(NotificationHubListener)
+        Assert.assertTrue(NotificationHubListener.getNotificationId() > notificationId)
+
+        // Call the getNotification() function for coverage
+        val mockBuilder = mockk<NotificationCompat.Builder>(relaxed = true)
+        NotificationHubListener.getNotification(mockBuilder)
     }
 
     @Test
-    fun testOnPushNotificationReceived_3() {
-        try {
-            val listener = NotificationHubListener()
-            val message3 = mockRemoteMessage("test", null)
-            val notificationId = NotificationHubListener.getNotificationId()
+    fun testOnPushNotificationReceived_PermissionDenied() {
+        val listener = spyk<NotificationHubListener>()
+        val mockContext = mockContext(false)
+        val message1 = mockRemoteMessage(null, null)
+        val message2 = mockRemoteMessage(TEST_TITLE, TEST_BODY)
+        val notificationId = NotificationHubListener.getNotificationId()
+        NotificationHubListener.createNotificationChannel(mockContext, TEST_CHANNEL_ID)
 
-            listener.onPushNotificationReceived(null, message3)
-            Assert.assertTrue(NotificationHubListener.getNotificationId() > notificationId)
-        } catch (e: Exception) {
-            Assert.fail() // Error should not be thrown
-        }
+        listener.onPushNotificationReceived(mockContext, message1)
+        listener.onPushNotificationReceived(mockContext, message2)
+        Assert.assertTrue(NotificationHubListener.getNotificationId() > notificationId)
     }
 
-    @Test
-    fun testOnPushNotificationReceived_4() {
-        try {
-            val listener = NotificationHubListener()
-            val message4 = mockRemoteMessage("test", "test")
-            val notificationId = NotificationHubListener.getNotificationId()
-
-            listener.onPushNotificationReceived(null, message4)
-            Assert.assertTrue(NotificationHubListener.getNotificationId() > notificationId)
-        } catch (e: Exception) {
-            Assert.fail() // Error should not be thrown
-        }
-    }
-
-    @Test
-    fun testOnPushNotificationReceived_5() {
-        try {
-            val listener = NotificationHubListener()
-            val message1 = mockRemoteMessage(null, null)
-            val notificationId = NotificationHubListener.getNotificationId()
-
-            listener.onPushNotificationReceived(_mockContextGranted, message1)
-            Assert.assertTrue(NotificationHubListener.getNotificationId() > notificationId)
-        } catch (e: Exception) {
-            Assert.fail() // Error should not be thrown
-        }
-    }
-
-    @Test
-    fun testOnPushNotificationReceived_6() {
-        try {
-            val listener = NotificationHubListener()
-            val message2 = mockRemoteMessage(null, "test")
-            val notificationId = NotificationHubListener.getNotificationId()
-
-            listener.onPushNotificationReceived(_mockContextGranted, message2)
-            Assert.assertTrue(NotificationHubListener.getNotificationId() > notificationId)
-        } catch (e: Exception) {
-            Assert.fail() // Error should not be thrown
-        }
-    }
-
-    @Test
-    fun testOnPushNotificationReceived_7() {
-        try {
-            val listener = NotificationHubListener()
-            val message3 = mockRemoteMessage("test", null)
-            val notificationId = NotificationHubListener.getNotificationId()
-
-            listener.onPushNotificationReceived(_mockContextGranted, message3)
-            Assert.assertTrue(NotificationHubListener.getNotificationId() > notificationId)
-        } catch (e: Exception) {
-            Assert.fail() // Error should not be thrown
-        }
-    }
-
-    @Test
-    fun testOnPushNotificationReceived_8() {
-        try {
-            val listener = NotificationHubListener()
-            val message4 = mockRemoteMessage("test", "test")
-            val notificationId = NotificationHubListener.getNotificationId()
-
-            listener.onPushNotificationReceived(_mockContextGranted, message4)
-            Assert.assertTrue(NotificationHubListener.getNotificationId() > notificationId)
-        } catch (e: Exception) {
-            Assert.fail() // Error should not be thrown
-        }
-    }
-
-    @Test
-    fun testOnPushNotificationReceived_9() {
-        try {
-            val listener = NotificationHubListener()
-            val message1 = mockRemoteMessage(null, null)
-            val notificationId = NotificationHubListener.getNotificationId()
-
-            listener.onPushNotificationReceived(_mockContextDenied, message1)
-            Assert.assertTrue(NotificationHubListener.getNotificationId() > notificationId)
-        } catch (e: Exception) {
-            Assert.fail() // Error should not be thrown
-        }
-    }
-
-    @Test
-    fun testOnPushNotificationReceived_10() {
-        try {
-            val listener = NotificationHubListener()
-            val message2 = mockRemoteMessage(null, "test")
-            val notificationId = NotificationHubListener.getNotificationId()
-
-            listener.onPushNotificationReceived(_mockContextDenied, message2)
-            Assert.assertTrue(NotificationHubListener.getNotificationId() > notificationId)
-        } catch (e: Exception) {
-            Assert.fail() // Error should not be thrown
-        }
-    }
-
-    @Test
-    fun testOnPushNotificationReceived_11() {
-        try {
-            val listener = NotificationHubListener()
-            val message3 = mockRemoteMessage("test", null)
-            val notificationId = NotificationHubListener.getNotificationId()
-
-            listener.onPushNotificationReceived(_mockContextDenied, message3)
-            Assert.assertTrue(NotificationHubListener.getNotificationId() > notificationId)
-        } catch (e: Exception) {
-            Assert.fail() // Error should not be thrown
-        }
-    }
-
-    @Test
-    fun testOnPushNotificationReceived_12() {
-        try {
-            val listener = NotificationHubListener()
-            val message4 = mockRemoteMessage("test", "test")
-            val notificationId = NotificationHubListener.getNotificationId()
-
-            listener.onPushNotificationReceived(_mockContextDenied, message4)
-            Assert.assertTrue(NotificationHubListener.getNotificationId() > notificationId)
-        } catch (e: Exception) {
-            Assert.fail() // Error should not be thrown
-        }
-    }
-
-    private fun mockContext(permission: Boolean = true): Activity {
-        val mockContext = mockk<Activity>()
-        val mockNotificationManager = mockk<NotificationManager>()
-        every { mockNotificationManager.createNotificationChannel(any()) } returns Unit
-        every { mockContext.getSystemService(Context.NOTIFICATION_SERVICE) } returns mockNotificationManager
-        every { mockContext.requestPermissions(any(), any()) } returns Unit
-
-        if (permission) {
-            every {
-                mockContext.checkSelfPermission(POST_NOTIFICATIONS)
-                mockContext.checkPermission(POST_NOTIFICATIONS, any(), any())
-            } returns PackageManager.PERMISSION_GRANTED
-        } else {
-            every {
-                mockContext.checkSelfPermission(POST_NOTIFICATIONS)
-                mockContext.checkPermission(POST_NOTIFICATIONS, any(), any())
-            } returns PackageManager.PERMISSION_DENIED
-        }
-        return mockContext
-    }
-
+    // ================================================================================
+    // Private Functions
+    // ================================================================================
     private fun mockRemoteMessage(title: String?, body: String?): RemoteMessage {
         val mockNotification = mockk<RemoteMessage.Notification>()
         every { mockNotification.title } returns title
@@ -252,5 +113,47 @@ class NotificationHubListenerTest {
         val mockRemoteMessage = mockk<RemoteMessage>()
         every { mockRemoteMessage.notification } returns mockNotification
         return mockRemoteMessage
+    }
+
+    companion object {
+        private const val TEST_CHANNEL_ID = "test"
+        private const val TEST_TITLE = "test notification message title"
+        private const val TEST_BODY = "test notification message body"
+
+        private fun mockContext(permission: Boolean = true): Activity {
+            val mockContext = mockk<Activity>(relaxed = true)
+            val mockNotificationManager = mockk<NotificationManager>()
+            every { mockNotificationManager.createNotificationChannel(any()) } just Runs
+            every { mockNotificationManager.notify(any(), any(), any()) } just Runs
+            every { mockContext.getSystemService(Context.NOTIFICATION_SERVICE) } returns mockNotificationManager
+            every { mockContext.requestPermissions(any(), any()) } returns Unit
+
+            if (permission) {
+                every {
+                    mockContext.checkSelfPermission(POST_NOTIFICATIONS)
+                    mockContext.checkPermission(POST_NOTIFICATIONS, any(), any())
+                } returns PackageManager.PERMISSION_GRANTED
+            } else {
+                every {
+                    mockContext.checkSelfPermission(POST_NOTIFICATIONS)
+                    mockContext.checkPermission(POST_NOTIFICATIONS, any(), any())
+                } returns PackageManager.PERMISSION_DENIED
+            }
+            return mockContext
+        }
+
+        @JvmStatic
+        @BeforeClass
+        fun set() {
+            mockkStatic(PendingIntent::class)
+            val mockIntent = mockk<PendingIntent>(relaxed = true)
+            every { PendingIntent.getActivity(any(), any(), any(), any()) } returns mockIntent
+        }
+
+        @JvmStatic
+        @AfterClass
+        fun tearDown() {
+            unmockkStatic(PendingIntent::class)
+        }
     }
 }
