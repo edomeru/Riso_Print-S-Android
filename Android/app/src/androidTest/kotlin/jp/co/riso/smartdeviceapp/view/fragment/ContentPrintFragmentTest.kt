@@ -221,26 +221,28 @@ class ContentPrintFragmentTest {
     // ================================================================================
     @Test
     fun testOnAuthenticationFinished_NotLoggedIn() {
+        ContentPrintManager.isLoggedIn = false
         val fragment = spyk<ContentPrintFragment>()
         addActivity(fragment)
         ContentPrintFragment.lastAuthentication = ContentPrintFragment.Authentication.LOGIN
-        ContentPrintManager.isLoggedIn = false
         fragment.onAuthenticationFinished()
-        val view = mockk<View>(relaxed = true)
-        every { view.findViewById<ViewGroup>(R.id.rightActionLayout) } returns null
+        val mockView = mockView()
+        fragment.initializeCustomActionBar(mockView, null)
         fragment.onAuthenticationFinished()
     }
 
     @Test
     fun testOnAuthenticationFinished_LoggedIn() {
+        ContentPrintManager.isLoggedIn = true
         val fragment = spyk<ContentPrintFragment>()
         addActivity(fragment)
         ContentPrintFragment.lastAuthentication = ContentPrintFragment.Authentication.LOGOUT
-        ContentPrintManager.isLoggedIn = true
         ContentPrintManager.filenameFromNotification = TEST_FILE_NAME
         fragment.onAuthenticationFinished()
-        val view = mockView()
-        fragment.initializeCustomActionBar(view, null)
+        fragment.initializeFragment(null)
+        fragment.onAuthenticationFinished()
+        ContentPrintFragment.lastAuthentication = ContentPrintFragment.Authentication.LOGIN
+        ContentPrintManager.filenameFromNotification = null
         fragment.onAuthenticationFinished()
     }
 
@@ -303,21 +305,17 @@ class ContentPrintFragmentTest {
     // Tests - onStartFileDownload
     // ================================================================================
     @Test
-    fun testOnStartFileDownload_WithoutResources() {
-        val fragment = spyk<ContentPrintFragment>()
-        addActivity(fragment, true)
-        fragment.onStartFileDownload()
-        val context = mockContext()
-        every { fragment.context } returns context
-        fragment.onStartFileDownload()
-    }
-
-    @Test
-    fun testOnStartFileDownload_WithResources() {
+    fun testOnStartFileDownload() {
+        ContentPrintManager.isLoggedIn = false
         val fragment = spyk<ContentPrintFragment>()
         addActivity(fragment, true)
         val context = MockTestUtil.mockContext()
         every { fragment.context } returns context
+        fragment.onStartFileDownload()
+        ContentPrintManager.isLoggedIn = false
+        fragment.onFileListUpdated(false)
+        fragment.onFileListUpdated(false)
+        fragment.onStartFileDownload()
         fragment.onStartFileDownload()
     }
 

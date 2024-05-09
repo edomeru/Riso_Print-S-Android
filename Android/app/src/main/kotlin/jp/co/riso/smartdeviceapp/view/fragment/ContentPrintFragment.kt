@@ -508,7 +508,7 @@ open class ContentPrintFragment : BaseFragment(),
         if (_downloadingDialog == null) {
             _downloadingDialog = WaitingDialogFragment.newInstance(
                 null,
-                context?.resources?.getString(R.string.ids_info_msg_downloading),
+                resources.getString(R.string.ids_info_msg_downloading),
                 false,
                 null,
                 TAG_DOWNLOADING_DIALOG
@@ -533,8 +533,8 @@ open class ContentPrintFragment : BaseFragment(),
             requireActivity(),
             KEY_CONTENT_PRINT_LOGIN_ERROR_DIALOG,
             InfoDialogFragment.newInstance(
-                context?.resources?.getString(R.string.ids_err_msg_login_failed),
-                context?.resources?.getString(R.string.ids_lbl_ok)
+                resources.getString(R.string.ids_err_msg_login_failed),
+                resources.getString(R.string.ids_lbl_ok)
             )
         )
     }
@@ -544,9 +544,9 @@ open class ContentPrintFragment : BaseFragment(),
             requireActivity(),
             KEY_CONTENT_PRINT_DOWNLOAD_ERROR_DIALOG,
             InfoDialogFragment.newInstance(
-                context?.resources?.getString(R.string.ids_lbl_content_print),
-                context?.resources?.getString(R.string.ids_err_msg_download_failed),
-                context?.resources?.getString(R.string.ids_lbl_ok)
+                resources.getString(R.string.ids_lbl_content_print),
+                resources.getString(R.string.ids_err_msg_download_failed),
+                resources.getString(R.string.ids_lbl_ok)
             )
         )
     }
