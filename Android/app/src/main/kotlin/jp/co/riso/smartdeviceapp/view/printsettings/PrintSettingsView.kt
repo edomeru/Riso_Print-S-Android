@@ -287,15 +287,13 @@ class PrintSettingsView @JvmOverloads constructor(
             }
         }
         // Content Print - START
-        if ((ContentPrintManager.isBoxRegistrationMode && (cdsPrinter?.isPrinterFTorCEREZONA_S == true || cdsPrinter?.isPrinterGLorOGA == true)) ||
-            (!ContentPrintManager.isBoxRegistrationMode && (printer!!.isPrinterFTorCEREZONA_S || printer!!.isPrinterGLorOGA))) {
+        if (isPrinterFTorCEREZONA() || isPrinterGLorOGA()) {
         // Content Print - END
             /* Specify the input tray and paper size arrays to be used */
             val inputTrayOptions: Array<InputTrayFtGlCerezonaSOga>
             val paperSizeOptions: Array<PaperSize>
             // Content Print - START
-            if ((ContentPrintManager.isBoxRegistrationMode && cdsPrinter?.isPrinterFTorCEREZONA_S == true) ||
-                (!ContentPrintManager.isBoxRegistrationMode && printer!!.isPrinterFTorCEREZONA_S)) {
+            if (isPrinterFTorCEREZONA()) {
             // Content Print - END
                 inputTrayOptions = valuesFtCerezonaS()
                 paperSizeOptions = valuesDefault()
@@ -319,7 +317,7 @@ class PrintSettingsView @JvmOverloads constructor(
                 return when (inputTrayOptions[value]) {
                     InputTrayFtGlCerezonaSOga.AUTO, InputTrayFtGlCerezonaSOga.STANDARD, InputTrayFtGlCerezonaSOga.TRAY1, InputTrayFtGlCerezonaSOga.TRAY2 -> true
                     // Content Print - START
-                    InputTrayFtGlCerezonaSOga.TRAY3 -> if (ContentPrintManager.isBoxRegistrationMode) cdsPrinter?.isPrinterGLorOGA == true else printer!!.isPrinterGLorOGA
+                    InputTrayFtGlCerezonaSOga.TRAY3 -> isPrinterGLorOGA()
                     // Content Print - END
                     InputTrayFtGlCerezonaSOga.EXTERNAL_FEEDER -> isPaperSupported
                 }
@@ -327,6 +325,27 @@ class PrintSettingsView @JvmOverloads constructor(
         }
         return true
     }
+
+    // Content Print - START
+    /**
+     * @brief Gets whether or not the selected printer is FT or CEREZONA
+     *
+     * @return whether or not the selected printer is FT or CEREZONA
+     */
+    private fun isPrinterFTorCEREZONA(): Boolean {
+        return if (ContentPrintManager.isBoxRegistrationMode) cdsPrinter?.isPrinterFTorCEREZONA_S == true else printer!!.isPrinterFTorCEREZONA_S
+
+    }
+
+    /**
+     * @brief Gets whether or not the selected printer is GL or OGA
+     *
+     * @return whether or not the selected printer is GL or OGA
+     */
+    private fun isPrinterGLorOGA(): Boolean {
+        return if (ContentPrintManager.isBoxRegistrationMode) cdsPrinter?.isPrinterGLorOGA == true else printer!!.isPrinterGLorOGA
+    }
+    // Content Print - END
 
     /**
      * @brief Gets the default value of a setting.
@@ -617,15 +636,13 @@ class PrintSettingsView @JvmOverloads constructor(
             }
         }
         // Content Print - START
-        if ((ContentPrintManager.isBoxRegistrationMode && (cdsPrinter?.isPrinterFTorCEREZONA_S == true || cdsPrinter?.isPrinterGLorOGA == true)) ||
-           (!ContentPrintManager.isBoxRegistrationMode && (printer!!.isPrinterFTorCEREZONA_S || printer!!.isPrinterGLorOGA))) {
+        if (isPrinterFTorCEREZONA() || isPrinterGLorOGA()) {
         // Content Print - END
             /* Specify the input tray and paper size arrays to be used */
             val inputTrayOptions: Array<InputTrayFtGlCerezonaSOga>
             val paperSizeOptions: Array<PaperSize>
             // Content Print - START
-            if ((ContentPrintManager.isBoxRegistrationMode && cdsPrinter?.isPrinterFTorCEREZONA_S == true) ||
-                (!ContentPrintManager.isBoxRegistrationMode && printer!!.isPrinterFTorCEREZONA_S)) {
+            if (isPrinterFTorCEREZONA()) {
             // Content Print - END
                 inputTrayOptions = valuesFtCerezonaS()
                 paperSizeOptions = valuesDefault()
@@ -676,13 +693,13 @@ class PrintSettingsView @JvmOverloads constructor(
         ipAddressTextView.visibility = GONE
 
         // Content Print - START
-        val targetPrinter = if (ContentPrintManager.isBoxRegistrationMode) cdsPrinter else printer
+        val targetPrinter: Any? = if (ContentPrintManager.isBoxRegistrationMode) cdsPrinter else printer
         // Content Print - END
         if (targetPrinter == null) {
             nameTextView.setText(string.ids_lbl_choose_printer)
         } else {
             // Content Print - START
-            var printerName = if (ContentPrintManager.isBoxRegistrationMode) cdsPrinter?.model else printer?.name
+            var printerName = if (ContentPrintManager.isBoxRegistrationMode) cdsPrinter!!.model else printer!!.name
             // Content Print - END
             if (printerName!!.isEmpty()) {
                 printerName = context.resources.getString(string.ids_lbl_no_name)
@@ -690,7 +707,7 @@ class PrintSettingsView @JvmOverloads constructor(
             nameTextView.text = printerName
             ipAddressTextView.visibility = VISIBLE
             // Content Print - START
-            ipAddressTextView.text = if (ContentPrintManager.isBoxRegistrationMode) cdsPrinter?.printerName else printer?.ipAddress
+            ipAddressTextView.text = if (ContentPrintManager.isBoxRegistrationMode) cdsPrinter!!.printerName else printer!!.ipAddress
             // Content Print - END
             height = resources.getDimensionPixelSize(R.dimen.printsettings_option_with_sub_height)
         }
@@ -750,13 +767,15 @@ class PrintSettingsView @JvmOverloads constructor(
      */
     private fun shouldDisplayOptionFromPrinter(name: String, value: Int): Boolean {
         // Content Print - START
-        if ((ContentPrintManager.isBoxRegistrationMode && cdsPrinter != null) ||
-            (!ContentPrintManager.isBoxRegistrationMode && printer != null)) {
+        if (ContentPrintManager.isBoxRegistrationMode && cdsPrinter != null) {
             if (name == PrintSettings.TAG_PAPER_TYPE) {
-                if (ContentPrintManager.isBoxRegistrationMode && PaperType.values()[value] == PaperType.LW_PAPER) {
+                if (PaperType.values()[value] == PaperType.LW_PAPER) {
                     return cdsPrinter!!.printerCapabilities?.paperTypeLightweight == true
                 }
             }
+        }
+        if ((ContentPrintManager.isBoxRegistrationMode && cdsPrinter != null) ||
+            (!ContentPrintManager.isBoxRegistrationMode && printer != null)) {
         // Content Print - END
             if (name == PrintSettings.TAG_OUTPUT_TRAY) {
                 return when (OutputTray.values()[value]) {
@@ -788,11 +807,10 @@ class PrintSettingsView @JvmOverloads constructor(
             }
             if (name == PrintSettings.TAG_INPUT_TRAY) {
                 // Content Print - START
-                if ((ContentPrintManager.isBoxRegistrationMode && cdsPrinter?.isPrinterFTorCEREZONA_S == true) ||
-                    (!ContentPrintManager.isBoxRegistrationMode && printer!!.isPrinterFTorCEREZONA_S)) {
-                // Content Print - END
-                    return when (valuesFtCerezonaS()[value]) {
-                        // Content Print - START
+                if (isPrinterFTorCEREZONA()) {
+                    val inputTrayValue = if (ContentPrintManager.isBoxRegistrationMode)
+                        InputTrayFtGlCerezonaSOga.values()[value] else valuesFtCerezonaS()[value]
+                    return when (inputTrayValue) {
                         InputTrayFtGlCerezonaSOga.AUTO -> true
                         InputTrayFtGlCerezonaSOga.STANDARD -> if (ContentPrintManager.isBoxRegistrationMode)
                             cdsPrinter!!.printerCapabilities?.inputTrayStandard == true else true
@@ -800,8 +818,7 @@ class PrintSettingsView @JvmOverloads constructor(
                             cdsPrinter!!.printerCapabilities?.inputTrayTray1 == true else true
                         InputTrayFtGlCerezonaSOga.TRAY2 -> if (ContentPrintManager.isBoxRegistrationMode)
                             cdsPrinter!!.printerCapabilities?.inputTrayTray2 == true else true
-                        InputTrayFtGlCerezonaSOga.TRAY3 -> if (ContentPrintManager.isBoxRegistrationMode)
-                            cdsPrinter!!.printerCapabilities?.inputTrayTray3 == true else false
+                        InputTrayFtGlCerezonaSOga.TRAY3 -> cdsPrinter!!.printerCapabilities?.inputTrayTray3 == true
                         InputTrayFtGlCerezonaSOga.EXTERNAL_FEEDER -> if (ContentPrintManager.isBoxRegistrationMode)
                             cdsPrinter!!.printerCapabilities?.inputTrayExternal == true else printer!!.config!!.isExternalFeederAvailable
                         // Content Print - END
@@ -809,8 +826,7 @@ class PrintSettingsView @JvmOverloads constructor(
                     }
                 }
                 // Content Print - START
-                if ((ContentPrintManager.isBoxRegistrationMode && cdsPrinter?.isPrinterGLorOGA == true) ||
-                    (!ContentPrintManager.isBoxRegistrationMode && printer!!.isPrinterGLorOGA)) {
+                if (isPrinterGLorOGA()) {
                 // Content Print - END
                     return when (valuesGlOga()[value]) {
                         // Content Print - START
@@ -822,7 +838,7 @@ class PrintSettingsView @JvmOverloads constructor(
                         InputTrayFtGlCerezonaSOga.TRAY2 -> if (ContentPrintManager.isBoxRegistrationMode)
                             cdsPrinter!!.printerCapabilities?.inputTrayTray2 == true else true
                         InputTrayFtGlCerezonaSOga.TRAY3 -> if (ContentPrintManager.isBoxRegistrationMode)
-                            cdsPrinter!!.printerCapabilities?.inputTrayTray3 == true else printer!!.isPrinterGLorOGA
+                            cdsPrinter!!.printerCapabilities?.inputTrayTray3 == true else isPrinterGLorOGA()
                         InputTrayFtGlCerezonaSOga.EXTERNAL_FEEDER -> if (ContentPrintManager.isBoxRegistrationMode)
                             cdsPrinter!!.printerCapabilities?.inputTrayExternal == true else printer!!.config!!.isExternalFeederAvailable
                         // Content Print - END
@@ -2100,7 +2116,7 @@ class PrintSettingsView @JvmOverloads constructor(
                 val pinCodeEditText = _mainView!!.findViewById<EditText>(R.id.view_id_pin_code_edit_text)
                 val loginId = pinCodeEditText.text.toString()
                 val contentPrintManager = ContentPrintManager.getInstance()
-                contentPrintManager?.registerToBox(
+                contentPrintManager!!.registerToBox(
                     ContentPrintManager.selectedFile!!.fileId,
                     ContentPrintManager.selectedPrinter!!.serialNo!!,
                     ContentPrintPrintSettings.convertToContentPrintPrintSettings(_printSettings!!, loginId),

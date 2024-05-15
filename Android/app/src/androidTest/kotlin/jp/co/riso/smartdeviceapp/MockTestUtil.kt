@@ -10,7 +10,10 @@ import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.content.res.Resources
+import android.os.Looper
 import android.util.DisplayMetrics
+import android.view.LayoutInflater
+import android.view.ViewConfiguration
 import android.widget.ArrayAdapter
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.test.platform.app.InstrumentationRegistry
@@ -23,9 +26,13 @@ import io.mockk.mockkConstructor
 import io.mockk.mockkStatic
 import io.mockk.unmockkConstructor
 import io.mockk.unmockkStatic
+import jp.co.riso.smartdeviceapp.controller.db.DatabaseManager
 import jp.co.riso.smartdeviceapp.controller.print.ContentPrintManager
 import jp.co.riso.smartdeviceapp.model.ContentPrintFile
+import jp.co.riso.smartdeviceapp.model.printsettings.Preview
+import jp.co.riso.smartdeviceapp.model.printsettings.PrintSettings
 import jp.co.riso.smartdeviceapp.view.contentprint.ContentPrintFileAdapter
+import jp.co.riso.smartdeviceapp.view.printsettings.PrintSettingsViewTest
 import jp.co.riso.smartprint.R
 import okhttp3.ResponseBody
 import retrofit2.Call
@@ -36,6 +43,9 @@ import java.io.File
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
+/**
+ * Utility class for mocking with the MockK library
+ */
 class MockTestUtil {
     companion object {
         private const val PACKAGE_NAME = "jp.co.riso.smartprint"
@@ -53,6 +63,7 @@ class MockTestUtil {
                 "\"power_opt_check_for_network_req_enabled\": false," +
                 "\"broker_redirect_uri_registered\": false," +
                 "\"environment\": \"PreProduction\"," +
+                "\"account_mode\": \"SINGLE\"," +
                 "\"authorities\" : [ { \"type\": \"AAD\", \"audience\": {" +
                 "\"type\": \"PersonalMicrosoftAccount\" }," +
                 "\"default\": true } ] }"
@@ -169,6 +180,20 @@ class MockTestUtil {
             return mockCtx
         }
 
+        fun mockUiContext(mockInflater: LayoutInflater?): Context {
+            val mockCtx = mockk<Activity>(relaxed = true)
+            val mockResources = mockk<Resources>(relaxed = true)
+            val mockMetrics = mockk<DisplayMetrics>(relaxed = true)
+            every { mockResources.displayMetrics } returns mockMetrics
+            val mockConfig = mockk<Configuration>(relaxed = true)
+            every { mockResources.configuration } returns mockConfig
+            every { mockCtx.resources } returns mockResources
+            if (mockInflater != null) {
+                every { mockCtx.getSystemService(Context.LAYOUT_INFLATER_SERVICE) } returns mockInflater
+            }
+            return mockCtx
+        }
+
         fun mockContentPrintService(): ContentPrintManager.IContentPrintService {
             val mockService = mockk<ContentPrintManager.IContentPrintService>()
             val mockFileResult = mockk<Call<ContentPrintManager.ContentPrintFileResult>>()
@@ -205,6 +230,17 @@ class MockTestUtil {
             }
             every { ValueAnimator.ofInt(any(), any()) } returns mockAnimator
 
+            mockkStatic(ViewConfiguration::class)
+            // ViewConfiguration.get eventually calls context.config.windowConfiguration, which always returns null
+            val mockViewConfig = mockk<ViewConfiguration>(relaxed = true)
+            every { ViewConfiguration.get(any()) } returns mockViewConfig
+
+            mockkStatic(Looper::class)
+            // Looper.myLooper always returns null
+            val mockLooper = mockk<Looper>(relaxed = true)
+            every { Looper.loop() } just Runs
+            every { Looper.myLooper() } returns mockLooper
+
             mockkConstructor(ContentPrintFileAdapter::class)
             // ArrayAdapter.clear calls AbstractList.remove, which generates an UnsupportedOperationException
             every { anyConstructed<ContentPrintFileAdapter>().clear() } just Runs
@@ -217,6 +253,8 @@ class MockTestUtil {
          */
         fun unMockUI() {
             unmockkStatic(ValueAnimator::class)
+            unmockkStatic(ViewConfiguration::class)
+            unmockkStatic(Looper::class)
             unmockkConstructor(ContentPrintFileAdapter::class)
         }
 

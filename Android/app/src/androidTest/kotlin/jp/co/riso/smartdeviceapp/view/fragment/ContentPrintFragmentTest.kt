@@ -449,7 +449,6 @@ class ContentPrintFragmentTest {
         private var activity: Activity? = null
 
         private fun mockContext(): Context {
-            val mockCtx = mockk<Context>(relaxed = true)
             val mockInflater = mockk<LayoutInflater>()
             val mockImageView = mockk<ImageView>(relaxed = true)
             every { mockInflater.inflate(R.layout.actionbar_button, null )} returns mockImageView
@@ -458,8 +457,7 @@ class ContentPrintFragmentTest {
             every { mockLayout.findViewById<TextView>(R.id.buttonLabelText) } returns mockTextView
             every { mockLayout.findViewById<ImageView>(R.id.buttonImage) } returns mockImageView
             every { mockInflater.inflate(R.layout.actionbar_button_with_label, null )} returns mockLayout
-            every { mockCtx.getSystemService(Context.LAYOUT_INFLATER_SERVICE) } returns mockInflater
-            return mockCtx
+            return MockTestUtil.mockUiContext(mockInflater)
         }
 
         private fun mockView(): View {

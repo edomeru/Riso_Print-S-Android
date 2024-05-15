@@ -19,7 +19,6 @@ import android.content.pm.PackageManager
 import android.media.AudioAttributes
 import android.media.RingtoneManager
 import android.os.Build
-import android.util.Log
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
@@ -37,7 +36,6 @@ import jp.co.riso.smartprint.R
  */
 class NotificationHubListener: NotificationListener {
     override fun onPushNotificationReceived(context: Context?, message: RemoteMessage?) {
-        Log.d("TEST", "===== ON PUSH NOTIFICATION RECEIVED =====")
         val notification = message?.notification
         val title = notification?.title
         val body = notification?.body
@@ -91,7 +89,6 @@ class NotificationHubListener: NotificationListener {
         }
 
         fun displayNotification(context: Context?, title: String?, body: String?) {
-            Log.d("TEST", "===== DISPLAY NOTIFICATION =====")
             // Increment the notification ID
             notificationId += 1
 
@@ -100,8 +97,8 @@ class NotificationHubListener: NotificationListener {
                 // https://developer.android.com/develop/ui/views/notifications/build-notification#lockscreenNotification
                 val launchIntent =
                         AppUtils.createActivityIntent(context, SplashActivity::class.java)
-                launchIntent?.putExtra("body", body)
-                launchIntent?.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
+                launchIntent!!.putExtra("body", body)
+                launchIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
 
                 // https://developer.android.com/about/versions/12/behavior-changes-12#pending-intent-mutability
                 val pendingIntent = PendingIntent.getActivity(
