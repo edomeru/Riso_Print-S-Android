@@ -15,9 +15,10 @@ class ReflectionTestUtil {
         }
 
         fun setField(obj: Any, fieldName: String, fieldValue: Any?) {
-            val field = obj.javaClass.getDeclaredField(fieldName)
+            val field = if (obj is Class<*>) obj.getDeclaredField(fieldName)
+                else obj.javaClass.getDeclaredField(fieldName)
             field.isAccessible = true
-            field.set(obj, fieldValue)
+            field.set(if (obj is Class<*>) null else obj, fieldValue)
         }
 
         fun callMethod(obj: Any, methodName: String, vararg params: Param): Any? {
