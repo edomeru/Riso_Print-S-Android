@@ -516,13 +516,13 @@ class ContentPrintFragmentTest {
         }
 
         private fun mockFragmentActivity(): FragmentActivity {
-            val mockFragment = mockk<BaseActivity>(relaxed = true)
+            val mockFragmentActivity = mockk<BaseActivity>(relaxed = true)
             // Inflater for ContentPrintFileAdapter
             val mockInflater = mockk<LayoutInflater>()
             val mockView = ContentPrintFileAdapterTest.mockView()
             every { mockInflater.inflate(any<Int>(), any(), any() )} returns mockView
-            every { mockFragment.getSystemService(Context.LAYOUT_INFLATER_SERVICE) } returns mockInflater
-            return mockFragment
+            every { mockFragmentActivity.getSystemService(Context.LAYOUT_INFLATER_SERVICE) } returns mockInflater
+            return mockFragmentActivity
         }
 
         @JvmStatic

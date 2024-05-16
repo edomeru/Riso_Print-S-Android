@@ -14,7 +14,6 @@ import android.os.Looper
 import android.util.DisplayMetrics
 import android.view.LayoutInflater
 import android.view.ViewConfiguration
-import android.widget.ArrayAdapter
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.test.platform.app.InstrumentationRegistry
 import io.mockk.Runs
@@ -26,13 +25,9 @@ import io.mockk.mockkConstructor
 import io.mockk.mockkStatic
 import io.mockk.unmockkConstructor
 import io.mockk.unmockkStatic
-import jp.co.riso.smartdeviceapp.controller.db.DatabaseManager
 import jp.co.riso.smartdeviceapp.controller.print.ContentPrintManager
 import jp.co.riso.smartdeviceapp.model.ContentPrintFile
-import jp.co.riso.smartdeviceapp.model.printsettings.Preview
-import jp.co.riso.smartdeviceapp.model.printsettings.PrintSettings
 import jp.co.riso.smartdeviceapp.view.contentprint.ContentPrintFileAdapter
-import jp.co.riso.smartdeviceapp.view.printsettings.PrintSettingsViewTest
 import jp.co.riso.smartprint.R
 import okhttp3.ResponseBody
 import retrofit2.Call
