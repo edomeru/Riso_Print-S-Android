@@ -203,6 +203,21 @@ class PrintSettingsFragmentTest {
     }
 
     // ================================================================================
+    // Tests - onPrintSettingsValueChanged
+    // ================================================================================
+    @Test
+    fun testOnPrintSettingsValueChanged() {
+        val fragment = spyk<PrintSettingsFragment>()
+        addActivity(fragment)
+        val printSettings = PrintSettings(AppConstants.PRINTER_MODEL_GL)
+        fragment.setTargetFragmentPrinters()
+        fragment.setFragmentForPrinting(true)
+        fragment.onPrintSettingsValueChanged(printSettings)
+        fragment.setFragmentForPrinting(false)
+        fragment.onPrintSettingsValueChanged(printSettings)
+    }
+
+    // ================================================================================
     // Tests - onPrint
     // ================================================================================
     @Test
