@@ -1238,8 +1238,8 @@ class ContentPrintManagerTest {
         private var application: ISingleAccountPublicClientApplication? = null
         private var service: ContentPrintManager.IContentPrintService? = null
 
-        private fun mockApplication(): ISingleAccountPublicClientApplication {
-            val mockApp: ISingleAccountPublicClientApplication = mockk<ISingleAccountPublicClientApplication>()
+        fun mockApplication(): ISingleAccountPublicClientApplication {
+            val mockApp: ISingleAccountPublicClientApplication = mockk<ISingleAccountPublicClientApplication>(relaxed = true)
             val mockAccountResult = mockk<ICurrentAccountResult>()
             val mockAcc = mockAccount()
             every { mockAccountResult.currentAccount } returns mockAcc
@@ -1252,6 +1252,7 @@ class ContentPrintManagerTest {
             }
             every { mockApp.signOut() } returns true
             every { mockApp.acquireTokenSilentAsync(any()) } just Runs
+            every { mockApp.acquireToken(any()) } just Runs
             return mockApp
         }
 

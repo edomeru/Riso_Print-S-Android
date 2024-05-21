@@ -23,6 +23,7 @@ import io.mockk.mockk
 import io.mockk.spyk
 import jp.co.riso.smartdeviceapp.MockTestUtil
 import jp.co.riso.smartdeviceapp.controller.print.ContentPrintManager
+import jp.co.riso.smartdeviceapp.controller.print.ContentPrintManagerTest
 import jp.co.riso.smartdeviceapp.model.ContentPrintFile
 import jp.co.riso.smartdeviceapp.view.base.BaseActivity
 import jp.co.riso.smartdeviceapp.view.contentprint.ContentPrintFileAdapterTest
@@ -131,6 +132,7 @@ class ContentPrintFragmentTest {
         val view = mockViewWithId( R.id.menu_id_action_login_button)
         fragment.onClick(view)
         fragment.initializeFragment(null)
+        ContentPrintManager.application = ContentPrintManagerTest.mockApplication()
         fragment.onClick(view)
     }
 
@@ -533,6 +535,7 @@ class ContentPrintFragmentTest {
             MockTestUtil.mockConfiguration()
             MockTestUtil.mockUI()
             ContentPrintManager.newInstance(activity)
+            ContentPrintManager.application = ContentPrintManagerTest.mockApplication()
         }
 
         @JvmStatic
