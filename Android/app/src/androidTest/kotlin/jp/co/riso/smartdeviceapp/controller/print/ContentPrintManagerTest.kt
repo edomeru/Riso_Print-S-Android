@@ -778,6 +778,7 @@ class ContentPrintManagerTest {
         val mockService = mockk<ContentPrintManager.IContentPrintService>()
         val mockResponseResult = mockk<retrofit2.Response<ResponseBody>>()
         every { mockResponseResult.code() } returns 401
+        every { mockResponseResult.body() } returns null
         val mockResponseBody = mockk<ResponseBody>()
         every { mockResponseResult.body() } returns mockResponseBody
         coEvery { mockService.downloadFile(any()) } returns mockResponseResult
@@ -797,7 +798,9 @@ class ContentPrintManagerTest {
         every { mockResponseResult.code() } returns 200
         val mockResponseBody = mockk<ResponseBody>()
         val mockInputStream = mockk<InputStream>()
+        every { mockInputStream.read(any()) } returns -1
         every { mockResponseBody.byteStream() } returns mockInputStream
+        every { mockResponseResult.body() } returns mockResponseBody
         coEvery { mockService.downloadFile(any()) } returns mockResponseResult
         ContentPrintManager.contentPrintService = mockService
         val manager = ContentPrintManager.getInstance()
@@ -815,7 +818,9 @@ class ContentPrintManagerTest {
         every { mockResponseResult.code() } returns 200
         val mockResponseBody = mockk<ResponseBody>()
         val mockInputStream = mockk<InputStream>()
+        every { mockInputStream.read(any()) } returns -1
         every { mockResponseBody.byteStream() } returns mockInputStream
+        every { mockResponseResult.body() } returns  mockResponseBody
         coEvery { mockService.downloadFile(any()) } returns mockResponseResult
         ContentPrintManager.contentPrintService = mockService
         val manager = ContentPrintManager.getInstance()
@@ -881,6 +886,7 @@ class ContentPrintManagerTest {
         every { mockResponseResult.code() } returns 200
         val mockResponseBody = mockk<ResponseBody>()
         val mockInputStream = mockk<InputStream>()
+        every { mockInputStream.read(any()) } returns -1
         every { mockResponseBody.byteStream() } returns mockInputStream
         coEvery { mockService.downloadThumbnail(any(), any()) } returns mockResponseResult
         ContentPrintManager.contentPrintService = mockService
@@ -899,6 +905,7 @@ class ContentPrintManagerTest {
         every { mockResponseResult.code() } returns 200
         val mockResponseBody = mockk<ResponseBody>()
         val mockInputStream = mockk<InputStream>()
+        every { mockInputStream.read(any()) } returns -1
         every { mockResponseBody.byteStream() } returns mockInputStream
         coEvery { mockService.downloadThumbnail(any(), any()) } returns mockResponseResult
         ContentPrintManager.contentPrintService = mockService
@@ -1252,7 +1259,6 @@ class ContentPrintManagerTest {
             }
             every { mockApp.signOut() } returns true
             every { mockApp.acquireTokenSilentAsync(any()) } just Runs
-            every { mockApp.acquireToken(any()) } just Runs
             return mockApp
         }
 

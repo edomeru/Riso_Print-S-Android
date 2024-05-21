@@ -112,6 +112,7 @@ class ContentPrintFragmentTest {
     @Test
     fun testOnClick_BackButton_CanGoBack() {
         val fragment = spyk<ContentPrintFragment>()
+        addActivity(fragment)
         addFragmentManager(fragment, 1)
         val view = mockViewWithId(R.id.menu_id_back_button)
         fragment.onClick(view)
@@ -120,6 +121,7 @@ class ContentPrintFragmentTest {
     @Test
     fun testOnClick_BackButton_CannotGoBack() {
         val fragment = spyk<ContentPrintFragment>()
+        addActivity(fragment)
         addFragmentManager(fragment, 0)
         val view = mockViewWithId(R.id.menu_id_back_button)
         fragment.onClick(view)
@@ -128,7 +130,8 @@ class ContentPrintFragmentTest {
     @Test
     fun testOnClick_LoginButton() {
         ContentPrintManager.isLoggedIn = false
-        val fragment = ContentPrintFragment()
+        val fragment = spyk<ContentPrintFragment>()
+        addActivity(fragment)
         val view = mockViewWithId( R.id.menu_id_action_login_button)
         fragment.onClick(view)
         fragment.initializeFragment(null)
@@ -149,7 +152,8 @@ class ContentPrintFragmentTest {
 
     @Test
     fun testOnClick_RefreshButton() {
-        val fragment = ContentPrintFragment()
+        val fragment = spyk<ContentPrintFragment>()
+        addActivity(fragment)
         val view = mockViewWithId(R.id.menu_id_action_refresh_button)
         fragment.onClick(view)
     }
@@ -157,6 +161,7 @@ class ContentPrintFragmentTest {
     @Test
     fun testOnClick_PreviousNextButtons() {
         val fragment = spyk<ContentPrintFragment>()
+        addActivity(fragment)
         val previous = mockViewWithId(R.id.previousButton)
         val next = mockViewWithId(R.id.nextButton)
         // Set 1 page
@@ -181,7 +186,8 @@ class ContentPrintFragmentTest {
 
     @Test
     fun testOnClick_Outside() {
-        val fragment = ContentPrintFragment()
+        val fragment = spyk<ContentPrintFragment>()
+        addActivity(fragment)
         val view = mockViewWithId(0)
         fragment.onClick(view)
     }
@@ -192,6 +198,7 @@ class ContentPrintFragmentTest {
     @Test
     fun testOnRefreshListener() {
         val fragment = spyk<ContentPrintFragment>()
+        addActivity(fragment)
         ContentPrintManager.isLoggedIn = false
         fragment.onRefresh()
         ContentPrintManager.isLoggedIn = true
@@ -213,6 +220,7 @@ class ContentPrintFragmentTest {
     @Test
     fun testOnAuthenticationStarted() {
         val fragment = spyk<ContentPrintFragment>()
+        addActivity(fragment)
         fragment.onAuthenticationStarted()
         initializeComponents(fragment)
         fragment.onAuthenticationStarted()
@@ -254,6 +262,7 @@ class ContentPrintFragmentTest {
     @Test
     fun testOnFileListUpdated() {
         val fragment = spyk<ContentPrintFragment>()
+        addActivity(fragment)
         ContentPrintManager.isLoggedIn = true
         ContentPrintManager.fileList = ArrayList()
         fragment.onFileListUpdated(true)
@@ -283,6 +292,7 @@ class ContentPrintFragmentTest {
     @Test
     fun testOnThumbnailDownloaded_Success() {
         val fragment = spyk<ContentPrintFragment>()
+        addActivity(fragment)
         val contentPrintFile = ContentPrintFile(0, TEST_FILE_NAME, null)
         val filePath = TEST_FILE_NAME
         val success = true
@@ -296,6 +306,7 @@ class ContentPrintFragmentTest {
     @Test
     fun testOnThumbnailDownloaded_Fail() {
         val fragment = spyk<ContentPrintFragment>()
+        addActivity(fragment)
         val contentPrintFile = ContentPrintFile(0, TEST_FILE_NAME, null)
         val filePath = TEST_FILE_NAME
         val success = false
@@ -327,6 +338,7 @@ class ContentPrintFragmentTest {
     @Test
     fun testOnFileDownloaded_Success() {
         val fragment = spyk<ContentPrintFragment>()
+        addActivity(fragment)
         val contentPrintFile = ContentPrintFile(0, TEST_FILE_NAME, null)
         val filePath = TEST_FILE_NAME
         val success = true
@@ -380,6 +392,7 @@ class ContentPrintFragmentTest {
     @Test
     fun testOnFileSelect_Null() {
         val fragment = spyk<ContentPrintFragment>()
+        addActivity(fragment)
         val result = fragment.onFileSelect(null)
         Assert.assertEquals(-1, result)
     }

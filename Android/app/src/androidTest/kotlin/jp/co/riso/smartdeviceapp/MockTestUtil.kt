@@ -81,6 +81,7 @@ class MockTestUtil {
 
         fun mockSharedPreferences(): SharedPreferences {
             val mockSharedPrefs = mockk<SharedPreferences>()
+            every { mockSharedPrefs.getBoolean(any(), any()) } returns false
             every { mockSharedPrefs.getString(any(), any()) } returns TEST_EXPIRATION
             val mockEditor = mockk<SharedPreferences.Editor>()
             every { mockSharedPrefs.edit() } returns mockEditor
