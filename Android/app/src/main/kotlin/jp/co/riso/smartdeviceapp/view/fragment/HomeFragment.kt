@@ -269,7 +269,7 @@ open class HomeFragment : BaseFragment(), View.OnClickListener, ConfirmDialogLis
     }
 
     override fun onStartFileDownload() {
-        // Do nothing
+        showLoadingPreviewDialog()
     }
 
     override fun onFileDownloaded(contentPrintFile: ContentPrintFile, filePath: String, success: Boolean) {
@@ -446,8 +446,6 @@ open class HomeFragment : BaseFragment(), View.OnClickListener, ConfirmDialogLis
     }
 
     private fun downloadFileFromNotification() {
-        showLoadingPreviewDialog()
-
         if (!ContentPrintManager.isLoggedIn) {
             _contentPrintManager?.login(activity, this)
         } else {
