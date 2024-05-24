@@ -4,6 +4,7 @@ import android.accounts.AccountManager
 import android.animation.ValueAnimator
 import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.ApplicationInfo
 import android.content.pm.PackageInfo
@@ -14,6 +15,7 @@ import android.os.Looper
 import android.util.DisplayMetrics
 import android.view.LayoutInflater
 import android.view.ViewConfiguration
+import androidx.activity.result.ActivityResultLauncher
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.test.platform.app.InstrumentationRegistry
 import io.mockk.Runs
@@ -237,6 +239,10 @@ class MockTestUtil {
             every { Looper.loop() } just Runs
             every { Looper.myLooper() } returns mockLooper
 
+            mockkConstructor(ActivityResultLauncher::class)
+            // launch generates IllegalStateException: Operation cannot be started before fragment is in created state
+            every { anyConstructed<ActivityResultLauncher<Intent>>().launch(any()) } just Runs
+
             mockkConstructor(ContentPrintFileAdapter::class)
             // ArrayAdapter.clear calls AbstractList.remove, which generates an UnsupportedOperationException
             every { anyConstructed<ContentPrintFileAdapter>().clear() } just Runs
@@ -251,6 +257,7 @@ class MockTestUtil {
             unmockkStatic(ValueAnimator::class)
             unmockkStatic(ViewConfiguration::class)
             unmockkStatic(Looper::class)
+            unmockkConstructor(ActivityResultLauncher::class)
             unmockkConstructor(ContentPrintFileAdapter::class)
         }
 

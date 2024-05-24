@@ -15,10 +15,17 @@ class ReflectionTestUtil {
         }
 
         fun setField(obj: Any, fieldName: String, fieldValue: Any?) {
-            val field = if (obj is Class<*>) obj.getDeclaredField(fieldName)
-                else obj.javaClass.getDeclaredField(fieldName)
-            field.isAccessible = true
-            field.set(if (obj is Class<*>) null else obj, fieldValue)
+            var clazz: Class<*>? = if (obj is Class<*>) obj else obj.javaClass
+            while (clazz != null) {
+                try {
+                    val field = clazz.getDeclaredField(fieldName)
+                    field.isAccessible = true
+                    field.set(if (obj is Class<*>) null else obj, fieldValue)
+                    break
+                } catch (e: NoSuchFieldException) {
+                    clazz = clazz.superclass
+                }
+            }
         }
 
         fun callMethod(obj: Any, methodName: String, vararg params: Param): Any? {
