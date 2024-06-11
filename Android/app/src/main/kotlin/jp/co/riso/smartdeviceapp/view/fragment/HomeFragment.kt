@@ -48,8 +48,10 @@ import jp.co.riso.smartdeviceapp.view.base.BaseFragment
 import jp.co.riso.smartprint.R
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.io.File
+import java.util.concurrent.TimeUnit
 
 /**
  * @class HomeFragment
@@ -450,7 +452,6 @@ open class HomeFragment : BaseFragment(), View.OnClickListener, ConfirmDialogLis
             _contentPrintManager?.login(activity, this)
         } else {
             val filename = ContentPrintManager.filenameFromNotification
-            Log.d("TEST", "Download $filename from CDS")
             _contentPrintManager?.downloadFile(filename, this)
         }
     }
@@ -458,9 +459,12 @@ open class HomeFragment : BaseFragment(), View.OnClickListener, ConfirmDialogLis
     private fun showLoadingPreviewDialog() {
         CoroutineScope(Dispatchers.Main).launch {
             if (_downloadingDialog == null) {
+                // Delay 1 second to give the loading preview dialog time to be displayed
+                delay(TimeUnit.SECONDS.toMillis(1))
+
                 _downloadingDialog = WaitingDialogFragment.newInstance(
                     null,
-                    context?.resources?.getString(R.string.ids_info_msg_downloading),
+                    resources.getString(R.string.ids_info_msg_downloading),
                     false,
                     null,
                     ContentPrintFragment.TAG_DOWNLOADING_DIALOG
@@ -492,8 +496,8 @@ open class HomeFragment : BaseFragment(), View.OnClickListener, ConfirmDialogLis
                 requireActivity(),
                 ContentPrintFragment.KEY_CONTENT_PRINT_LOGIN_ERROR_DIALOG,
                 newInstance(
-                    context?.resources?.getString(R.string.ids_err_msg_login_failed),
-                    context?.resources?.getString(R.string.ids_lbl_ok)
+                    resources.getString(R.string.ids_err_msg_login_failed),
+                    resources.getString(R.string.ids_lbl_ok)
                 )
             )
         }
@@ -505,9 +509,9 @@ open class HomeFragment : BaseFragment(), View.OnClickListener, ConfirmDialogLis
                 requireActivity(),
                 ContentPrintFragment.KEY_CONTENT_PRINT_DOWNLOAD_ERROR_DIALOG,
                 newInstance(
-                    context?.resources?.getString(R.string.ids_lbl_content_print),
-                    context?.resources?.getString(R.string.ids_err_msg_download_failed),
-                    context?.resources?.getString(R.string.ids_lbl_ok)
+                    resources.getString(R.string.ids_lbl_content_print),
+                    resources.getString(R.string.ids_err_msg_download_failed),
+                    resources.getString(R.string.ids_lbl_ok)
                 )
             )
         }
