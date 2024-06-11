@@ -30,6 +30,7 @@ import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.activityViewModels
+import androidx.preference.PreferenceManager
 import jp.co.riso.android.dialog.ConfirmDialogFragment
 import jp.co.riso.android.dialog.ConfirmDialogFragment.ConfirmDialogListener
 import jp.co.riso.android.dialog.DialogUtils.dismissDialog
@@ -45,6 +46,7 @@ import jp.co.riso.android.util.FileUtils
 import jp.co.riso.android.util.ImageUtils
 import jp.co.riso.android.util.MemoryUtils.getCacheSizeBasedOnMemoryClass
 import jp.co.riso.smartdeviceapp.AppConstants
+import jp.co.riso.smartdeviceapp.SmartDeviceApp
 import jp.co.riso.smartdeviceapp.SmartDeviceApp.Companion.appContext
 import jp.co.riso.smartdeviceapp.controller.pdf.PDFConverterManager
 import jp.co.riso.smartdeviceapp.controller.pdf.PDFConverterManagerInterface
@@ -437,9 +439,21 @@ class PrintPreviewFragment : BaseFragment(), Handler.Callback, PDFFileManagerInt
         _handler!!.sendMessage(newMessage)
 
         // Content Print - START
-        if (ContentPrintManager.isFileFromContentPrint && AppConstants.USE_PDF_ORIENTATION) {
+        if (ContentPrintManager.isFileFromContentPrint) {
+            // Save the filename to the Shared Preferences
+            val prefs = PreferenceManager.getDefaultSharedPreferences(appContext!!)
+            prefs.edit().putString(
+                AppConstants.PREF_KEY_CONTENT_PRINT_FILENAME,
+                _pdfManager!!.fileName
+            ).apply()
+
             // Update the orientation based on the document orientation during initialization
-            _printSettings!!.setValue(PrintSettings.TAG_ORIENTATION, if (_pdfManager!!.isPDFLandscape) 1 else 0)
+            if (AppConstants.USE_PDF_ORIENTATION) {
+                _printSettings!!.setValue(
+                    PrintSettings.TAG_ORIENTATION,
+                    if (_pdfManager!!.isPDFLandscape) 1 else 0
+                )
+            }
         }
         // Content Print - END
     }
@@ -883,6 +897,14 @@ class PrintPreviewFragment : BaseFragment(), Handler.Callback, PDFFileManagerInt
                     if (_filenameFromContent != null) {
                         _pdfManager!!.fileName = _filenameFromContent
                     }
+                    // Content Print - START
+                    else if (ContentPrintManager.isFileFromContentPrint) {
+                        // Get the last value of fragment for printing saved in the Shared Preferences
+                        val prefs = PreferenceManager.getDefaultSharedPreferences(appContext!!)
+                        _pdfManager!!.fileName = prefs.getString(
+                            AppConstants.PREF_KEY_CONTENT_PRINT_FILENAME, null)
+                    }
+                    // Content Print - END
                     setPrintPreviewViewDisplayed(view, true)
                     if (_shouldResetToFirstPageOnInitialize) {
                         _shouldResetToFirstPageOnInitialize = false

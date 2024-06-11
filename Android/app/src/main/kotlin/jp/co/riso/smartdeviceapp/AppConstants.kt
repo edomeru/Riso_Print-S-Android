@@ -234,6 +234,9 @@ object AppConstants {
     /// Print Settings Fragment for Printing key for saving value to shared preference
     const val PREF_KEY_FRAGMENT_FOR_PRINTING = "pref_key_fragment_for_printing"
 
+    /// Content Print Filename key for saving value to shared preference
+    const val PREF_KEY_CONTENT_PRINT_FILENAME = "pref_key_content_print_filename"
+
     /// Content Print key for saving value to intent
     const val VAL_KEY_CONTENT_PRINT = "body"
 
