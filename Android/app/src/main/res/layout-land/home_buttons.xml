@@ -132,7 +132,8 @@
                 android:layout_height="match_parent"
                 android:layout_weight="0.05"
                 android:scaleType="fitCenter"
-                android:src="@drawable/selector_home_camera"
+                android:paddingBottom="6dp"
+                android:src="@drawable/selector_home_contentprint"
                 android:tint="@color/theme_color_1"
                 android:layout_gravity="center_vertical"
                 android:importantForAccessibility="no" />

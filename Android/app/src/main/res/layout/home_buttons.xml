@@ -135,6 +135,7 @@
                 android:layout_weight="1"
                 android:importantForAccessibility="no"
                 android:scaleType="fitCenter"
+                android:paddingBottom="6dp"
                 android:src="@drawable/selector_home_contentprint"
                 android:tint="@color/theme_color_1" />
 
