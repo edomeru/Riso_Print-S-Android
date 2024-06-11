@@ -209,6 +209,8 @@ open class ContentPrintFragment : BaseFragment(),
         // UI updates should be called on the main thread,
         // in case the authentication is refreshed from the background
         CoroutineScope(Dispatchers.Main).launch {
+            // Stop the loading indicator
+            _listView?.onRefreshComplete()
             // Update the action bar
             updateActionBar()
             // Display error
@@ -365,7 +367,6 @@ open class ContentPrintFragment : BaseFragment(),
     // Private Functions
     // ================================================================================
     private fun refreshFileList() {
-        Log.d("TEST", "refreshFileList")
         ContentPrintManager.fileList = ArrayList()
         _previousButton?.visibility = View.GONE
         _pageLabel?.visibility = View.GONE
