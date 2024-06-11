@@ -15,6 +15,7 @@ import android.view.View
 import android.widget.TextView
 import androidx.core.os.bundleOf
 import androidx.fragment.app.activityViewModels
+import androidx.preference.PreferenceManager
 import jp.co.riso.android.dialog.DialogUtils.dismissDialog
 import jp.co.riso.android.dialog.DialogUtils.displayDialog
 import jp.co.riso.android.dialog.InfoDialogFragment
@@ -26,6 +27,7 @@ import jp.co.riso.android.os.pauseablehandler.PauseableHandler
 import jp.co.riso.android.os.pauseablehandler.PauseableHandlerCallback
 import jp.co.riso.android.util.AppUtils
 import jp.co.riso.android.util.NetUtils.isNetworkAvailable
+import jp.co.riso.smartdeviceapp.AppConstants
 import jp.co.riso.smartdeviceapp.SmartDeviceApp
 import jp.co.riso.smartdeviceapp.common.DirectPrintManager
 import jp.co.riso.smartdeviceapp.common.DirectPrintManager.DirectPrintCallback
@@ -92,6 +94,9 @@ class PrintSettingsFragment : BaseFragment(), PrintSettingsViewInterface, Pausea
         _printSettingsView!!.setValueChangedListener(this)
         // Content Print - START
         _printSettingsView!!.setRegisterToBoxCallback(this)
+        // Get the last value of fragment for printing saved in the Shared Preferences
+        val prefs = PreferenceManager.getDefaultSharedPreferences(requireActivity())
+        _fragmentForPrinting = prefs.getBoolean(AppConstants.PREF_KEY_FRAGMENT_FOR_PRINTING, false)
         // Content Print - END
         _printSettingsView!!.setInitialValues(_printerId, _printSettings!!)
         _printSettingsView!!.setShowPrintControls(_fragmentForPrinting)
@@ -143,6 +148,14 @@ class PrintSettingsFragment : BaseFragment(), PrintSettingsViewInterface, Pausea
      */
     fun setFragmentForPrinting(fragmentForPrinting: Boolean) {
         _fragmentForPrinting = fragmentForPrinting
+        // Content Print - START
+        // Save the fragment for printing value in the Shared Preferences
+        val prefs = PreferenceManager.getDefaultSharedPreferences(SmartDeviceApp.appContext!!)
+        prefs.edit().putBoolean(
+            AppConstants.PREF_KEY_FRAGMENT_FOR_PRINTING,
+            _fragmentForPrinting
+        ).apply()
+        // Content Print - END
     }
 
     /**

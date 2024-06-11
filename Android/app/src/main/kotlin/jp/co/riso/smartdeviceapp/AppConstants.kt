@@ -231,6 +231,9 @@ object AppConstants {
     const val CHROME_BOOK = "org.chromium.arc.device_management"
 
     // Content Print - START
+    /// Print Settings Fragment for Printing key for saving value to shared preference
+    const val PREF_KEY_FRAGMENT_FOR_PRINTING = "pref_key_fragment_for_printing"
+
     /// Content Print key for saving value to intent
     const val VAL_KEY_CONTENT_PRINT = "body"
 
