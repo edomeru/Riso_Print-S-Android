@@ -322,6 +322,8 @@ class ContentPrintManager(context: Context?) {
                 .withCallback(InteractiveAuthenticationCallback(authenticationCallback))
                 .build()
             application!!.acquireToken(params)
+        } else {
+            authenticationCallback.onAuthenticationFinished()
         }
     }
 
