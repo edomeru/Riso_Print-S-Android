@@ -109,6 +109,8 @@ class PrintPreviewFragment : BaseFragment(), Handler.Callback, PDFFileManagerInt
     private var _filenameFromContent: String? = null
     // Content Print - START
     private var _isBoxRegistrationDialog = false
+    // to prevent double tap
+    private var _lastClickTime: Long = 0
     // Content Print - END
 
     // BTS ID#20039: This flag controls if page index should reset to 1 on PDF
@@ -1038,19 +1040,26 @@ class PrintPreviewFragment : BaseFragment(), Handler.Callback, PDFFileManagerInt
     }
 
     override fun processMessage(message: Message?) {
-        val id = message!!.what
-        if (id == R.id.view_id_print_button) {
-            // Content Print - START
-            if (ContentPrintManager.isFileFromContentPrint) {
-                showBoxRegistrationConfirmDialog()
-            } else {
-                togglePrintSettingsDrawer()
-            }
+        // Content Print - START
+        if (SystemClock.elapsedRealtime() - _lastClickTime > AppConstants.DOUBLE_TAP_TIME_ELAPSED) {
+            // prevent double tap
+            _lastClickTime = SystemClock.elapsedRealtime()
             // Content Print - END
-        } else if (id == R.id.menu_id_action_button) {
-            _pauseableHandler!!.pause()
-            val activity = requireActivity() as MainActivity
-            activity.openDrawer(Gravity.LEFT)
+
+            val id = message!!.what
+            if (id == R.id.view_id_print_button) {
+                // Content Print - START
+                if (ContentPrintManager.isFileFromContentPrint) {
+                    showBoxRegistrationConfirmDialog()
+                } else {
+                    togglePrintSettingsDrawer()
+                }
+                // Content Print - END
+            } else if (id == R.id.menu_id_action_button) {
+                _pauseableHandler!!.pause()
+                val activity = requireActivity() as MainActivity
+                activity.openDrawer(Gravity.LEFT)
+            }
         }
     }
 

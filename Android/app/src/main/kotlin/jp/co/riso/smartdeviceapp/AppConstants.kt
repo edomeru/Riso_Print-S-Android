@@ -233,5 +233,8 @@ object AppConstants {
     // Content Print - START
     /// Content Print key for saving value to intent
     const val VAL_KEY_CONTENT_PRINT = "body"
+
+    // The time before tap is considered a double tap
+    const val DOUBLE_TAP_TIME_ELAPSED = 1000
     // Content Print - END
 }

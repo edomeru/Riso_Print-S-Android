@@ -11,6 +11,7 @@ import android.animation.ValueAnimator
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.os.SystemClock
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -74,6 +75,8 @@ open class ContentPrintFragment : BaseFragment(),
     private var _contentPrintManager: ContentPrintManager? = null
     private var _downloadingDialog: WaitingDialogFragment? = null
     private var _page: Int = 1
+    // to prevent double tap
+    private var _lastClickTime: Long = 0
 
     // ================================================================================
     // INTERFACE - BaseFragment
@@ -139,28 +142,37 @@ open class ContentPrintFragment : BaseFragment(),
     // ================================================================================
     override fun onClick(v: View) {
         super.onClick(v)
-        val id = v.id
-        when (id) {
-            R.id.menu_id_back_button -> {
-                val fm = parentFragmentManager
-                val ft = fm.beginTransaction()
-                if (fm.backStackEntryCount > 0) {
-                    fm.popBackStack()
-                    ft.commit()
-                    fm.executePendingTransactions()
+
+        if (SystemClock.elapsedRealtime() - _lastClickTime > AppConstants.DOUBLE_TAP_TIME_ELAPSED) {
+            // prevent double tap
+            _lastClickTime = SystemClock.elapsedRealtime()
+
+            val id = v.id
+            when (id) {
+                R.id.menu_id_back_button -> {
+                    val fm = parentFragmentManager
+                    val ft = fm.beginTransaction()
+                    if (fm.backStackEntryCount > 0) {
+                        fm.popBackStack()
+                        ft.commit()
+                        fm.executePendingTransactions()
+                    }
                 }
+
+                R.id.menu_id_action_login_button -> {
+                    lastAuthentication = Authentication.LOGIN
+                    _contentPrintManager?.login(this.activity, this)
+                }
+
+                R.id.menu_id_action_logout_button -> {
+                    lastAuthentication = Authentication.LOGOUT
+                    showLogoutConfirmDialog()
+                }
+
+                R.id.menu_id_action_refresh_button -> refreshFileList()
+                R.id.previousButton -> previousPage()
+                R.id.nextButton -> nextPage()
             }
-            R.id.menu_id_action_login_button -> {
-                lastAuthentication = Authentication.LOGIN
-                _contentPrintManager?.login(this.activity, this)
-            }
-            R.id.menu_id_action_logout_button -> {
-                lastAuthentication = Authentication.LOGOUT
-                showLogoutConfirmDialog()
-            }
-            R.id.menu_id_action_refresh_button -> refreshFileList()
-            R.id.previousButton -> previousPage()
-            R.id.nextButton -> nextPage()
         }
     }
 

@@ -9,12 +9,14 @@ package jp.co.riso.smartdeviceapp.view.contentprint
 
 import android.content.Context
 import android.graphics.BitmapFactory
+import android.os.SystemClock
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.ImageView
 import android.widget.TextView
+import jp.co.riso.smartdeviceapp.AppConstants
 import jp.co.riso.smartdeviceapp.model.ContentPrintFile
 import jp.co.riso.smartprint.R
 
@@ -26,6 +28,7 @@ class ContentPrintFileAdapter(
 ) : ArrayAdapter<ContentPrintFile>(context!!, _layoutId, values!!),
     View.OnClickListener {
     private var _adapterInterface: ContentPrintFileAdapterInterface? = null
+    private var _lastClickTime: Long = 0
 
     override fun getView(position: Int, view: View?, parent: ViewGroup): View {
         var convertView = view
@@ -131,7 +134,11 @@ class ContentPrintFileAdapter(
     // Interface View.OnClickListener
     // ================================================================================
     override fun onClick(v: View) {
-        if (v.id == R.id.content_print_row) {
+        if (v.id == R.id.content_print_row &&
+            SystemClock.elapsedRealtime() - _lastClickTime > AppConstants.DOUBLE_TAP_TIME_ELAPSED) {
+            // prevent double tap
+            _lastClickTime = SystemClock.elapsedRealtime()
+
             val viewHolder = v.tag as ViewHolder?
             val contentPrintFile = getItem(viewHolder!!.position)
 
