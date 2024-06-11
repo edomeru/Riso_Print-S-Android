@@ -459,9 +459,6 @@ open class HomeFragment : BaseFragment(), View.OnClickListener, ConfirmDialogLis
     private fun showLoadingPreviewDialog() {
         CoroutineScope(Dispatchers.Main).launch {
             if (_downloadingDialog == null) {
-                // Delay 1 second to give the loading preview dialog time to be displayed
-                delay(TimeUnit.SECONDS.toMillis(1))
-
                 _downloadingDialog = WaitingDialogFragment.newInstance(
                     null,
                     resources.getString(R.string.ids_info_msg_downloading),
@@ -481,10 +478,16 @@ open class HomeFragment : BaseFragment(), View.OnClickListener, ConfirmDialogLis
     private fun hideLoadingPreviewDialog() {
         CoroutineScope(Dispatchers.Main).launch {
             if (_downloadingDialog != null) {
-                DialogUtils.dismissDialog(
-                    requireActivity(),
-                    ContentPrintFragment.TAG_DOWNLOADING_DIALOG
-                )
+                // Delay 1 second to give the loading preview dialog time to be displayed
+                delay(TimeUnit.SECONDS.toMillis(1))
+
+                // Check if the Home Fragment is still being displayed after 1 second
+                if (isAdded) {
+                    DialogUtils.dismissDialog(
+                        requireActivity(),
+                        ContentPrintFragment.TAG_DOWNLOADING_DIALOG
+                    )
+                }
                 _downloadingDialog = null
             }
         }

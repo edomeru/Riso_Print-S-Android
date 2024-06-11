@@ -552,7 +552,10 @@ open class ContentPrintFragment : BaseFragment(),
                 // Delay 1 second to give the loading preview dialog time to be displayed
                 delay(TimeUnit.SECONDS.toMillis(1))
 
-                DialogUtils.dismissDialog(requireActivity(), TAG_DOWNLOADING_DIALOG)
+                // Check if the Content Print Fragment is still being displayed after 1 second
+                if (isAdded) {
+                    DialogUtils.dismissDialog(requireActivity(), TAG_DOWNLOADING_DIALOG)
+                }
                 _downloadingDialog = null
             }
         }
