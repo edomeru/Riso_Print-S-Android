@@ -65,6 +65,7 @@
         <item name="android:windowIsTranslucent">true</item>
         <!-- The transparent background creates a transparent display cutout if the device has a notch -->
         <!--item name="android:windowBackground">@android:color/transparent</item-->
+        <item name="android:windowLayoutInDisplayCutoutMode">shortEdges</item>
     </style>
     <!-- Content Print - END -->
 </resources>
