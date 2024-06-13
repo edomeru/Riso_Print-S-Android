@@ -193,7 +193,7 @@ class ContentPrintFragmentTest {
     }
 
     // ================================================================================
-    // Tests - OnRefreshListener
+    // Tests - onRefreshListener
     // ================================================================================
     @Test
     fun testOnRefreshListener() {

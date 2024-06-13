@@ -1,5 +1,7 @@
 package jp.co.riso.smartdeviceapp
 
+import java.lang.reflect.Method
+
 /**
  * Utility class for Java Reflection
  * Access private fields and members for testing
@@ -28,18 +30,33 @@ class ReflectionTestUtil {
             }
         }
 
+        fun callMethod(clazz: Class<*>, obj: Any, methodName: String, vararg params: Param): Any? {
+            val parameterClasses = getParameterClasses(*params)
+            val method = clazz.getDeclaredMethod(methodName, *parameterClasses)
+            return invokeMethod(obj, method, *params)
+        }
+
         fun callMethod(obj: Any, methodName: String, vararg params: Param): Any? {
-            val parameterClasses = arrayOfNulls<Class<*>>(params.size)
-            for (i in params.indices) {
-                parameterClasses[i] = params[i].clazz
-            }
+            val parameterClasses = getParameterClasses(*params)
             val method = obj.javaClass.getDeclaredMethod(methodName, *parameterClasses)
+            return invokeMethod(obj, method, *params)
+        }
+
+        private fun invokeMethod(obj: Any, method: Method, vararg params: Param): Any? {
             method.isAccessible = true
             val parameterValues = arrayOfNulls<Any>(params.size)
             for (i in params.indices) {
                 parameterValues[i] = params[i].value
             }
             return method.invoke(obj, *parameterValues)
+        }
+
+        private fun getParameterClasses(vararg params: Param): Array<Class<*>?> {
+            val parameterClasses = arrayOfNulls<Class<*>>(params.size)
+            for (i in params.indices) {
+                parameterClasses[i] = params[i].clazz
+            }
+            return parameterClasses
         }
     }
 }

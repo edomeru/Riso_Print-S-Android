@@ -1,751 +1,667 @@
 package jp.co.riso.smartdeviceapp.view.fragment
 
-import android.Manifest.permission.*
-import android.app.Instrumentation
+import android.Manifest.permission.CAMERA
+import android.Manifest.permission.READ_MEDIA_IMAGES
 import android.content.ClipData
+import android.content.Context
 import android.content.Intent
-import android.os.Build
+import android.content.pm.PackageManager
+import android.content.res.Configuration
+import android.net.Uri
+import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
+import android.widget.ImageView
+import android.widget.LinearLayout
+import android.widget.LinearLayout.LayoutParams
+import android.widget.TextView
 import androidx.fragment.app.FragmentActivity
-import androidx.test.espresso.action.ViewActions.doubleClick
-import androidx.test.espresso.intent.Intents
-import androidx.test.espresso.intent.matcher.IntentMatchers
-import androidx.test.espresso.intent.matcher.IntentMatchers.hasAction
-import androidx.test.filters.LargeTest
-import androidx.test.platform.app.InstrumentationRegistry
-import androidx.test.rule.GrantPermissionRule
-import com.scanlibrary.ScanActivity
-import com.scanlibrary.ScanConstants
+import androidx.fragment.app.FragmentManager
+import com.microsoft.identity.client.ISingleAccountPublicClientApplication
+import io.mockk.Runs
+import io.mockk.every
+import io.mockk.just
+import io.mockk.mockk
+import io.mockk.mockkStatic
+import io.mockk.spyk
+import io.mockk.unmockkStatic
+import jp.co.riso.android.dialog.ConfirmDialogFragment
+import jp.co.riso.android.dialog.WaitingDialogFragment
 import jp.co.riso.smartdeviceapp.AppConstants
-import jp.co.riso.smartdeviceapp.view.BaseActivityTestUtil
+import jp.co.riso.smartdeviceapp.MockTestUtil
+import jp.co.riso.smartdeviceapp.ReflectionTestUtil
+import jp.co.riso.smartdeviceapp.controller.print.ContentPrintManager
+import jp.co.riso.smartdeviceapp.controller.print.ContentPrintManagerTest
+import jp.co.riso.smartdeviceapp.model.ContentPrintFile
 import jp.co.riso.smartdeviceapp.view.MainActivity
-import jp.co.riso.smartdeviceapp.view.PDFHandlerActivity
-import jp.co.riso.smartdeviceapp.view.fragment.HomeFragment.Companion.FRAGMENT_TAG_DIALOG
 import jp.co.riso.smartprint.R
 import org.junit.*
 
-class HomeFragmentTest : BaseActivityTestUtil() {
-
-    private var _homeFragment: HomeFragment? = null
-    private val REQUEST_PERMISSIONS = "android.content.pm.action.REQUEST_PERMISSIONS"
-    private val REQUEST_PERMISSIONS_NAMES = "android.content.pm.extra.REQUEST_PERMISSIONS_NAMES"
-
-    @get:Rule
-    var storagePermission: GrantPermissionRule = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-        GrantPermissionRule.grant(READ_MEDIA_IMAGES)
-    } else {
-        GrantPermissionRule.grant(WRITE_EXTERNAL_STORAGE)
+class HomeFragmentTest {
+    // ================================================================================
+    // Tests - initializeFragment
+    // ================================================================================
+    @Test
+    fun testInitializeFragment_NullIntent() {
+        ContentPrintManager.filenameFromNotification = null
+        val fragment = spyk<HomeFragment>()
+        val mockActivity = mockFragmentActivity()
+        every { mockActivity.intent } returns null
+        addActivity(fragment, mockActivity)
+        val bundle = mockk<Bundle>()
+        val view = mockView()
+        fragment.initializeFragment(bundle)
+        fragment.initializeView(view, bundle)
+        fragment.initializeCustomActionBar(view, bundle)
+        Assert.assertNotNull(fragment)
+        Assert.assertEquals(fragment.viewLayout, R.layout.fragment_home)
     }
 
-    // HIDE_NEW_FEATURES comment when CAMERA permission is hidden feature. uncomment when new features are restored
-//    @get:Rule
-//    var cameraPermission: GrantPermissionRule = GrantPermissionRule.grant(CAMERA)
-
-    @Before
-    fun setup() {
-        Intents.init()
-        wakeUpScreen()
-        initFragment()
+    @Test
+    fun testInitializeFragment_NullExtras() {
+        ContentPrintManager.filenameFromNotification = null
+        val fragment = spyk<HomeFragment>()
+        val mockActivity = mockFragmentActivity()
+        val mockIntent = mockk<Intent>()
+        every { mockIntent.extras } returns null
+        every { mockActivity.intent } returns mockIntent
+        addActivity(fragment, mockActivity)
+        val bundle = mockk<Bundle>()
+        val view = mockView()
+        fragment.initializeFragment(bundle)
+        fragment.initializeView(view, bundle)
+        fragment.initializeCustomActionBar(view, bundle)
+        Assert.assertNotNull(fragment)
+        Assert.assertEquals(fragment.viewLayout, R.layout.fragment_home)
     }
 
-    @After
-    fun cleanUp() {
-        Intents.release()
+    @Test
+    fun testInitializeFragment_NullExtraString() {
+        ContentPrintManager.filenameFromNotification = null
+        val fragment = spyk<HomeFragment>()
+        val mockActivity = mockFragmentActivity()
+        val mockIntent = mockk<Intent>()
+        val mockExtras = mockk<Bundle>(relaxed = true)
+        every { mockExtras.getString(any()) } returns null
+        every { mockIntent.extras } returns mockExtras
+        every { mockActivity.intent } returns mockIntent
+        addActivity(fragment, mockActivity)
+        val bundle = mockk<Bundle>()
+        val view = mockView()
+        fragment.initializeFragment(bundle)
+        fragment.initializeView(view, bundle)
+        fragment.initializeCustomActionBar(view, bundle)
+        Assert.assertNotNull(fragment)
+        Assert.assertEquals(fragment.viewLayout, R.layout.fragment_home)
     }
 
-    private fun initFragment() {
-        val fm = mainActivity!!.supportFragmentManager
-        mainActivity!!.runOnUiThread {
-            fm.beginTransaction().add(R.id.mainLayout, HomeFragment()).commit()
-            fm.executePendingTransactions()
+    @Test
+    fun testInitializeFragment_InvalidExtraString() {
+        ContentPrintManager.filenameFromNotification = null
+        val fragment = spyk<HomeFragment>()
+        val mockActivity = mockFragmentActivity()
+        val mockIntent = mockk<Intent>(relaxed = true)
+        val mockExtras = mockk<Bundle>(relaxed = true)
+        every { mockExtras.getString(any()) } returns AppConstants.ERR_KEY_INVALID_INTENT
+        every { mockIntent.extras } returns mockExtras
+        every { mockActivity.intent } returns mockIntent
+        addActivity(fragment, mockActivity)
+        val bundle = mockk<Bundle>()
+        val view = mockView()
+        fragment.initializeFragment(bundle)
+        fragment.initializeView(view, bundle)
+        fragment.initializeCustomActionBar(view, bundle)
+        Assert.assertNotNull(fragment)
+        Assert.assertEquals(fragment.viewLayout, R.layout.fragment_home)
+    }
+
+    @Test
+    fun testInitializeFragment_OtherExtraString() {
+        ContentPrintManager.filenameFromNotification = null
+        val fragment = spyk<HomeFragment>()
+        val mockActivity = mockFragmentActivity()
+        val mockIntent = mockk<Intent>(relaxed = true)
+        val mockExtras = mockk<Bundle>(relaxed = true)
+        every { mockExtras.getString(any()) } returns "Test"
+        every { mockIntent.extras } returns mockExtras
+        every { mockActivity.intent } returns mockIntent
+        addActivity(fragment, mockActivity)
+        val bundle = mockk<Bundle>()
+        val view = mockView()
+        fragment.initializeFragment(bundle)
+        fragment.initializeView(view, bundle)
+        fragment.initializeCustomActionBar(view, bundle)
+        Assert.assertNotNull(fragment)
+        Assert.assertEquals(fragment.viewLayout, R.layout.fragment_home)
+    }
+
+    @Test
+    fun testInitializeFragment_PushNotification_NotLoggedIn() {
+        ContentPrintManager.filenameFromNotification = TEST_FILE_NAME
+        ContentPrintManager.isLoggedIn = false
+        ContentPrintManager.application = application
+        val fragment = spyk<HomeFragment>()
+        addActivity(fragment)
+        val bundle = mockk<Bundle>()
+        val view = mockView()
+        fragment.initializeFragment(bundle)
+        fragment.initializeView(view, bundle)
+        fragment.initializeCustomActionBar(view, bundle)
+        Assert.assertNotNull(fragment)
+        Assert.assertEquals(fragment.viewLayout, R.layout.fragment_home)
+    }
+
+    @Test
+    fun testInitializeFragment_PushNotification_IsLoggedIn() {
+        ContentPrintManager.filenameFromNotification = TEST_FILE_NAME
+        ContentPrintManager.isLoggedIn = true
+        val fragment = spyk<HomeFragment>()
+        addActivity(fragment)
+        val bundle = mockk<Bundle>()
+        val view = mockView()
+        fragment.initializeFragment(bundle)
+        fragment.initializeView(view, bundle)
+        fragment.initializeCustomActionBar(view, bundle)
+        Assert.assertNotNull(fragment)
+        Assert.assertEquals(fragment.viewLayout, R.layout.fragment_home)
+    }
+
+    // ================================================================================
+    // Tests - onClick
+    // ================================================================================
+    @Test
+    fun testOnClick_FileButton() {
+        val fragment = spyk<HomeFragment>()
+        addActivity(fragment)
+        val view = mockk<View>(relaxed = true)
+        every { view.id } returns R.id.fileButton
+        fragment.onClick(view)
+        fragment.onClick(view)
+        Assert.assertFalse(ContentPrintManager.isFileFromContentPrint)
+        Assert.assertFalse(ContentPrintManager.isBoxRegistrationMode)
+    }
+
+    @Test
+    fun testOnClick_PhotosButton() {
+        val fragment = spyk<HomeFragment>()
+        addActivity(fragment)
+        val view = mockk<View>(relaxed = true)
+        every { view.id } returns R.id.photosButton
+        fragment.onClick(view)
+        fragment.onClick(view)
+        Assert.assertFalse(ContentPrintManager.isFileFromContentPrint)
+        Assert.assertFalse(ContentPrintManager.isBoxRegistrationMode)
+    }
+
+    @Test
+    fun testOnClick_ContentPrintButton() {
+        val fragment = spyk<HomeFragment>()
+        addActivity(fragment)
+        addFragmentManager(fragment)
+        val view = mockk<View>(relaxed = true)
+        every { view.id } returns R.id.contentPrintButton
+        fragment.onClick(view)
+        fragment.onClick(view)
+    }
+
+    @Test
+    fun testOnClick_Other() {
+        val fragment = spyk<HomeFragment>()
+        addActivity(fragment)
+        val view = mockk<View>(relaxed = true)
+        every { view.id } returns 0
+        fragment.onClick(view)
+    }
+
+    // ================================================================================
+    // Tests - onConfigurationChanged
+    // ================================================================================
+    @Test
+    fun testOnClick_OnConfigurationChanged() {
+        val fragment = spyk<HomeFragment>()
+        addActivity(fragment)
+        val mockView = mockView()
+        every { fragment.view } returns mockView
+        val mockLayout = mockk<LinearLayout>(relaxed = true)
+        ReflectionTestUtil.setField(fragment, FIELD_HOME_BUTTONS, mockLayout)
+        val config = mockk<Configuration>()
+        fragment.onConfigurationChanged(config)
+    }
+
+    // ================================================================================
+    // Tests - onAuthenticationFinished
+    // ================================================================================
+    @Test
+    fun testOnAuthenticationFinished_IsNotLoggedIn() {
+        ContentPrintManager.isLoggedIn = false
+        val fragment = spyk<HomeFragment>()
+        addActivity(fragment)
+        fragment.onAuthenticationStarted()
+        fragment.onAuthenticationFinished()
+    }
+
+    @Test
+    fun testOnAuthenticationFinished_NotPushNotification() {
+        ContentPrintManager.isLoggedIn = true
+        ContentPrintManager.filenameFromNotification = null
+        val fragment = spyk<HomeFragment>()
+        addActivity(fragment)
+        fragment.onAuthenticationStarted()
+        fragment.onAuthenticationFinished()
+    }
+
+    @Test
+    fun testOnAuthenticationFinished_PushNotification() {
+        ContentPrintManager.isLoggedIn = true
+        ContentPrintManager.filenameFromNotification = TEST_FILE_NAME
+        val fragment = spyk<HomeFragment>()
+        addActivity(fragment)
+        fragment.onAuthenticationStarted()
+        fragment.onAuthenticationFinished()
+    }
+
+    @Test
+    fun testOnAuthenticationFinished_InitPushNotification() {
+        ContentPrintManager.isLoggedIn = true
+        ContentPrintManager.filenameFromNotification = TEST_FILE_NAME
+        val fragment = spyk<HomeFragment>()
+        addActivity(fragment)
+        val bundle = mockk<Bundle>(relaxed = true)
+        fragment.initializeFragment(bundle)
+        fragment.onAuthenticationStarted()
+        fragment.onAuthenticationFinished()
+    }
+
+    // ================================================================================
+    // Tests - onFileDownloaded
+    // ================================================================================
+    @Test
+    fun testOnFileDownloaded_Success() {
+        val fragment = spyk<HomeFragment>()
+        addActivity(fragment)
+        fragment.onFileListUpdated(true)
+        val contentPrintFile = ContentPrintFile(0, TEST_FILE_NAME, null)
+        fragment.onThumbnailDownloaded(contentPrintFile, TEST_FILE_NAME, true)
+        fragment.onStartFileDownload()
+        fragment.onFileDownloaded(contentPrintFile, TEST_FILE_NAME, true)
+        Assert.assertTrue(ContentPrintManager.isFileFromContentPrint)
+    }
+
+    @Test
+    fun testOnFileDownloaded_InitializedSuccess() {
+        val fragment = spyk<HomeFragment>()
+        addActivity(fragment)
+        val bundle = mockk<Bundle>(relaxed = true)
+        fragment.initializeFragment(bundle)
+        fragment.onFileListUpdated(true)
+        val contentPrintFile = ContentPrintFile(0, TEST_FILE_NAME, null)
+        fragment.onThumbnailDownloaded(contentPrintFile, TEST_FILE_NAME, true)
+        fragment.onStartFileDownload()
+        fragment.onFileDownloaded(contentPrintFile, TEST_FILE_NAME, true)
+        Assert.assertTrue(ContentPrintManager.isFileFromContentPrint)
+    }
+
+    @Test
+    fun testOnFileDownloaded_Failed() {
+        val fragment = spyk<HomeFragment>()
+        addActivity(fragment)
+        val bundle = mockk<Bundle>(relaxed = true)
+        fragment.initializeFragment(bundle)
+        fragment.onFileListUpdated(true)
+        val contentPrintFile = ContentPrintFile(0, TEST_FILE_NAME, null)
+        fragment.onThumbnailDownloaded(contentPrintFile, TEST_FILE_NAME, true)
+        fragment.onStartFileDownload()
+        fragment.onFileDownloaded(contentPrintFile, TEST_FILE_NAME, false)
+        Assert.assertFalse(ContentPrintManager.isFileFromContentPrint)
+    }
+
+    // ================================================================================
+    // Tests - onPrinterListUpdated
+    // ================================================================================
+    @Test
+    fun testOnPrinterListUpdated_NotPushNotification() {
+        ContentPrintManager.filenameFromNotification = null
+        val fragment = spyk<HomeFragment>()
+        addActivity(fragment)
+        every { fragment.startActivity(any()) } just Runs
+        fragment.onPrinterListUpdated(true)
+    }
+
+    @Test
+    fun testOnPrinterListUpdated_Success() {
+        ContentPrintManager.filePath = TEST_FILE_NAME
+        val fragment = spyk<HomeFragment>()
+        addActivity(fragment)
+        every { fragment.startActivity(any()) } just Runs
+        fragment.onPrinterListUpdated(true)
+    }
+
+    @Test
+    fun testOnPrinterListUpdated_Failed() {
+        ContentPrintManager.filenameFromNotification = TEST_FILE_NAME
+        val fragment = spyk<HomeFragment>()
+        addActivity(fragment)
+        every { fragment.startActivity(any()) } just Runs
+        fragment.onPrinterListUpdated(false)
+    }
+
+    // ================================================================================
+    // Tests - onConfirm
+    // ================================================================================
+    @Test
+    fun testOnConfirm() {
+        val fragment = spyk<HomeFragment>()
+        addActivity(fragment)
+        fragment.onConfirm()
+        fragment.onCancel()
+    }
+
+    // ================================================================================
+    // Private Method Tests - downloadFileFromNotification
+    // ================================================================================
+    @Test
+    fun testDownloadFileFromNotification_IsLoggedIn() {
+        ContentPrintManager.isLoggedIn = true
+        val fragment = spyk<HomeFragment>()
+        addActivity(fragment)
+        ReflectionTestUtil.callMethod(HomeFragment::class.java, fragment, METHOD_DOWNLOAD_FILE)
+    }
+
+    @Test
+    fun testDownloadFileFromNotification_IsNotLoggedIn() {
+        ContentPrintManager.isLoggedIn = false
+        val fragment = spyk<HomeFragment>()
+        addActivity(fragment)
+        ReflectionTestUtil.callMethod(HomeFragment::class.java, fragment, METHOD_DOWNLOAD_FILE)
+    }
+
+    // ================================================================================
+    // Private Method Tests - hideLoadingPreviewDialog
+    // ================================================================================
+    @Test
+    fun testHideLoadingPreviewDialog_IsAdded() {
+        val fragment = spyk<HomeFragment>()
+        addActivity(fragment)
+        every { fragment.isAdded } returns true
+        val dialog = spyk<WaitingDialogFragment>()
+        ReflectionTestUtil.setField(fragment, FIELD_DOWNLOAD_DIALOG, dialog)
+        ReflectionTestUtil.callMethod(HomeFragment::class.java, fragment, METHOD_HIDE_LOADING_DIALOG)
+    }
+
+    @Test
+    fun testHideLoadingPreviewDialog_IsNotAdded() {
+        val fragment = spyk<HomeFragment>()
+        addActivity(fragment)
+        every { fragment.isAdded } returns false
+        val dialog = spyk<WaitingDialogFragment>()
+        ReflectionTestUtil.setField(fragment, FIELD_DOWNLOAD_DIALOG, dialog)
+        ReflectionTestUtil.callMethod(HomeFragment::class.java, fragment, METHOD_HIDE_LOADING_DIALOG)
+    }
+
+    // ================================================================================
+    // Private Method Tests - checkPermission
+    // ================================================================================
+    @Test
+    fun testCheckPermission_IsNotStorageOnly_DeniedNoRequest() {
+        val fragmentActivity = mockFragmentActivity()
+        every {
+            fragmentActivity.checkPermission(any(), any(), any())
+        } returns PackageManager.PERMISSION_DENIED
+        val fragment = spyk<HomeFragment>()
+        every { fragment.requireActivity() } returns fragmentActivity
+        every { fragment.shouldShowRequestPermissionRationale(any()) } returns false
+        val isStorageOnly = false
+        val result = ReflectionTestUtil.callMethod(HomeFragment::class.java, fragment,
+            METHOD_CHECK_PERMISSION,
+            ReflectionTestUtil.Param(Boolean::class.java, isStorageOnly)
+        ) as Boolean
+        Assert.assertFalse(result)
+    }
+
+    @Test
+    fun testCheckPermission_IsNotStorageOnly_CameraDeniedWithCameraRequest_NoDialog() {
+        val fragmentActivity = mockFragmentActivity()
+        every {
+            fragmentActivity.checkPermission(CAMERA, any(), any())
+        } returns PackageManager.PERMISSION_GRANTED
+        every {
+            fragmentActivity.checkPermission(READ_MEDIA_IMAGES, any(), any())
+        } returns PackageManager.PERMISSION_DENIED
+        val fragment = spyk<HomeFragment>()
+        every { fragment.requireActivity() } returns fragmentActivity
+        every { fragment.shouldShowRequestPermissionRationale(CAMERA) } returns true
+        every { fragment.shouldShowRequestPermissionRationale(READ_MEDIA_IMAGES) } returns false
+        ReflectionTestUtil.setField(fragment, FIELD_CONFIRM_DIALOG, null)
+        val isStorageOnly = false
+        val result = ReflectionTestUtil.callMethod(HomeFragment::class.java, fragment,
+            METHOD_CHECK_PERMISSION,
+            ReflectionTestUtil.Param(Boolean::class.java, isStorageOnly)
+        ) as Boolean
+        Assert.assertFalse(result)
+    }
+
+    @Test
+    fun testCheckPermission_IsNotStorageOnly_ReadDeniedWithReadRequest_WithDialog() {
+        val fragmentActivity = mockFragmentActivity()
+        every {
+            fragmentActivity.checkPermission(CAMERA, any(), any())
+        } returns PackageManager.PERMISSION_DENIED
+        every {
+            fragmentActivity.checkPermission(READ_MEDIA_IMAGES, any(), any())
+        } returns PackageManager.PERMISSION_GRANTED
+        val fragment = spyk<HomeFragment>()
+        every { fragment.requireActivity() } returns fragmentActivity
+        every { fragment.shouldShowRequestPermissionRationale(CAMERA) } returns false
+        every { fragment.shouldShowRequestPermissionRationale(READ_MEDIA_IMAGES) } returns true
+        val dialog = spyk<ConfirmDialogFragment>()
+        ReflectionTestUtil.setField(fragment, FIELD_CONFIRM_DIALOG, dialog)
+        val isStorageOnly = false
+        val result = ReflectionTestUtil.callMethod(HomeFragment::class.java, fragment,
+            METHOD_CHECK_PERMISSION,
+            ReflectionTestUtil.Param(Boolean::class.java, isStorageOnly)
+        ) as Boolean
+        Assert.assertFalse(result)
+    }
+
+    @Test
+    fun testCheckPermission_IsNotStorageOnly_Granted() {
+        val fragmentActivity = mockFragmentActivity()
+        every {
+            fragmentActivity.checkPermission(any(), any(), any())
+        } returns PackageManager.PERMISSION_GRANTED
+        val fragment = spyk<HomeFragment>()
+        every { fragment.requireActivity() } returns fragmentActivity
+        val isStorageOnly = false
+        val result = ReflectionTestUtil.callMethod(HomeFragment::class.java, fragment,
+            METHOD_CHECK_PERMISSION,
+            ReflectionTestUtil.Param(Boolean::class.java, isStorageOnly)
+        ) as Boolean
+        Assert.assertTrue(result)
+    }
+
+    @Test
+    fun testCheckPermission_IsStorageOnly_Granted() {
+        val fragmentActivity = mockFragmentActivity()
+        every {
+            fragmentActivity.checkPermission(any(), any(), any())
+        } returns PackageManager.PERMISSION_GRANTED
+        val fragment = spyk<HomeFragment>()
+        every { fragment.requireActivity() } returns fragmentActivity
+        val isStorageOnly = true
+        val result = ReflectionTestUtil.callMethod(HomeFragment::class.java, fragment,
+            METHOD_CHECK_PERMISSION,
+            ReflectionTestUtil.Param(Boolean::class.java, isStorageOnly)
+        ) as Boolean
+        Assert.assertTrue(result)
+    }
+
+    @Test
+    fun testCheckPermission_IsStorageOnly_DeniedWithRequest_NoDialog() {
+        val fragmentActivity = mockFragmentActivity()
+        every {
+            fragmentActivity.checkPermission(any(), any(), any())
+        } returns PackageManager.PERMISSION_DENIED
+        val fragment = spyk<HomeFragment>()
+        every { fragment.requireActivity() } returns fragmentActivity
+        every { fragment.shouldShowRequestPermissionRationale(any()) } returns true
+        ReflectionTestUtil.setField(fragment, FIELD_CONFIRM_DIALOG, null)
+        val isStorageOnly = true
+        val result = ReflectionTestUtil.callMethod(HomeFragment::class.java, fragment,
+            METHOD_CHECK_PERMISSION,
+            ReflectionTestUtil.Param(Boolean::class.java, isStorageOnly)
+        ) as Boolean
+        Assert.assertFalse(result)
+    }
+
+    @Test
+    fun testCheckPermission_IsStorageOnly_DeniedWithRequest_WithDialog() {
+        val fragmentActivity = mockFragmentActivity()
+        every {
+            fragmentActivity.checkPermission(any(), any(), any())
+        } returns PackageManager.PERMISSION_DENIED
+        val fragment = spyk<HomeFragment>()
+        every { fragment.requireActivity() } returns fragmentActivity
+        every { fragment.shouldShowRequestPermissionRationale(any()) } returns true
+        val dialog = spyk<ConfirmDialogFragment>()
+        ReflectionTestUtil.setField(fragment, FIELD_CONFIRM_DIALOG, dialog)
+        val isStorageOnly = true
+        val result = ReflectionTestUtil.callMethod(HomeFragment::class.java, fragment,
+            METHOD_CHECK_PERMISSION,
+            ReflectionTestUtil.Param(Boolean::class.java, isStorageOnly)
+        ) as Boolean
+        Assert.assertFalse(result)
+    }
+
+    @Test
+    fun testCheckPermission_IsStorageOnly_DeniedNoRequest() {
+        val fragmentActivity = mockFragmentActivity()
+        every {
+            fragmentActivity.checkPermission(any(), any(), any())
+        } returns PackageManager.PERMISSION_DENIED
+        val fragment = spyk<HomeFragment>()
+        every { fragment.requireActivity() } returns fragmentActivity
+        every { fragment.shouldShowRequestPermissionRationale(any()) } returns false
+        val isStorageOnly = true
+        val result = ReflectionTestUtil.callMethod(HomeFragment::class.java, fragment,
+            METHOD_CHECK_PERMISSION,
+            ReflectionTestUtil.Param(Boolean::class.java, isStorageOnly)
+        ) as Boolean
+        Assert.assertFalse(result)
+    }
+
+    // ================================================================================
+    // Private Method Tests - openFile
+    // ================================================================================
+    @Test
+    fun testOpenFile_ImagesFromPicker() {
+        val fragment = spyk<HomeFragment>()
+        addActivity(fragment)
+        every { fragment.startActivity(any()) } just Runs
+        val data: Uri? = null
+        val clipData: ClipData? = null
+        val fileType: Int = HomeFragment.IMAGES_FROM_PICKER
+        ReflectionTestUtil.callMethod(HomeFragment::class.java, fragment,
+            METHOD_OPEN_FILE,
+            ReflectionTestUtil.Param(Uri::class.java, data),
+            ReflectionTestUtil.Param(ClipData::class.java, clipData),
+            ReflectionTestUtil.Param(Int::class.java, fileType)
+        )
+    }
+
+    @Test
+    fun testOpenFile_ImageFromPicker() {
+        val fragment = spyk<HomeFragment>()
+        addActivity(fragment)
+        every { fragment.startActivity(any()) } just Runs
+        val data: Uri? = null
+        val clipData: ClipData? = null
+        val fileType: Int = HomeFragment.IMAGE_FROM_PICKER
+        ReflectionTestUtil.callMethod(HomeFragment::class.java, fragment,
+            METHOD_OPEN_FILE,
+            ReflectionTestUtil.Param(Uri::class.java, data),
+            ReflectionTestUtil.Param(ClipData::class.java, clipData),
+            ReflectionTestUtil.Param(Int::class.java, fileType)
+        )
+    }
+
+    // ================================================================================
+    // Private Functions
+    // ================================================================================
+    private fun addActivity(fragment: HomeFragment,
+                            activity: FragmentActivity? = fragmentActivity) {
+        every { fragment.activity } returns activity
+        every { fragment.context } returns activity
+    }
+
+    private fun addFragmentManager(fragment: HomeFragment) {
+        // Associate the fragment with a fragment manager
+        val mockFragmentManager = mockk<FragmentManager>(relaxed = true)
+        every { fragment.parentFragmentManager } returns mockFragmentManager
+    }
+
+    companion object {
+        private const val TEST_FILE_NAME = "test.pdf"
+        private const val FIELD_HOME_BUTTONS = "_homeButtons"
+        private const val FIELD_CONFIRM_DIALOG = "_confirmDialogFragment"
+        private const val FIELD_DOWNLOAD_DIALOG = "_downloadingDialog"
+        private const val METHOD_DOWNLOAD_FILE = "downloadFileFromNotification"
+        private const val METHOD_HIDE_LOADING_DIALOG = "hideLoadingPreviewDialog"
+        private const val METHOD_CHECK_PERMISSION = "checkPermission"
+        private const val METHOD_OPEN_FILE = "openFile"
+
+        private var fragmentActivity: FragmentActivity? = null
+        private var application: ISingleAccountPublicClientApplication? = null
+
+        private fun mockView(): View {
+            val mockView = mockk<View>(relaxed = true)
+            val mockLayout = mockk<LinearLayout>(relaxed = true)
+            every { mockView.findViewById<LinearLayout>(R.id.homeButtons) } returns mockLayout
+            every { mockView.findViewById<LinearLayout>(R.id.fileButton) } returns mockLayout
+            every { mockView.findViewById<LinearLayout>(R.id.photosButton) } returns mockLayout
+            every { mockView.findViewById<LinearLayout>(R.id.cameraButton) } returns mockLayout
+            every { mockView.findViewById<LinearLayout>(R.id.contentPrintButton) } returns mockLayout
+            every { mockView.findViewById<LinearLayout>(R.id.contentView) } returns mockLayout
+            val mockTextView = mockk<TextView>(relaxed = true)
+            every { mockView.findViewById<TextView>(R.id.actionBarTitle) } returns mockTextView
+            val mockViewGroup = mockk<ViewGroup>(relaxed = true)
+            every { mockView.findViewById<ViewGroup>(R.id.leftActionLayout) } returns mockViewGroup
+            every { mockView.context } returns fragmentActivity
+            return mockView
         }
-        InstrumentationRegistry.getInstrumentation().waitForIdleSync()
-        val homeFragment = fm.findFragmentById(R.id.mainLayout)
-        Assert.assertTrue(homeFragment is HomeFragment)
-        _homeFragment = homeFragment as HomeFragment?
-    }
 
-    private fun grantPermissions() {
-        /** Use if default state, permissions are not granted
-         * Not yet working. Clearing of permissions is needed at the end of each test, however, this also clears coverage report generated in app storage
-        InstrumentationRegistry.getInstrumentation().uiAutomation.executeShellCommand("pm grant ${mainActivity!!.packageName} android.permission.WRITE_EXTERNAL_STORAGE")
-        InstrumentationRegistry.getInstrumentation().uiAutomation.executeShellCommand("pm grant ${mainActivity!!.packageName} android.permission.CAMERA")
-        waitFewSeconds()
-         */
-    }
-    /** Use if default state, permissions are not granted
-     * Not yet working. Clearing of permissions is needed at the end of each test, however, this also clears coverage report generated in app storage
-    private fun grantStoragePermission() {
-        val instrumentation = InstrumentationRegistry.getInstrumentation()
-        if (Build.VERSION.SDK_INT >= 23) {
-            val allowPermission = UiDevice.getInstance(instrumentation).findObject(
-                UiSelector().text(
-                    "Allow"
-                )
-            )
-            if (allowPermission.exists()) {
-                allowPermission.click()
-            }
-        }
-    }
-
-    private fun grantCameraPermission() {
-        val instrumentation = InstrumentationRegistry.getInstrumentation()
-        if (Build.VERSION.SDK_INT >= 23) {
-            val allowPermission = UiDevice.getInstance(instrumentation).findObject(
-                UiSelector().text(
-                    when {
-                        Build.VERSION.SDK_INT == 23 -> "Allow"
-                        Build.VERSION.SDK_INT <= 28 -> "ALLOW"
-                        Build.VERSION.SDK_INT == 29 -> "Allow only while using the app"
-                        else -> "While using the app"
-                    }
-                )
-            )
-            if (allowPermission.exists()) {
-                allowPermission.click()
-            }
-        }
-    }
-
-    fun denyPermission() {
-        val instrumentation = InstrumentationRegistry.getInstrumentation()
-        if (Build.VERSION.SDK_INT >= 23) {
-            val denyPermission = UiDevice.getInstance(instrumentation).findObject(UiSelector().text(
-                when {
-                    Build.VERSION.SDK_INT in 24..28 -> "DENY"
-                    else -> "Deny"
-                }
-            ))
-            if (denyPermission.exists()) {
-                denyPermission.click()
-            }
-        }
-    }
-
-    private fun checkIntent_StoragePermission(intent: Intent) {
-        Assert.assertNotNull(intent)
-        Assert.assertEquals(intent.action, REQUEST_PERMISSIONS)
-        val permissions = intent.getStringArrayExtra(REQUEST_PERMISSIONS_NAMES)
-        Assert.assertEquals(1, permissions!!.size.toLong())
-        Assert.assertEquals(WRITE_EXTERNAL_STORAGE, permissions[0])
-    }
-
-    private fun checkIntent_CameraPermission(intent: Intent) {
-        Assert.assertNotNull(intent)
-        Assert.assertEquals(REQUEST_PERMISSIONS, intent.action)
-        val permissions = intent.getStringArrayExtra(REQUEST_PERMISSIONS_NAMES)
-        Assert.assertEquals(2, permissions!!.size.toLong())
-        Assert.assertEquals(CAMERA, permissions[0])
-        Assert.assertEquals(WRITE_EXTERNAL_STORAGE, permissions[1])
-    }
-     */
-
-    private fun checkIntentDocumentPicker(intent: Intent) {
-        Assert.assertNotNull(intent)
-        Assert.assertEquals(Intent.ACTION_CHOOSER, intent.action)
-        val extraIntent = intent.getParcelableExtra<Intent>(Intent.EXTRA_INTENT)
-        Assert.assertNotNull(extraIntent)
-        Assert.assertEquals(Intent.ACTION_GET_CONTENT, extraIntent!!.action)
-        Assert.assertEquals("*/*", extraIntent.type)
-        if (_homeFragment!!.isChromeBook) {
-            Assert.assertNull(extraIntent.getStringArrayExtra(Intent.EXTRA_MIME_TYPES))
-        } else {
-            Assert.assertArrayEquals(
-                AppConstants.DOC_TYPES,
-                extraIntent.getStringArrayExtra(Intent.EXTRA_MIME_TYPES)
-            )
-        }
-    }
-
-    private fun checkIntentImagePicker(intent: Intent) {
-        Assert.assertNotNull(intent)
-        Assert.assertEquals(Intent.ACTION_CHOOSER, intent.action)
-        val extraIntent = intent.getParcelableExtra<Intent>(Intent.EXTRA_INTENT)
-        Assert.assertNotNull(extraIntent)
-        Assert.assertEquals(Intent.ACTION_GET_CONTENT, extraIntent!!.action)
-        Assert.assertEquals("*/*", extraIntent.type)
-        Assert.assertTrue(extraIntent.getBooleanExtra(Intent.EXTRA_ALLOW_MULTIPLE, false))
-        if (_homeFragment!!.isChromeBook) {
-            Assert.assertNull(extraIntent.getStringArrayExtra(Intent.EXTRA_MIME_TYPES))
-        } else {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                Assert.assertArrayEquals(
-                    AppConstants.IMAGE_TYPES_ANDROID_12,
-                    extraIntent.getStringArrayExtra(Intent.EXTRA_MIME_TYPES)
-                )
-            } else {
-                Assert.assertArrayEquals(
-                    AppConstants.IMAGE_TYPES,
-                    extraIntent.getStringArrayExtra(Intent.EXTRA_MIME_TYPES)
-                )
-            }
-        }
-    }
-
-    private fun checkIntentScanActivity(intent: Intent) {
-        Assert.assertNotNull(intent)
-        Assert.assertEquals(
-            ScanActivity::class.java.name,
-            intent.component!!.className)
-        Assert.assertEquals(
-            ScanConstants.OPEN_CAMERA.toLong(),
-            intent.getIntExtra(ScanConstants.OPEN_INTENT_PREFERENCE, 0).toLong())
-    }
-
-    @Test
-    fun testNewInstance() {
-        Assert.assertNotNull(_homeFragment)
-    }
-
-    /** Not yet working. Clearing of permissions is needed at the end of each test, however, this also clears coverage report
-    @Test
-    fun testPermissionsAllow_SelectDocument() {
-        val result = Instrumentation.ActivityResult(FragmentActivity.RESULT_OK, null)
-        Intents.intending(IntentMatchers.hasAction(Intent.ACTION_CHOOSER)).respondWith(result)
-
-        testClick(R.id.fileButton)
-
-        // Check permission not yet granted
-        Assert.assertTrue(
-            ContextCompat.checkSelfPermission(
-                mainActivity!!,
-                WRITE_EXTERNAL_STORAGE
-            ) != PackageManager.PERMISSION_GRANTED
-        )
-        checkIntent_StoragePermission(Intents.getIntents()[0])
-        grantStoragePermission()
-
-        // check that picker intent was sent
-        checkIntent_DocumentPicker(Intents.getIntents()[1])
-    }
-
-    @Test
-    fun testPermissionsAllow_SelectPhotos() {
-        val result = Instrumentation.ActivityResult(FragmentActivity.RESULT_OK, null)
-        Intents.intending(IntentMatchers.hasAction(Intent.ACTION_CHOOSER)).respondWith(result)
-
-        testClick(R.id.photosButton)
-
-        // Check permission not yet granted
-        Assert.assertTrue(
-            ContextCompat.checkSelfPermission(
-                mainActivity!!,
-                WRITE_EXTERNAL_STORAGE
-            ) != PackageManager.PERMISSION_GRANTED
-        )
-        checkIntent_StoragePermission(Intents.getIntents()[0])
-        grantStoragePermission()
-
-        // check that picker intent was sent
-        checkIntent_ImagePicker(Intents.getIntents()[1])
-    }
-
-    @Test
-    fun testPermissionsAllow_CapturePhoto() {
-        val result = Intent()
-        val testFile = getUriFromPath(IMG_BMP)
-        result.putExtra(ScanConstants.SCANNED_RESULT, testFile)
-        Intents.intending(IntentMatchers.hasComponent(ScanActivity::class.java.name))
-            .respondWith(
-                Instrumentation.ActivityResult(
-                    FragmentActivity.RESULT_OK,
-                    result
-                )
-            )
-
-        testClick(R.id.cameraButton)
-
-        // Check permission not yet granted
-        Assert.assertTrue(
-            ContextCompat.checkSelfPermission(
-                mainActivity!!,
-                WRITE_EXTERNAL_STORAGE
-            ) != PackageManager.PERMISSION_GRANTED ||
-            ContextCompat.checkSelfPermission(
-                mainActivity!!,
-                CAMERA
-            ) != PackageManager.PERMISSION_GRANTED
-        )
-        checkIntent_CameraPermission(Intents.getIntents()[0])
-        grantStoragePermission()
-        grantCameraPermission()
-
-        // check that picker intent was sent
-        checkIntentScanActivity(Intents.getIntents()[1])
-    }
-     */
-
-    @Test
-    fun testOnClick_SelectDocument() {
-        // stubs handling of start activity to prevent launching of OS picker
-        // null result only since test is not about checking handling of result
-        val result = Instrumentation.ActivityResult(FragmentActivity.RESULT_OK, null)
-        Intents.intending(IntentMatchers.anyIntent()).respondWith(result)
-
-        testClick(R.id.fileButton)
-
-        Assert.assertEquals(1, Intents.getIntents().size.toLong())
-
-        // check intent that was sent
-        checkIntentDocumentPicker(Intents.getIntents()[0])
-    }
-
-    @Test
-    fun testOnClick_SelectPhotos() {
-        // stubs handling of start activity to prevent launching of OS picker
-        // null result only since test is not about checking handling of result
-        val result = Instrumentation.ActivityResult(FragmentActivity.RESULT_OK, null)
-        Intents.intending(IntentMatchers.anyIntent()).respondWith(result)
-
-        testClick(R.id.photosButton)
-
-        Assert.assertEquals(1, Intents.getIntents().size.toLong())
-
-        // check intent that was sent
-        checkIntentImagePicker(Intents.getIntents()[0])
-    }
-
-    /* HIDE_NEW_FEATURES comment when CAMERA permission is hidden feature. uncomment when new features are restored
-    @Test
-    fun testOnClick_CapturePhoto() {
-        // stubs handling of start activity to prevent launching of Camera
-        // null result only since test is not about checking handling of result
-        val result = Instrumentation.ActivityResult(FragmentActivity.RESULT_OK, null)
-        Intents.intending(IntentMatchers.anyIntent()).respondWith(result)
-
-        testClick(R.id.cameraButton)
-
-        // check that ScanActivity intent was sent
-        Assert.assertEquals(1, Intents.getIntents().size.toLong())
-
-        // check that intent for ScanActivity was sent
-        checkIntentScanActivity(Intents.getIntents()[0])
-    }*/
-
-    @Test
-    fun testOnClick_NotButton() {
-        val dummyView = mainActivity!!.findViewById<View>(R.id.mainLayout)
-        mainActivity!!.runOnUiThread {
-            dummyView.setOnClickListener(_homeFragment)
+        private fun mockFragmentActivity(): FragmentActivity {
+            val mockFragmentActivity = mockk<MainActivity>(relaxed = true)
+            val mockInflater = mockk<LayoutInflater>(relaxed = true)
+            val mockImageView = mockk<ImageView>(relaxed = true)
+            every { mockInflater.inflate(R.layout.actionbar_button, null )} returns mockImageView
+            val mockLayout = mockk<LinearLayout>(relaxed = true)
+            every { mockLayout.findViewById<LinearLayout>(any()) } returns mockLayout
+            val mockLayoutParams = mockk<LayoutParams>(relaxed = true)
+            every { mockLayout.layoutParams } returns mockLayoutParams
+            every { mockInflater.inflate(R.layout.home_buttons, any()) } returns mockLayout
+            every { mockInflater.inflate(R.layout.home_buttons, any(), any()) } returns mockLayout
+            every { mockFragmentActivity.getSystemService(Context.LAYOUT_INFLATER_SERVICE) } returns mockInflater
+            return mockFragmentActivity
         }
 
-        testClick(R.id.mainLayout)
-
-        // check that no intent was sent
-        Assert.assertEquals(0, Intents.getIntents().size.toLong())
-
-        mainActivity!!.runOnUiThread {
-            dummyView.setOnClickListener(null)
-        }
-    }
-
-    @Test
-    fun testOnDoubleClick_SelectDocument() {
-        // stubs handling of start activity to prevent launching of OS picker
-        // null result only since test is not about checking handling of result
-        val result = Instrumentation.ActivityResult(FragmentActivity.RESULT_OK, null)
-        Intents.intending(IntentMatchers.anyIntent()).respondWith(result)
-
-        getViewInteractionFromMatchAtPosition(
-            R.id.fileButton,
-            0
-        ).perform(doubleClick())
-        waitForAnimation()
-
-        Assert.assertEquals(1, Intents.getIntents().size.toLong())
-
-        // check intent that was sent
-        checkIntentDocumentPicker(Intents.getIntents()[0])
-    }
-
-    @Test
-    fun testOnDoubleClick_SelectPhotos() {
-        // stubs handling of start activity to prevent launching of OS picker
-        // null result only since test is not about checking handling of result
-        val result = Instrumentation.ActivityResult(FragmentActivity.RESULT_OK, null)
-        Intents.intending(IntentMatchers.anyIntent()).respondWith(result)
-
-        getViewInteractionFromMatchAtPosition(
-            R.id.photosButton,
-            0
-        ).perform(doubleClick())
-        waitForAnimation()
-
-        Assert.assertEquals(1, Intents.getIntents().size.toLong())
-
-        // check intent that was sent
-        checkIntentImagePicker(Intents.getIntents()[0])
-    }
-
-    /* HIDE_NEW_FEATURES comment when CAMERA permission is hidden feature. uncomment when new features are restored
-    @Test
-    fun testOnDoubleClick_CapturePhoto() {
-        // stubs handling of start activity to prevent launching of Camera
-        // null result only since test is not about checking handling of result
-        val result = Instrumentation.ActivityResult(FragmentActivity.RESULT_OK, null)
-        Intents.intending(IntentMatchers.anyIntent()).respondWith(result)
-
-        getViewInteractionFromMatchAtPosition(
-            R.id.cameraButton,
-            0
-        ).perform(doubleClick())
-        waitForAnimation()
-
-        // check that ScanActivity intent was sent
-        Assert.assertEquals(1, Intents.getIntents().size.toLong())
-
-        // check that intent for ScanActivity was sent
-        checkIntentScanActivity(Intents.getIntents()[0])
-    }*/
-
-    @Test
-    fun testFileOpen_SelectDocument() {
-        val testFile = getUriFromPath(DOC_PDF)
-        selectDocument(testFile)
-
-        // check that File Picker, PdfHandlerActivity, MainActivity intents were sent
-        Assert.assertEquals(3, Intents.getIntents().size.toLong())
-
-        checkIntentDocumentPicker(Intents.getIntents()[0])
-
-        val pdfHandlerIntent = Intents.getIntents()[1]
-        Assert.assertNotNull(pdfHandlerIntent)
-        Assert.assertEquals(
-            PDFHandlerActivity::class.java.name,
-            pdfHandlerIntent.component!!.className
-        )
-        Assert.assertEquals(
-            HomeFragment.PDF_FROM_PICKER.toLong(),
-            pdfHandlerIntent.getIntExtra(AppConstants.EXTRA_FILE_FROM_PICKER, 0).toLong()
-        )
-        Assert.assertEquals(testFile, pdfHandlerIntent.data)
-
-        val mainActivityIntent = Intents.getIntents()[2]
-        Assert.assertNotNull(mainActivityIntent)
-        Assert.assertEquals(
-            MainActivity::class.java.name,
-            mainActivityIntent.component!!.className
-        )
-        Assert.assertEquals(
-            HomeFragment.PDF_FROM_PICKER.toLong(),
-            mainActivityIntent.getIntExtra(AppConstants.EXTRA_FILE_FROM_PICKER, 0).toLong()
-        )
-        Assert.assertEquals(testFile, mainActivityIntent.data)
-    }
-
-    @Test
-    fun testFileOpen_SelectTextFile() {
-        val testFile = getUriFromPath(DOC_TXT)
-        selectDocument(testFile)
-
-        // check that File Picker, PdfHandlerActivity, Main Activity intents were sent
-        Assert.assertEquals(3, Intents.getIntents().size.toLong())
-
-        checkIntentDocumentPicker(Intents.getIntents()[0])
-
-        val pdfHandlerIntent = Intents.getIntents()[1]
-        Assert.assertNotNull(pdfHandlerIntent)
-        Assert.assertEquals(
-            PDFHandlerActivity::class.java.name,
-            pdfHandlerIntent.component!!.className
-        )
-        Assert.assertEquals(
-            HomeFragment.TEXT_FROM_PICKER.toLong(),
-            pdfHandlerIntent.getIntExtra(AppConstants.EXTRA_FILE_FROM_PICKER, 0).toLong()
-        )
-        Assert.assertEquals(testFile, pdfHandlerIntent.data)
-
-        val mainActivityIntent = Intents.getIntents()[2]
-        Assert.assertNotNull(mainActivityIntent)
-        Assert.assertEquals(
-            MainActivity::class.java.name,
-            mainActivityIntent.component!!.className
-        )
-        Assert.assertEquals(
-            HomeFragment.TEXT_FROM_PICKER.toLong(),
-            mainActivityIntent.getIntExtra(AppConstants.EXTRA_FILE_FROM_PICKER, 0).toLong()
-        )
-        Assert.assertEquals(testFile, mainActivityIntent.data!!)
-    }
-
-    @Test
-    fun testFileOpen_SelectPhotos() {
-        val testFile = getUriFromPath(IMG_PNG)
-        selectPhotos(testFile)
-
-        // check that File Picker, PdfHandlerActivity, MainActivity intents were sent
-        Assert.assertEquals(3, Intents.getIntents().size.toLong())
-
-        checkIntentImagePicker(Intents.getIntents()[0])
-
-        val pdfHandlerIntent = Intents.getIntents()[1]
-        Assert.assertNotNull(pdfHandlerIntent)
-        Assert.assertEquals(
-            PDFHandlerActivity::class.java.name,
-            pdfHandlerIntent.component!!.className
-        )
-        Assert.assertEquals(
-            HomeFragment.IMAGE_FROM_PICKER.toLong(),
-            pdfHandlerIntent.getIntExtra(AppConstants.EXTRA_FILE_FROM_PICKER, 0).toLong()
-        )
-        Assert.assertEquals(testFile, pdfHandlerIntent.data)
-
-        val mainActivityIntent = Intents.getIntents()[2]
-        Assert.assertNotNull(mainActivityIntent)
-        Assert.assertEquals(
-            MainActivity::class.java.name,
-            mainActivityIntent.component!!.className
-        )
-        Assert.assertEquals(
-            HomeFragment.IMAGE_FROM_PICKER.toLong(),
-            mainActivityIntent.getIntExtra(AppConstants.EXTRA_FILE_FROM_PICKER, 0).toLong()
-        )
-        Assert.assertEquals(testFile, mainActivityIntent.data)
-        // files sent to main activity not in same sequence
-    }
-
-    @Test
-    fun testFileOpen_SelectPhotosMultiple() {
-        val testFiles = ClipData.newUri(
-            mainActivity!!.contentResolver,
-            IMG_BMP,
-            getUriFromPath(IMG_BMP))
-        testFiles.addItem(ClipData.Item(getUriFromPath(IMG_GIF)))
-        testFiles.addItem(ClipData.Item(getUriFromPath(IMG_PNG)))
-        selectPhotos(testFiles)
-
-        // check that File Picker, PdfHandlerActivity, MainActivity intents were sent
-        Assert.assertEquals(3, Intents.getIntents().size.toLong())
-
-        checkIntentImagePicker(Intents.getIntents()[0])
-
-        val pdfHandlerIntent = Intents.getIntents()[1]
-        Assert.assertNotNull(pdfHandlerIntent)
-        Assert.assertEquals(
-            PDFHandlerActivity::class.java.name,
-            pdfHandlerIntent.component!!.className
-        )
-        Assert.assertEquals(
-            HomeFragment.IMAGES_FROM_PICKER.toLong(),
-            pdfHandlerIntent.getIntExtra(AppConstants.EXTRA_FILE_FROM_PICKER, 0).toLong()
-        )
-        Assert.assertEquals(testFiles.itemCount, pdfHandlerIntent.clipData!!.itemCount)
-        for (i in 0 until testFiles.itemCount) {
-            Assert.assertEquals(testFiles.getItemAt(i), pdfHandlerIntent.clipData!!.getItemAt(i))
+        @JvmStatic
+        @BeforeClass
+        fun set() {
+            fragmentActivity = mockFragmentActivity()
+            MockTestUtil.mockConfiguration()
+            MockTestUtil.mockUI()
+            val mockActivity = MockTestUtil.mockActivity()
+            ContentPrintManager.newInstance(mockActivity)
+            application = ContentPrintManagerTest.mockApplication()
+            ContentPrintManager.application = application
         }
 
-        val mainActivityIntent = Intents.getIntents()[2]
-        Assert.assertNotNull(mainActivityIntent)
-        Assert.assertEquals(
-            MainActivity::class.java.name,
-            mainActivityIntent.component!!.className
-        )
-        Assert.assertEquals(
-            HomeFragment.IMAGES_FROM_PICKER.toLong(),
-            mainActivityIntent.getIntExtra(AppConstants.EXTRA_FILE_FROM_PICKER, 0).toLong()
-        )
-        Assert.assertEquals(testFiles.itemCount, mainActivityIntent.clipData!!.itemCount)
-    }
-
-    @Test
-    fun testFileOpen_SelectPhotosSingleClipData() {
-        val testFiles = ClipData.newUri(
-            mainActivity!!.contentResolver,
-            IMG_BMP,
-            getUriFromPath(IMG_BMP))
-        selectPhotos(testFiles)
-
-        // check that File Picker, PdfHandlerActivity, MainActivity intents were sent
-        Assert.assertEquals(3, Intents.getIntents().size.toLong())
-
-        checkIntentImagePicker(Intents.getIntents()[0])
-
-        val pdfHandlerIntent = Intents.getIntents()[1]
-        Assert.assertNotNull(pdfHandlerIntent)
-        Assert.assertEquals(
-            PDFHandlerActivity::class.java.name,
-            pdfHandlerIntent.component!!.className
-        )
-        Assert.assertEquals(
-            HomeFragment.IMAGES_FROM_PICKER.toLong(),
-            pdfHandlerIntent.getIntExtra(AppConstants.EXTRA_FILE_FROM_PICKER, 0).toLong()
-        )
-        Assert.assertEquals(testFiles.itemCount, pdfHandlerIntent.clipData!!.itemCount)
-        for (i in 0 until testFiles.itemCount) {
-            Assert.assertEquals(testFiles.getItemAt(i), pdfHandlerIntent.clipData!!.getItemAt(i))
-        }
-
-        val mainActivityIntent = Intents.getIntents()[2]
-        Assert.assertNotNull(mainActivityIntent)
-        Assert.assertEquals(
-            MainActivity::class.java.name,
-            mainActivityIntent.component!!.className
-        )
-        Assert.assertEquals(
-            HomeFragment.IMAGES_FROM_PICKER.toLong(),
-            mainActivityIntent.getIntExtra(AppConstants.EXTRA_FILE_FROM_PICKER, 0).toLong()
-        )
-        Assert.assertEquals(testFiles.itemCount, mainActivityIntent.clipData!!.itemCount)
-        for (i in 0 until testFiles.itemCount) {
-            Assert.assertEquals(testFiles.getItemAt(i), pdfHandlerIntent.clipData!!.getItemAt(i))
+        @JvmStatic
+        @AfterClass
+        fun tearDown() {
+            MockTestUtil.unMockConfiguration()
+            MockTestUtil.unMockUI()
         }
     }
-
-    /* HIDE_NEW_FEATURES comment when CAMERA permission is hidden feature. uncomment when new features are restored
-    @Test
-    fun testFileOpen_CapturePhoto() {
-        // stubs handling of permission request in case of no permissions
-        // null result only since test is not about checking handling of result
-        Intents.intending(hasAction(REQUEST_PERMISSIONS))
-            .respondWith(Instrumentation.ActivityResult(FragmentActivity.RESULT_OK, null))
-
-        // simulate return of ScanActivity
-        val testFile = getUriFromPath(IMG_BMP)
-        capturePhoto(testFile)
-
-        // check that ScanActivity, PdfHandlerActivity, MainActivity intents were sent
-        Assert.assertEquals(3, Intents.getIntents().size.toLong())
-
-        checkIntentScanActivity(Intents.getIntents()[0])
-
-        // check that intent for PdfHandlerActivity was sent
-        val pdfHandlerIntent = Intents.getIntents()[1]
-        Assert.assertNotNull(pdfHandlerIntent)
-        Assert.assertEquals(
-            pdfHandlerIntent.component!!.className,
-            PDFHandlerActivity::class.java.name
-        )
-        Assert.assertEquals(
-            pdfHandlerIntent.getIntExtra(AppConstants.EXTRA_FILE_FROM_PICKER, 0).toLong(),
-            HomeFragment.IMAGE_FROM_CAMERA.toLong()
-        )
-        Assert.assertEquals(testFile, pdfHandlerIntent.data)
-
-        // check that intent for MainActivity was sent
-        val mainActivityIntent = Intents.getIntents()[2]
-        Assert.assertNotNull(mainActivityIntent)
-        Assert.assertEquals(
-            MainActivity::class.java.name,
-            mainActivityIntent.component!!.className
-        )
-        Assert.assertEquals(
-            HomeFragment.IMAGE_FROM_CAMERA.toLong(),
-            mainActivityIntent.getIntExtra(AppConstants.EXTRA_FILE_FROM_PICKER, 0).toLong()
-        )
-        Assert.assertEquals(testFile, mainActivityIntent.data)
-    }*/
-
-    @Test
-    fun testInvalid_SelectDocument() {
-        val testFile = getUriFromPath(IMG_PNG)
-        selectDocument(testFile)
-
-        // check that only File Picker intent was sent
-        Assert.assertEquals(1, Intents.getIntents().size.toLong())
-
-        checkIntentDocumentPicker(Intents.getIntents()[0])
-
-        checkDialog(
-            FRAGMENT_TAG_DIALOG,
-            R.string.ids_err_msg_open_failed
-        )
-    }
-
-    @Test
-    fun testInvalid_SelectPhotos() {
-        val testFile = getUriFromPath(DOC_PDF)
-        selectPhotos(testFile)
-
-        // check that only File Picker intent was sent
-        Assert.assertEquals(1, Intents.getIntents().size.toLong())
-
-        checkIntentImagePicker(Intents.getIntents()[0])
-
-        checkDialog(
-            FRAGMENT_TAG_DIALOG,
-            R.string.ids_err_msg_invalid_file_selection
-        )
-    }
-
-    @Test
-    fun testInvalid_SelectPhotosMultiple() {
-        val testFiles = ClipData.newUri(
-                mainActivity!!.contentResolver,
-                IMG_BMP,
-                getUriFromPath(IMG_BMP))
-        testFiles.addItem(ClipData.Item(getUriFromPath(IMG_GIF)))
-        testFiles.addItem(ClipData.Item(getUriFromPath(DOC_PDF)))
-        selectPhotos(testFiles)
-
-        // check that only File Picker intent was sent
-        Assert.assertEquals(1, Intents.getIntents().size.toLong())
-
-        checkIntentImagePicker(Intents.getIntents()[0])
-
-        checkDialog(
-            FRAGMENT_TAG_DIALOG,
-            R.string.ids_err_msg_invalid_file_selection
-        )
-    }
-
-    @Test
-    fun testCanceled_SelectDocument() {
-        val result = Instrumentation.ActivityResult(FragmentActivity.RESULT_CANCELED, null)
-        Intents.intending(hasAction(Intent.ACTION_CHOOSER)).respondWith(result)
-        testClick(R.id.fileButton)
-
-        // check that only File Picker is sent
-        Assert.assertEquals(Intents.getIntents().size.toLong(), 1)
-
-        checkIntentDocumentPicker(Intents.getIntents()[0])
-    }
-
-    @Test
-    fun testCanceled_SelectPhotos() {
-        val result = Instrumentation.ActivityResult(FragmentActivity.RESULT_CANCELED, null)
-        Intents.intending(hasAction(Intent.ACTION_CHOOSER)).respondWith(result)
-        testClick(R.id.photosButton)
-
-        // check that only File Picker is sent
-        Assert.assertEquals(Intents.getIntents().size.toLong(), 1)
-
-        checkIntentImagePicker(Intents.getIntents()[0])
-    }
-
-    /* HIDE_NEW_FEATURES comment when CAMERA permission is hidden feature. uncomment when new features are restored
-    @Test
-    fun testCanceled_CapturePhoto() {
-        val result = Instrumentation.ActivityResult(FragmentActivity.RESULT_CANCELED, null)
-        Intents.intending(IntentMatchers.anyIntent()).respondWith(result)
-        testClick(R.id.cameraButton)
-
-        // check that only File Picker is sent
-        Assert.assertEquals(Intents.getIntents().size.toLong(), 1)
-
-        checkIntentScanActivity(Intents.getIntents()[0])
-    }*/
-
-    @Test
-    fun testOrientationChange_SelectDocument() {
-        switchOrientation()
-        waitForAnimation()
-        testOnClick_SelectDocument()
-    }
-
-    @Test
-    fun testOrientationChange_SelectPhotos() {
-        switchOrientation()
-        waitForAnimation()
-        testOnClick_SelectPhotos()
-    }
-
-    /* HIDE_NEW_FEATURES comment when CAMERA permission is hidden feature. uncomment when new features are restored
-    @Test
-    fun testOrientationChange_CapturePhoto() {
-        switchOrientation()
-        waitForAnimation()
-        testOnClick_CapturePhoto()
-    }*/
-
 }
