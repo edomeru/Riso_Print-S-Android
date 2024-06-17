@@ -89,6 +89,7 @@ class MockTestUtil {
             val mockEditor = mockk<SharedPreferences.Editor>()
             every { mockSharedPrefs.edit() } returns mockEditor
             every { mockEditor.putString(any(), any()) } returns mockEditor
+            every { mockEditor.putBoolean(any(), any()) } returns mockEditor
             every { mockEditor.remove(any()) } returns mockEditor
             every { mockEditor.commit() } returns true
             every { mockEditor.apply() } just Runs

@@ -5,6 +5,7 @@ import android.app.ActivityManager
 import android.content.ClipData
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.graphics.Bitmap
 import android.graphics.Point
@@ -59,6 +60,7 @@ import jp.co.riso.smartdeviceapp.view.base.BaseActivity
 import jp.co.riso.smartdeviceapp.view.preview.PrintPreviewView
 import jp.co.riso.smartprint.R
 import org.junit.*
+import java.lang.reflect.InvocationTargetException
 
 
 class PrintPreviewFragmentTest {
@@ -353,22 +355,90 @@ class PrintPreviewFragmentTest {
     // Tests - onResume
     // ================================================================================
     @Test
-    fun testOnResume() {
-        val fragment = getInitializedFragment()
+    fun testOnResume_NoPdfFile_PermissionDialogClosed() {
+        val fragment = getInitializedFragment(true)
+        val activity = mockk<MainActivity>(relaxed = true)
+        val mockInputMethod = mockk<InputMethodManager>(relaxed = true)
+        every { activity.getSystemService(Activity.INPUT_METHOD_SERVICE) } returns mockInputMethod
+        // No PDF file in open-in (No PDF file in sandbox by default)
+        every { activity.intent } returns null
+        addActivity(fragment, activity)
+        ReflectionTestUtil.setField(fragment, FIELD_IS_PERMISSION_DIALOG, false)
+        ReflectionTestUtil.setField(fragment, FIELD_PRINTER_ID, 1)
+        ReflectionTestUtil.setField(fragment, FIELD_PAUSEABLE_HANDLER, null)
+        printerType = null
+        // _printerId != PrinterManager.EMPTY_ID && !printerManager.isExists(_printerId)
+        printerExists = true
+        fragment.onResume()
+        printerExists = false
+        fragment.onResume()
+        ReflectionTestUtil.setField(fragment, FIELD_PRINTER_ID, PrinterManager.EMPTY_ID)
+        val mockPauseableHandler = mockk<PauseableHandler>(relaxed = true)
+        ReflectionTestUtil.setField(fragment, FIELD_PAUSEABLE_HANDLER, mockPauseableHandler)
+        printerType = AppConstants.PRINTER_MODEL_GL
+        // _printerId == PrinterManager.EMPTY_ID && defaultPrinterId != PrinterManager.EMPTY_ID
+        printerId = PrinterManager.EMPTY_ID
+        fragment.onResume()
+        ReflectionTestUtil.setField(fragment, FIELD_PRINTER_ID, PrinterManager.EMPTY_ID)
+        printerId = 1
         fragment.onResume()
     }
 
     @Test
-    fun testOnResume_NotInitialized() {
-        val fragment = spyk<PrintPreviewFragment>()
-        addActivity(fragment)
+    fun testOnResume_HasPdfFile_PermissionDenied() {
+        val fragment = getInitializedFragment(true)
+        val activity = mockk<MainActivity>(relaxed = true)
+        val mockInputMethod = mockk<InputMethodManager>(relaxed = true)
+        every { activity.getSystemService(Activity.INPUT_METHOD_SERVICE) } returns mockInputMethod
+        val intent = mockk<Intent>(relaxed = true)
+        every { intent.data } returns mockk<Uri>()
+        every { activity.intent } returns intent
+        every {
+            activity.checkPermission(any(), any(), any())
+        } returns PackageManager.PERMISSION_DENIED
+        addActivity(fragment, activity)
+        ReflectionTestUtil.setField(fragment, FIELD_IS_PERMISSION_DIALOG, true)
+        fragment.onResume()
+        ReflectionTestUtil.setField(fragment, FIELD_IS_PERMISSION_DIALOG, false)
+        ReflectionTestUtil.setField(fragment, FIELD_SHOULD_DISPLAY_EXPLANATION, false)
+        fragment.onResume()
+        ReflectionTestUtil.setField(fragment, FIELD_SHOULD_DISPLAY_EXPLANATION, true)
+        every { fragment.view } returns mockView()
+        ReflectionTestUtil.setField(fragment, FIELD_CONFIRM_DIALOG, null)
+        fragment.onResume()
         val mockConfirmDialog = mockk<ConfirmDialogFragment>(relaxed = true)
         ReflectionTestUtil.setField(fragment, FIELD_CONFIRM_DIALOG, mockConfirmDialog)
-        ReflectionTestUtil.setField(fragment, FIELD_IS_PDF_INITIALIZED, true)
-        ReflectionTestUtil.setField(fragment, FIELD_PRINTER_ID, PrinterManager.EMPTY_ID)
         fragment.onResume()
-        val config = mockk<Configuration>()
-        fragment.onConfigurationChanged(config)
+    }
+
+    @Test
+    fun testOnResume_HasPdfFile_PermissionGranted() {
+        val fragment = getInitializedFragment(true)
+        val activity = mockk<MainActivity>(relaxed = true)
+        val mockInputMethod = mockk<InputMethodManager>(relaxed = true)
+        every { activity.getSystemService(Activity.INPUT_METHOD_SERVICE) } returns mockInputMethod
+        val intent = mockk<Intent>(relaxed = true)
+        every { intent.data } returns mockk<Uri>()
+        every { activity.intent } returns intent
+        every {
+            activity.checkPermission(any(), any(), any())
+        } returns PackageManager.PERMISSION_GRANTED
+        addActivity(fragment, activity)
+        ReflectionTestUtil.setField(fragment, FIELD_IS_PERMISSION_DIALOG, true)
+        fragment.onResume()
+        ReflectionTestUtil.setField(fragment, FIELD_IS_PERMISSION_DIALOG, false)
+        ReflectionTestUtil.setField(fragment, FIELD_CONFIRM_DIALOG, null)
+        ReflectionTestUtil.setField(fragment, FIELD_PDF_CONVERTER, null)
+        ReflectionTestUtil.setField(fragment, FIELD_IS_PDF_INITIALIZED, false)
+        fragment.onResume()
+        val mockConfirmDialog = mockk<ConfirmDialogFragment>(relaxed = true)
+        ReflectionTestUtil.setField(fragment, FIELD_CONFIRM_DIALOG, mockConfirmDialog)
+        setPDFConverterManager(fragment)
+        ReflectionTestUtil.setField(fragment, FIELD_IS_PDF_INITIALIZED, true)
+        ReflectionTestUtil.setField(fragment, FIELD_IS_CONVERTER_INITIALIZED, true)
+        fragment.onResume()
+        ReflectionTestUtil.setField(fragment, FIELD_IS_CONVERTER_INITIALIZED, false)
+        fragment.onResume()
     }
 
     // ================================================================================
@@ -619,6 +689,9 @@ class PrintPreviewFragmentTest {
         ReflectionTestUtil.setField(fragment, FIELD_HAS_CONVERSION_ERROR, false)
         ReflectionTestUtil.setField(fragment, FIELD_FILENAME, null)
         ReflectionTestUtil.setField(fragment, FIELD_SHOULD_RESET_PAGE, false)
+        ContentPrintManager.isFileFromContentPrint = true
+        fragment.onFileInitialized(PDFFileManager.PDF_OK)
+        ContentPrintManager.isFileFromContentPrint = false
         fragment.onFileInitialized(PDFFileManager.PDF_OK)
     }
 
@@ -806,6 +879,7 @@ class PrintPreviewFragmentTest {
         val message = Message()
         message.what = R.id.view_id_print_button
         fragment.processMessage(message)
+        fragment.processMessage(message)
         fragment.handleMessage(message)
         Assert.assertFalse(fragment.storeMessage(message))
     }
@@ -819,6 +893,7 @@ class PrintPreviewFragmentTest {
         val message = Message()
         message.what = R.id.view_id_print_button
         fragment.processMessage(message)
+        fragment.processMessage(message)
         fragment.handleMessage(message)
         Assert.assertFalse(fragment.storeMessage(message))
     }
@@ -829,6 +904,7 @@ class PrintPreviewFragmentTest {
         val message = Message()
         message.what = R.id.menu_id_action_button
         fragment.processMessage(message)
+        fragment.processMessage(message)
         Assert.assertFalse(fragment.storeMessage(message))
     }
 
@@ -838,6 +914,7 @@ class PrintPreviewFragmentTest {
         val message = Message()
         message.what = 0
         fragment.processMessage(message)
+        fragment.processMessage(message)
         Assert.assertFalse(fragment.storeMessage(message))
     }
 
@@ -845,7 +922,15 @@ class PrintPreviewFragmentTest {
     // Tests - togglePrintSettingsDrawer
     // ================================================================================
     @Test
-    fun testTogglePrintSettingsDrawer_BoxRegistration() {
+    fun testTogglePrintSettingsDrawer_BoxRegistrationWithPrinter() {
+        ContentPrintManager.isBoxRegistrationMode = true
+        printerId = 1 // Not PrinterManager.EMPTY_ID
+        val fragment = getInitializedFragment()
+        fragment.togglePrintSettingsDrawer()
+    }
+
+    @Test
+    fun testTogglePrintSettingsDrawer_BoxRegistrationNoPrinter() {
         ContentPrintManager.isBoxRegistrationMode = true
         printerId = PrinterManager.EMPTY_ID
         val fragment = getInitializedFragment()
@@ -853,7 +938,7 @@ class PrintPreviewFragmentTest {
     }
 
     @Test
-    fun testTogglePrintSettingsDrawer_WithPrinter() {
+    fun testTogglePrintSettingsDrawer_NotBoxRegistrationWithPrinter() {
         ContentPrintManager.isBoxRegistrationMode = false
         printerId = 1 // Not PrinterManager.EMPTY_ID
         val fragment = getInitializedFragment()
@@ -861,7 +946,7 @@ class PrintPreviewFragmentTest {
     }
 
     @Test
-    fun testTogglePrintSettingsDrawer_NoPrinter() {
+    fun testTogglePrintSettingsDrawer_NotBoxRegistrationNoPrinter() {
         ContentPrintManager.isBoxRegistrationMode = false
         printerId = PrinterManager.EMPTY_ID
         val fragment = getInitializedFragment()
@@ -1373,12 +1458,28 @@ class PrintPreviewFragmentTest {
         val mockFragment = mockk<MenuFragment>(relaxed = true)
         every { mockFragment.setCurrentState(any()) } just Runs
         every { mockFragmentActivity.menuFragment } returns mockFragment
-        val mockFragmentManager = mockk<FragmentManager>(relaxed = true)
-        val mockTransaction = mockk<FragmentTransaction>(relaxed = true)
-        every { mockFragmentManager.beginTransaction() } returns mockTransaction
-        every { mockFragmentActivity.supportFragmentManager } returns mockFragmentManager
         addActivity(fragment, mockFragmentActivity)
         ReflectionTestUtil.callMethod(fragment, METHOD_TRANSITION_HOME)
+    }
+
+    @Test
+    fun testTransitionToHomeScreen_NoMenu() {
+        try {
+            val fragment = spyk<PrintPreviewFragment>()
+            val mockFragmentActivity = mockk<MainActivity>(relaxed = true)
+            val mockFragment = mockk<MenuFragment>(relaxed = true)
+            every { mockFragment.setCurrentState(any()) } just Runs
+            every { mockFragmentActivity.menuFragment } returns null
+            val mockFragmentManager = mockk<FragmentManager>(relaxed = true)
+            val mockTransaction = mockk<FragmentTransaction>(relaxed = true)
+            every { mockFragmentManager.beginTransaction() } returns mockTransaction
+            every { mockFragmentActivity.supportFragmentManager } returns mockFragmentManager
+            addActivity(fragment, mockFragmentActivity)
+            ReflectionTestUtil.callMethod(fragment, METHOD_TRANSITION_HOME)
+        } catch (_: InvocationTargetException) {
+            // Expected IllegalStateException: Fragment MenuFragment not associated with a fragment manager
+            // From MenuFragment.switchToFragment
+        }
     }
 
     // ================================================================================
@@ -1468,6 +1569,9 @@ class PrintPreviewFragmentTest {
         private const val FIELD_FILENAME = "_filenameFromContent"
         private const val FIELD_PAGE = "_currentPage"
         private const val FIELD_IS_PDF_INITIALIZED = "_isPdfInitialized"
+        private const val FIELD_IS_CONVERTER_INITIALIZED = "_isConverterInitialized"
+        private const val FIELD_IS_PERMISSION_DIALOG = "_isPermissionDialogOpen"
+        private const val FIELD_SHOULD_DISPLAY_EXPLANATION = "_shouldDisplayExplanation"
         private const val FIELD_HAS_CONVERSION_ERROR = "_hasConversionError"
         private const val FIELD_SHOULD_RESET_PAGE = "_shouldResetToFirstPageOnInitialize"
         private const val FIELD_IS_BOX_REGISTRATION_DIALOG = "_isBoxRegistrationDialog"
@@ -1489,6 +1593,7 @@ class PrintPreviewFragmentTest {
         private val selectedFile = ContentPrintFile(1, TEST_FILE_NAME, ContentPrintPrintSettings())
         private var printerId = PrinterManager.EMPTY_ID
         private var printerExists = false
+        private var printerType: String? = AppConstants.PRINTER_MODEL_GL
 
         private fun mockBundle(): Bundle {
             val mockBundle = mockk<Bundle>(relaxed = true)
@@ -1549,7 +1654,7 @@ class PrintPreviewFragmentTest {
             mockkObject(PrinterManager)
             val mockPrinterManager = mockk<PrinterManager>()
             every { mockPrinterManager.isExists(any<Int>()) } returns printerExists
-            every { mockPrinterManager.getPrinterType(any()) } returns AppConstants.PRINTER_MODEL_GL
+            every { mockPrinterManager.getPrinterType(any()) } returns printerType
             every { mockPrinterManager.defaultPrinter } returns printerId
             every { PrinterManager.getInstance(any<Context>()) } returns mockPrinterManager
         }
