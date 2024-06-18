@@ -21,7 +21,9 @@ import io.mockk.every
 import io.mockk.just
 import io.mockk.mockk
 import io.mockk.spyk
+import jp.co.riso.android.dialog.WaitingDialogFragment
 import jp.co.riso.smartdeviceapp.MockTestUtil
+import jp.co.riso.smartdeviceapp.ReflectionTestUtil
 import jp.co.riso.smartdeviceapp.controller.print.ContentPrintManager
 import jp.co.riso.smartdeviceapp.controller.print.ContentPrintManagerTest
 import jp.co.riso.smartdeviceapp.model.ContentPrintFile
@@ -193,7 +195,7 @@ class ContentPrintFragmentTest {
     }
 
     // ================================================================================
-    // Tests - OnRefreshListener
+    // Tests - onRefreshListener
     // ================================================================================
     @Test
     fun testOnRefreshListener() {
@@ -406,10 +408,11 @@ class ContentPrintFragmentTest {
         addActivity(fragment)
         fragment.onCancel()
         // Set last confirmation as logout
-        val view = mockViewWithId(R.id.menu_id_action_logout_button)
-        fragment.onClick(view)
+        ReflectionTestUtil.setField(fragment, FIELD_LAST_CONFIRMATION, ContentPrintFragment.Confirmation.LOGOUT)
+        val manager = mockk<ContentPrintManager>(relaxed = true)
+        ReflectionTestUtil.setField(fragment, FIELD_CONTENT_PRINT_MANAGER, manager)
         fragment.onConfirm()
-        fragment.initializeFragment(null)
+        ReflectionTestUtil.setField(fragment, FIELD_CONTENT_PRINT_MANAGER, null)
         fragment.onConfirm()
     }
 
@@ -419,13 +422,39 @@ class ContentPrintFragmentTest {
         addActivity(fragment)
         fragment.onCancel()
         // Set last confirmation as preview
-        val contentPrintFile = ContentPrintFile(0, TEST_FILE_NAME, null)
-        fragment.onFileSelect(contentPrintFile)
+        ReflectionTestUtil.setField(fragment, FIELD_LAST_CONFIRMATION, ContentPrintFragment.Confirmation.PREVIEW)
+        val manager = mockk<ContentPrintManager>(relaxed = true)
+        ReflectionTestUtil.setField(fragment, FIELD_CONTENT_PRINT_MANAGER, manager)
         fragment.onConfirm()
-        fragment.initializeFragment(null)
+        ReflectionTestUtil.setField(fragment, FIELD_CONTENT_PRINT_MANAGER, null)
+        val contentPrintFile = ContentPrintFile(0, TEST_FILE_NAME, null)
+        ContentPrintManager.selectedFile = contentPrintFile
         fragment.onConfirm()
         ContentPrintManager.selectedFile = null
         fragment.onConfirm()
+    }
+
+    // ================================================================================
+    // Private Method Tests - hideLoadingPreviewDialog
+    // ================================================================================
+    @Test
+    fun testHideLoadingPreviewDialog_IsAdded() {
+        val fragment = spyk<ContentPrintFragment>()
+        addActivity(fragment)
+        every { fragment.isAdded } returns true
+        val dialog = spyk<WaitingDialogFragment>()
+        ReflectionTestUtil.setField(fragment, FIELD_DOWNLOAD_DIALOG, dialog)
+        ReflectionTestUtil.callMethod(ContentPrintFragment::class.java, fragment, METHOD_HIDE_LOADING_DIALOG)
+    }
+
+    @Test
+    fun testHideLoadingPreviewDialog_IsNotAdded() {
+        val fragment = spyk<ContentPrintFragment>()
+        addActivity(fragment)
+        every { fragment.isAdded } returns false
+        val dialog = spyk<WaitingDialogFragment>()
+        ReflectionTestUtil.setField(fragment, FIELD_DOWNLOAD_DIALOG, dialog)
+        ReflectionTestUtil.callMethod(ContentPrintFragment::class.java, fragment, METHOD_HIDE_LOADING_DIALOG)
     }
 
     // ================================================================================
@@ -445,6 +474,7 @@ class ContentPrintFragmentTest {
         // Set the fragment activity to prevent NullPointerException during the initialization
         // of the ContentPrintFileAdapter, which requires a non-null activity
         every { fragment.activity } returns fragmentActivity
+        every { fragment.isAdded } returns true
         if (!noContext) {
             every { fragment.context } returns fragmentActivity
         }
@@ -459,6 +489,10 @@ class ContentPrintFragmentTest {
 
     companion object {
         private const val TEST_FILE_NAME = "test.pdf"
+        private const val FIELD_CONTENT_PRINT_MANAGER = "_contentPrintManager"
+        private const val FIELD_LAST_CONFIRMATION = "_lastConfirmation"
+        private const val FIELD_DOWNLOAD_DIALOG = "_downloadingDialog"
+        private const val METHOD_HIDE_LOADING_DIALOG = "hideLoadingPreviewDialog"
 
         private var fragmentActivity: FragmentActivity? = null
         private var activity: Activity? = null

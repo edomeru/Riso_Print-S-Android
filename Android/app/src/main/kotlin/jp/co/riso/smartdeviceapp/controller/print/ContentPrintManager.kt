@@ -313,7 +313,7 @@ class ContentPrintManager(context: Context?) {
     }
 
     fun login(activity: Activity?, authenticationCallback: IAuthenticationCallback) {
-        if (application != null) {
+        if (application != null && !isLoggedIn) {
             authenticationCallback.onAuthenticationStarted()
 
             val params = AcquireTokenParameters.Builder()
@@ -322,6 +322,8 @@ class ContentPrintManager(context: Context?) {
                 .withCallback(InteractiveAuthenticationCallback(authenticationCallback))
                 .build()
             application!!.acquireToken(params)
+        } else {
+            authenticationCallback.onAuthenticationFinished()
         }
     }
 
@@ -349,9 +351,9 @@ class ContentPrintManager(context: Context?) {
     }
 
     fun downloadFile(filename: String?, callback: IContentPrintCallback?) {
-        CoroutineScope(Dispatchers.IO).launch {
-            callback?.onStartFileDownload()
+        callback?.onStartFileDownload()
 
+        CoroutineScope(Dispatchers.IO).launch {
             // Get the file from the file list
             contentPrintService?.listFiles(0, 0, PRINTER_TYPE)
                 ?.enqueue(ContentPrintFileDownloadCallback(this@ContentPrintManager, filename, callback))

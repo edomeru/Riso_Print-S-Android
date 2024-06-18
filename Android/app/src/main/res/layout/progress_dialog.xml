@@ -10,11 +10,13 @@
         android:paddingEnd="?android:dialogPreferredPadding"
         android:indeterminate="true">
     </ProgressBar>
+    <!-- Content Print - START -->
     <TextView
         android:id="@+id/progressText"
         android:layout_width="wrap_content"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:textSize="@dimen/font_size_xl"
-        android:gravity="center_vertical">
+        android:layout_gravity="center_vertical">
     </TextView>
+    <!-- Content Print - END -->
 </LinearLayout>

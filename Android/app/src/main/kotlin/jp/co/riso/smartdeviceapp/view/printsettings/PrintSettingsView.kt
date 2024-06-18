@@ -13,6 +13,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.os.Message
+import android.os.SystemClock
 import android.text.Editable
 import android.text.InputFilter
 import android.text.InputFilter.LengthFilter
@@ -86,6 +87,8 @@ class PrintSettingsView @JvmOverloads constructor(
 
     // Content Print - START
     private lateinit var _registerToBox: ContentPrintManager.IRegisterToBoxCallback
+    // to prevent double tap
+    private var _lastClickTime: Long = 0
     // Content Print - END
 
     /**
@@ -2089,43 +2092,54 @@ class PrintSettingsView @JvmOverloads constructor(
     // INTERFACE - View.OnClickListener
     // ================================================================================
     override fun onClick(v: View) {
-        val id = v.id
-        if (id == R.id.view_id_collapse_container) {
-            toggleCollapse(v)
-        } else if (id == R.id.view_id_show_subview_container) {
-            if (_mainView!!.isEnabled) {
-                displayOptionsSubview(v, true)
-            }
-        } else if (id == R.id.view_id_hide_subview_container) {
-            if (_subView!!.isEnabled) {
-                dismissOptionsSubview(true)
-                _printerManager!!.createUpdateStatusThread()
-            }
-        } else if (id == R.id.view_id_subview_option_item ||
-            id == R.id.view_id_subview_printer_item
-        ) {
-            subviewOptionsItemClicked(v)
-        } else if (id == R.id.view_id_print_selected_printer) {
-            if (_mainView!!.isEnabled) {
-                displayOptionsSubview(v, true)
-                _printerManager!!.createUpdateStatusThread()
-            }
-        } else if (id == R.id.view_id_print_header) {
-            // Content Print - START
-            if (ContentPrintManager.isBoxRegistrationMode) {
-                val pinCodeEditText = _mainView!!.findViewById<EditText>(R.id.view_id_pin_code_edit_text)
-                val loginId = pinCodeEditText.text.toString()
-                val contentPrintManager = ContentPrintManager.getInstance()
-                contentPrintManager!!.registerToBox(
-                    ContentPrintManager.selectedFile!!.fileId,
-                    ContentPrintManager.selectedPrinter!!.serialNo!!,
-                    ContentPrintPrintSettings.convertToContentPrintPrintSettings(_printSettings!!, loginId),
-                    _registerToBox
-                )
-            } else {
-                executePrint()
-            }
+        // Content Print - START
+        if (SystemClock.elapsedRealtime() - _lastClickTime > AppConstants.DOUBLE_TAP_TIME_ELAPSED) {
+            // prevent double tap
+            _lastClickTime = SystemClock.elapsedRealtime()
             // Content Print - END
+
+            val id = v.id
+            if (id == R.id.view_id_collapse_container) {
+                toggleCollapse(v)
+            } else if (id == R.id.view_id_show_subview_container) {
+                if (_mainView!!.isEnabled) {
+                    displayOptionsSubview(v, true)
+                }
+            } else if (id == R.id.view_id_hide_subview_container) {
+                if (_subView!!.isEnabled) {
+                    dismissOptionsSubview(true)
+                    _printerManager!!.createUpdateStatusThread()
+                }
+            } else if (id == R.id.view_id_subview_option_item ||
+                id == R.id.view_id_subview_printer_item
+            ) {
+                subviewOptionsItemClicked(v)
+            } else if (id == R.id.view_id_print_selected_printer) {
+                if (_mainView!!.isEnabled) {
+                    displayOptionsSubview(v, true)
+                    _printerManager!!.createUpdateStatusThread()
+                }
+            } else if (id == R.id.view_id_print_header) {
+                // Content Print - START
+                if (ContentPrintManager.isBoxRegistrationMode) {
+                    val pinCodeEditText =
+                        _mainView!!.findViewById<EditText>(R.id.view_id_pin_code_edit_text)
+                    val loginId = pinCodeEditText.text.toString()
+                    val contentPrintManager = ContentPrintManager.getInstance()
+                    contentPrintManager!!.registerToBox(
+                        ContentPrintManager.selectedFile!!.fileId,
+                        ContentPrintManager.selectedPrinter!!.serialNo!!,
+                        ContentPrintPrintSettings.convertToContentPrintPrintSettings(
+                            _printSettings!!,
+                            loginId
+                        ),
+                        _registerToBox
+                    )
+                } else {
+                    executePrint()
+                }
+                // Content Print - END
+            }
         }
     }
 

@@ -11,6 +11,7 @@ import android.animation.ValueAnimator
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.os.SystemClock
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -37,8 +38,10 @@ import jp.co.riso.smartdeviceapp.view.contentprint.ContentPrintFileAdapter
 import jp.co.riso.smartprint.R
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.io.File
+import java.util.concurrent.TimeUnit
 import kotlin.math.ceil
 
 /**
@@ -74,6 +77,8 @@ open class ContentPrintFragment : BaseFragment(),
     private var _contentPrintManager: ContentPrintManager? = null
     private var _downloadingDialog: WaitingDialogFragment? = null
     private var _page: Int = 1
+    // to prevent double tap
+    private var _lastClickTime: Long = 0
 
     // ================================================================================
     // INTERFACE - BaseFragment
@@ -139,28 +144,37 @@ open class ContentPrintFragment : BaseFragment(),
     // ================================================================================
     override fun onClick(v: View) {
         super.onClick(v)
-        val id = v.id
-        when (id) {
-            R.id.menu_id_back_button -> {
-                val fm = parentFragmentManager
-                val ft = fm.beginTransaction()
-                if (fm.backStackEntryCount > 0) {
-                    fm.popBackStack()
-                    ft.commit()
-                    fm.executePendingTransactions()
+
+        if (SystemClock.elapsedRealtime() - _lastClickTime > AppConstants.DOUBLE_TAP_TIME_ELAPSED) {
+            // prevent double tap
+            _lastClickTime = SystemClock.elapsedRealtime()
+
+            val id = v.id
+            when (id) {
+                R.id.menu_id_back_button -> {
+                    val fm = parentFragmentManager
+                    val ft = fm.beginTransaction()
+                    if (fm.backStackEntryCount > 0) {
+                        fm.popBackStack()
+                        ft.commit()
+                        fm.executePendingTransactions()
+                    }
                 }
+
+                R.id.menu_id_action_login_button -> {
+                    lastAuthentication = Authentication.LOGIN
+                    _contentPrintManager?.login(this.activity, this)
+                }
+
+                R.id.menu_id_action_logout_button -> {
+                    lastAuthentication = Authentication.LOGOUT
+                    showLogoutConfirmDialog()
+                }
+
+                R.id.menu_id_action_refresh_button -> refreshFileList()
+                R.id.previousButton -> previousPage()
+                R.id.nextButton -> nextPage()
             }
-            R.id.menu_id_action_login_button -> {
-                lastAuthentication = Authentication.LOGIN
-                _contentPrintManager?.login(this.activity, this)
-            }
-            R.id.menu_id_action_logout_button -> {
-                lastAuthentication = Authentication.LOGOUT
-                showLogoutConfirmDialog()
-            }
-            R.id.menu_id_action_refresh_button -> refreshFileList()
-            R.id.previousButton -> previousPage()
-            R.id.nextButton -> nextPage()
         }
     }
 
@@ -209,6 +223,8 @@ open class ContentPrintFragment : BaseFragment(),
         // UI updates should be called on the main thread,
         // in case the authentication is refreshed from the background
         CoroutineScope(Dispatchers.Main).launch {
+            // Stop the loading indicator
+            _listView?.onRefreshComplete()
             // Update the action bar
             updateActionBar()
             // Display error
@@ -365,7 +381,6 @@ open class ContentPrintFragment : BaseFragment(),
     // Private Functions
     // ================================================================================
     private fun refreshFileList() {
-        Log.d("TEST", "refreshFileList")
         ContentPrintManager.fileList = ArrayList()
         _previousButton?.visibility = View.GONE
         _pageLabel?.visibility = View.GONE
@@ -471,84 +486,111 @@ open class ContentPrintFragment : BaseFragment(),
     }
 
     private fun showLogoutConfirmDialog() {
-        val confirm = ConfirmDialogFragment.newInstance(
-            resources.getString(R.string.ids_lbl_confirm_logout_title),
-            resources.getString(R.string.ids_lbl_confirm_logout),
-            resources.getString(R.string.ids_lbl_ok),
-            resources.getString(R.string.ids_lbl_cancel),
-            KEY_CONTENT_PRINT_LOGOUT_DIALOG
-        )
-        _lastConfirmation = Confirmation.LOGOUT
-        setResultListenerConfirmDialog(
-            requireActivity().supportFragmentManager,
-            this,
-            KEY_CONTENT_PRINT_LOGOUT_DIALOG
-        )
-        DialogUtils.displayDialog(requireActivity(), KEY_CONTENT_PRINT_LOGOUT_DIALOG, confirm)
+        // UI updates should be called on the main thread
+        CoroutineScope(Dispatchers.Main).launch {
+            val confirm = ConfirmDialogFragment.newInstance(
+                resources.getString(R.string.ids_lbl_confirm_logout_title),
+                resources.getString(R.string.ids_lbl_confirm_logout),
+                resources.getString(R.string.ids_lbl_ok),
+                resources.getString(R.string.ids_lbl_cancel),
+                KEY_CONTENT_PRINT_LOGOUT_DIALOG
+            )
+            _lastConfirmation = Confirmation.LOGOUT
+            setResultListenerConfirmDialog(
+                requireActivity().supportFragmentManager,
+                this@ContentPrintFragment,
+                KEY_CONTENT_PRINT_LOGOUT_DIALOG
+            )
+            DialogUtils.displayDialog(requireActivity(), KEY_CONTENT_PRINT_LOGOUT_DIALOG, confirm)
+        }
     }
 
     private fun showContentPrintConfirmDialog() {
-        val confirm = ConfirmDialogFragment.newInstance(
-            resources.getString(R.string.ids_info_msg_confirm_preview_title),
-            resources.getString(R.string.ids_info_msg_confirm_preview),
-            resources.getString(R.string.ids_lbl_ok),
-            resources.getString(R.string.ids_lbl_cancel),
-            KEY_CONTENT_PRINT_PREVIEW_DIALOG
-        )
-        _lastConfirmation = Confirmation.PREVIEW
-        setResultListenerConfirmDialog(
-            requireActivity().supportFragmentManager,
-            this,
-            KEY_CONTENT_PRINT_PREVIEW_DIALOG
-        )
-        DialogUtils.displayDialog(requireActivity(), KEY_CONTENT_PRINT_PREVIEW_DIALOG, confirm)
+        // UI updates should be called on the main thread
+        CoroutineScope(Dispatchers.Main).launch {
+            val confirm = ConfirmDialogFragment.newInstance(
+                resources.getString(R.string.ids_info_msg_confirm_preview_title),
+                resources.getString(R.string.ids_info_msg_confirm_preview),
+                resources.getString(R.string.ids_lbl_ok),
+                resources.getString(R.string.ids_lbl_cancel),
+                KEY_CONTENT_PRINT_PREVIEW_DIALOG
+            )
+            _lastConfirmation = Confirmation.PREVIEW
+            setResultListenerConfirmDialog(
+                requireActivity().supportFragmentManager,
+                this@ContentPrintFragment,
+                KEY_CONTENT_PRINT_PREVIEW_DIALOG
+            )
+            DialogUtils.displayDialog(requireActivity(), KEY_CONTENT_PRINT_PREVIEW_DIALOG, confirm)
+        }
     }
 
     private fun showLoadingPreviewDialog() {
-        if (_downloadingDialog == null) {
-            _downloadingDialog = WaitingDialogFragment.newInstance(
-                null,
-                resources.getString(R.string.ids_info_msg_downloading),
-                false,
-                null,
-                TAG_DOWNLOADING_DIALOG
-            )
-            DialogUtils.displayDialog(
-                requireActivity(),
-                TAG_DOWNLOADING_DIALOG,
-                _downloadingDialog!!
-            )
+        // UI updates should be called on the main thread
+        CoroutineScope(Dispatchers.Main).launch {
+            if (_downloadingDialog == null) {
+                _downloadingDialog = WaitingDialogFragment.newInstance(
+                    null,
+                    resources.getString(R.string.ids_info_msg_downloading),
+                    false,
+                    null,
+                    TAG_DOWNLOADING_DIALOG
+                )
+                DialogUtils.displayDialog(
+                    requireActivity(),
+                    TAG_DOWNLOADING_DIALOG,
+                    _downloadingDialog!!
+                )
+            }
         }
     }
 
     private fun hideLoadingPreviewDialog() {
-        if (_downloadingDialog != null) {
-            DialogUtils.dismissDialog(requireActivity(), TAG_DOWNLOADING_DIALOG)
-            _downloadingDialog = null
+        // UI updates should be called on the main thread
+        CoroutineScope(Dispatchers.Main).launch {
+            if (_downloadingDialog != null) {
+                // Delay 1 second to give the loading preview dialog time to be displayed
+                delay(TimeUnit.SECONDS.toMillis(1))
+
+                // Check if the Content Print Fragment is still being displayed after 1 second
+                if (isAdded) {
+                    DialogUtils.dismissDialog(requireActivity(), TAG_DOWNLOADING_DIALOG)
+                }
+                _downloadingDialog = null
+            }
         }
     }
 
     private fun showLoginError() {
-        DialogUtils.displayDialog(
-            requireActivity(),
-            KEY_CONTENT_PRINT_LOGIN_ERROR_DIALOG,
-            InfoDialogFragment.newInstance(
-                resources.getString(R.string.ids_err_msg_login_failed),
-                resources.getString(R.string.ids_lbl_ok)
+        // UI updates should be called on the main thread
+        CoroutineScope(Dispatchers.Main).launch {
+            DialogUtils.displayDialog(
+                requireActivity(),
+                KEY_CONTENT_PRINT_LOGIN_ERROR_DIALOG,
+                InfoDialogFragment.newInstance(
+                    resources.getString(R.string.ids_err_msg_login_failed),
+                    resources.getString(R.string.ids_lbl_ok)
+                )
             )
-        )
+        }
     }
 
     private fun showDownloadError() {
-        DialogUtils.displayDialog(
-            requireActivity(),
-            KEY_CONTENT_PRINT_DOWNLOAD_ERROR_DIALOG,
-            InfoDialogFragment.newInstance(
-                resources.getString(R.string.ids_lbl_content_print),
-                resources.getString(R.string.ids_err_msg_download_failed),
-                resources.getString(R.string.ids_lbl_ok)
+        // UI updates should be called on the main thread
+        CoroutineScope(Dispatchers.Main).launch {
+            // Dismiss the loading preview dialog if applicable
+            hideLoadingPreviewDialog()
+
+            DialogUtils.displayDialog(
+                requireActivity(),
+                KEY_CONTENT_PRINT_DOWNLOAD_ERROR_DIALOG,
+                InfoDialogFragment.newInstance(
+                    resources.getString(R.string.ids_lbl_content_print),
+                    resources.getString(R.string.ids_err_msg_download_failed),
+                    resources.getString(R.string.ids_lbl_ok)
+                )
             )
-        )
+        }
     }
 
     companion object {

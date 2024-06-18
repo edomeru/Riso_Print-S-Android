@@ -794,14 +794,7 @@ class ContentPrintManagerTest {
     fun testDownloadFile_DownloadError() {
         ContentPrintManager.application = application
         val mockService = mockk<ContentPrintManager.IContentPrintService>()
-        val mockResponseResult = mockk<retrofit2.Response<ResponseBody>>()
-        every { mockResponseResult.code() } returns 200
-        val mockResponseBody = mockk<ResponseBody>()
-        val mockInputStream = mockk<InputStream>()
-        every { mockInputStream.read(any()) } returns -1
-        every { mockResponseBody.byteStream() } returns mockInputStream
-        every { mockResponseResult.body() } returns mockResponseBody
-        coEvery { mockService.downloadFile(any()) } returns mockResponseResult
+        coEvery { mockService.downloadFile(any()) } answers { throw Exception() }
         ContentPrintManager.contentPrintService = mockService
         val manager = ContentPrintManager.getInstance()
         val file = ContentPrintFile(1, TEST_FILE, null)
@@ -814,14 +807,7 @@ class ContentPrintManagerTest {
     fun testDownloadFile_DownloadError_WithoutCallback() {
         ContentPrintManager.application = application
         val mockService = mockk<ContentPrintManager.IContentPrintService>()
-        val mockResponseResult = mockk<retrofit2.Response<ResponseBody>>()
-        every { mockResponseResult.code() } returns 200
-        val mockResponseBody = mockk<ResponseBody>()
-        val mockInputStream = mockk<InputStream>()
-        every { mockInputStream.read(any()) } returns -1
-        every { mockResponseBody.byteStream() } returns mockInputStream
-        every { mockResponseResult.body() } returns  mockResponseBody
-        coEvery { mockService.downloadFile(any()) } returns mockResponseResult
+        coEvery { mockService.downloadFile(any()) } answers { throw Exception() }
         ContentPrintManager.contentPrintService = mockService
         val manager = ContentPrintManager.getInstance()
         val file = ContentPrintFile(1, TEST_FILE, null)
@@ -882,13 +868,7 @@ class ContentPrintManagerTest {
     fun testDownloadThumbnail_DownloadError() {
         ContentPrintManager.application = application
         val mockService = mockk<ContentPrintManager.IContentPrintService>()
-        val mockResponseResult = mockk<retrofit2.Response<ResponseBody>>()
-        every { mockResponseResult.code() } returns 200
-        val mockResponseBody = mockk<ResponseBody>()
-        val mockInputStream = mockk<InputStream>()
-        every { mockInputStream.read(any()) } returns -1
-        every { mockResponseBody.byteStream() } returns mockInputStream
-        coEvery { mockService.downloadThumbnail(any(), any()) } returns mockResponseResult
+        coEvery { mockService.downloadFile(any()) } answers { throw Exception() }
         ContentPrintManager.contentPrintService = mockService
         val manager = ContentPrintManager.getInstance()
         val file = ContentPrintFile(1, TEST_FILE, null)
@@ -901,13 +881,7 @@ class ContentPrintManagerTest {
     fun testDownloadThumbnail_DownloadError_WithoutCallback() {
         ContentPrintManager.application = application
         val mockService = mockk<ContentPrintManager.IContentPrintService>()
-        val mockResponseResult = mockk<retrofit2.Response<ResponseBody>>()
-        every { mockResponseResult.code() } returns 200
-        val mockResponseBody = mockk<ResponseBody>()
-        val mockInputStream = mockk<InputStream>()
-        every { mockInputStream.read(any()) } returns -1
-        every { mockResponseBody.byteStream() } returns mockInputStream
-        coEvery { mockService.downloadThumbnail(any(), any()) } returns mockResponseResult
+        coEvery { mockService.downloadFile(any()) } answers { throw Exception() }
         ContentPrintManager.contentPrintService = mockService
         val manager = ContentPrintManager.getInstance()
         val file = ContentPrintFile(1, TEST_FILE, null)

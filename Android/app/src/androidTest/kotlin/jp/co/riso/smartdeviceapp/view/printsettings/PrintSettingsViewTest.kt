@@ -3,7 +3,10 @@ package jp.co.riso.smartdeviceapp.view.printsettings
 import android.app.Activity
 import android.content.Context
 import android.os.Bundle
+import android.os.Message
+import android.text.InputType
 import android.view.InputDevice
+import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.MotionEvent
 import android.view.View
@@ -11,10 +14,13 @@ import android.view.ViewGroup
 import android.view.animation.Animation
 import android.view.animation.Animation.AnimationListener
 import android.view.animation.TranslateAnimation
+import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
+import android.widget.CompoundButton
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.ScrollView
 import android.widget.Switch
 import android.widget.TextView
 import io.mockk.every
@@ -155,9 +161,18 @@ class PrintSettingsViewTest {
     // ================================================================================
     @Test
     fun testSaveState() {
+        val mockLayout = mockk<LinearLayout>(relaxed = true)
+        every { mockLayout.tag } returns "test"
+        val subView = ReflectionTestUtil.getField(_printSettingsView!!, FIELD_SUB_VIEW)
+        ReflectionTestUtil.setField(_printSettingsView!!, FIELD_SUB_VIEW, mockLayout)
+        val scrollView = mockk<ScrollView>(relaxed = true)
+        ReflectionTestUtil.setField(_printSettingsView!!, FIELD_SUB_SCROLL_VIEW, scrollView)
+
         val bundle = mockk<Bundle>(relaxed = true)
         _printSettingsView!!.saveState(bundle)
         _printSettingsView!!.restoreState(bundle)
+
+        ReflectionTestUtil.setField(_printSettingsView!!, FIELD_SUB_VIEW, subView)
     }
 
     // ================================================================================
@@ -364,6 +379,88 @@ class PrintSettingsViewTest {
     }
 
     // ================================================================================
+    // Tests - handleMessage
+    // ================================================================================
+    @Test
+    fun testHandleMessage() {
+        // Store the print setting titles
+        val printSettingsTitles = ReflectionTestUtil.getField(
+            _printSettingsView!!, FIELD_PRINT_SETTING_TITLES
+        )
+
+        val scrollView = mockk<ScrollView>(relaxed = true)
+        ReflectionTestUtil.setField(_printSettingsView!!, FIELD_SUB_SCROLL_VIEW, scrollView)
+
+        val layout = mockk<LinearLayout>(relaxed = true)
+        val view = mockk<View>(relaxed = true)
+        every { layout.getTag(ID_COLLAPSE_TARGET_GROUP) } returns view
+        val titles = arrayListOf(layout)
+        ReflectionTestUtil.setField(_printSettingsView!!, FIELD_PRINT_SETTING_TITLES, titles)
+
+        val mockView = mockSubview()
+        val mockLayout = mockk<LinearLayout>(relaxed = true)
+        every { mockLayout.findViewWithTag<View>(any()) } returns mockView
+        setLayout(FIELD_MAIN_VIEW, mockLayout)
+        val subView = getLayout(FIELD_SUB_VIEW)
+        setLayout(FIELD_SUB_VIEW, mockLayout)
+
+        val message = Message()
+        message.arg1 = 0
+        message.what = MSG_COLLAPSE
+        val result1 = _printSettingsView!!.handleMessage(message)
+        message.what = MSG_EXPAND
+        val result2 = _printSettingsView!!.handleMessage(message)
+        message.what = MSG_SET_SCROLL
+        val result3 = _printSettingsView!!.handleMessage(message)
+        message.what = MSG_SLIDE_IN
+        val result4 = _printSettingsView!!.handleMessage(message)
+        message.what = MSG_SLIDE_OUT
+        val result5 = _printSettingsView!!.handleMessage(message)
+        message.what = MSG_SET_SUB_SCROLL
+        val result6 = _printSettingsView!!.handleMessage(message)
+        message.what = MSG_SHOW_SUBVIEW
+        message.obj = KEY_TAG_PRINTER
+        val result7 = _printSettingsView!!.handleMessage(message)
+        message.obj = "test"
+        _printSettingsView!!.handleMessage(message)
+        message.what = 100
+        val result8 = _printSettingsView!!.handleMessage(message)
+
+        // Revert the print setting titles
+        ReflectionTestUtil.setField(
+            _printSettingsView!!, FIELD_PRINT_SETTING_TITLES, printSettingsTitles
+        )
+        setLayout(FIELD_MAIN_VIEW, _mainView)
+        setLayout(FIELD_SUB_VIEW, subView)
+
+        Assert.assertTrue(result1)
+        Assert.assertTrue(result2)
+        Assert.assertTrue(result3)
+        Assert.assertTrue(result4)
+        Assert.assertTrue(result5)
+        Assert.assertTrue(result6)
+        Assert.assertTrue(result7)
+        Assert.assertFalse(result8)
+    }
+
+    // ================================================================================
+    // Tests - onCheckedChanged
+    // ================================================================================
+    @Test
+    fun testOnCheckedChanged() {
+        var buttonView = mockk<CompoundButton>(relaxed = true)
+        every { buttonView.id } returns R.id.view_id_secure_print_switch
+        every { buttonView.tag } returns "test"
+        _printSettingsView!!.onCheckedChanged(buttonView, true)
+
+        buttonView = mockk<CompoundButton>(relaxed = true)
+        every { buttonView.id } returns R.id.view_id_pin_code_edit_text
+        every { buttonView.tag } returns "test"
+        _printSettingsView!!.onCheckedChanged(buttonView, true)
+        _printSettingsView!!.onCheckedChanged(buttonView, false)
+    }
+
+    // ================================================================================
     // Tests - updateOnlineStatus
     // ================================================================================
     @Test
@@ -406,6 +503,34 @@ class PrintSettingsViewTest {
         setLayout(FIELD_SUB_VIEW, mockLayout)
         _printSettingsView!!.updateOnlineStatus()
         setLayout(FIELD_SUB_VIEW, subView)
+    }
+
+    // ================================================================================
+    // Tests - onEditorAction
+    // ================================================================================
+    @Test
+    fun testOnEditorAction() {
+        val mockTextView = mockk<TextView>(relaxed = true)
+        every { mockTextView.inputType } returns InputType.TYPE_CLASS_TEXT
+        every { mockTextView.id } returns R.id.view_id_pin_code_edit_text
+
+        var result = _printSettingsView!!.onEditorAction(mockTextView, EditorInfo.IME_ACTION_DONE, null)
+        Assert.assertFalse(result)
+        result = _printSettingsView!!.onEditorAction(mockTextView, EditorInfo.IME_NULL, null)
+        Assert.assertTrue(result)
+
+        var mockEvent = mockk<KeyEvent>(relaxed = true)
+        every { mockEvent.action } returns KeyEvent.ACTION_UP
+        result = _printSettingsView!!.onEditorAction(mockTextView, EditorInfo.IME_NULL, mockEvent)
+        Assert.assertTrue(result)
+
+        mockEvent = mockk<KeyEvent>(relaxed = true)
+        every { mockEvent.action } returns KeyEvent.ACTION_DOWN
+        result = _printSettingsView!!.onEditorAction(mockTextView, EditorInfo.IME_NULL, mockEvent)
+        Assert.assertTrue(result)
+
+        result = _printSettingsView!!.onEditorAction(mockTextView, EditorInfo.IME_ACTION_GO, null)
+        Assert.assertFalse(result)
     }
 
     // ================================================================================
@@ -647,7 +772,13 @@ class PrintSettingsViewTest {
         ContentPrintManager.isBoxRegistrationMode = true
         ContentPrintManager.selectedPrinter = selectedPrinterFT
 
-        val result = callShouldDisplayOptionFromConstraints(PrintSettings.TAG_COLOR_MODE,
+        var result = callShouldDisplayOptionFromConstraints(PrintSettings.TAG_COLOR_MODE,
+            Preview.ColorMode.FULL_COLOR.ordinal)
+        Assert.assertTrue(result)
+
+
+        ContentPrintManager.selectedPrinter = selectedPrinterUnknown
+        result = callShouldDisplayOptionFromConstraints(PrintSettings.TAG_COLOR_MODE,
             Preview.ColorMode.FULL_COLOR.ordinal)
         Assert.assertTrue(result)
     }
@@ -1096,10 +1227,12 @@ class PrintSettingsViewTest {
     fun testHideDisabledPrintSettings() {
         ContentPrintManager.isBoxRegistrationMode = true
         ContentPrintManager.selectedPrinter = null
+        ContentPrintManager.printerList = ArrayList()
         callHideDisabledPrintSettings()
 
         ContentPrintManager.isBoxRegistrationMode = true
         ContentPrintManager.selectedPrinter = selectedPrinterUnknown
+        ContentPrintManager.printerList = listOf(selectedPrinterFT, selectedPrinterGL, selectedPrinterUnknown)
         callHideDisabledPrintSettings()
 
         ContentPrintManager.isBoxRegistrationMode = true
@@ -1138,8 +1271,8 @@ class PrintSettingsViewTest {
 
         ContentPrintManager.isBoxRegistrationMode = false
         printerList[0].config?.isStaplerAvailable = true
-        printerList[0].config?.isPunch0Available = true
-        printerList[0].config?.isPunch3Available = false
+        printerList[0].config?.isPunch0Available = false
+        printerList[0].config?.isPunch3Available = true
         printerList[0].config?.isPunch4Available = false
         printerList[0].config?.isBookletFinishingAvailable = true
         setPrinterList(printerList)
@@ -1164,11 +1297,13 @@ class PrintSettingsViewTest {
     fun testShouldDisplayOptionFromPrinter_PaperType() {
         ContentPrintManager.isBoxRegistrationMode = true
         ContentPrintManager.selectedPrinter = null
+        ContentPrintManager.printerList = ArrayList()
         var result = callShouldDisplayOptionFromPrinter(PrintSettings.TAG_PAPER_TYPE, Preview.PaperType.LW_PAPER.ordinal)
-        Assert.assertFalse(result)
+        Assert.assertTrue(result)
 
         ContentPrintManager.isBoxRegistrationMode = true
         ContentPrintManager.selectedPrinter = selectedPrinterUnknown
+        ContentPrintManager.printerList = listOf(selectedPrinterFT, selectedPrinterGL, selectedPrinterUnknown)
         result = callShouldDisplayOptionFromPrinter(PrintSettings.TAG_PAPER_TYPE, Preview.PaperType.LW_PAPER.ordinal)
         Assert.assertFalse(result)
 
@@ -1185,6 +1320,11 @@ class PrintSettingsViewTest {
         Assert.assertFalse(result)
 
         result = callShouldDisplayOptionFromPrinter(PrintSettings.TAG_PAPER_TYPE, Preview.PaperType.ANY.ordinal)
+        Assert.assertTrue(result)
+
+        ContentPrintManager.isBoxRegistrationMode = false
+        setPrinterId(100)
+        result = callShouldDisplayOptionFromPrinter(PrintSettings.TAG_PAPER_TYPE, Preview.PaperType.LW_PAPER.ordinal)
         Assert.assertTrue(result)
 
         ContentPrintManager.isBoxRegistrationMode = false
@@ -2054,7 +2194,9 @@ class PrintSettingsViewTest {
         val mockView = mockk<View>(relaxed = true)
         every { mockView.tag } returns KEY_TAG_PRINTER
         val optionsLayout = getLayout(FIELD_OPTIONS_LAYOUT)
-        ContentPrintManager.printerList = listOf(selectedPrinterFT, selectedPrinterGL, selectedPrinterUnknown)
+        ContentPrintManager.printerList = listOf(
+            selectedPrinterFT, selectedPrinterGL, selectedPrinterUnknown, selectedPrinterNoModel
+        )
         setLayout(FIELD_SUB_VIEW, mockLayout)
         setLayout(FIELD_OPTIONS_LAYOUT, mockLayout)
         ContentPrintManager.isBoxRegistrationMode = true
@@ -2166,6 +2308,254 @@ class PrintSettingsViewTest {
         setLayout(FIELD_SUB_VIEW, subView)
     }
 
+    // ================================================================================
+    // Private Method Tests - displayOptionsSubview
+    // ================================================================================
+    @Test
+    fun testDisplayOptionsSubview() {
+        val mockLayout = mockk<LinearLayout>(relaxed = true)
+        val subView = ReflectionTestUtil.getField(_printSettingsView!!, FIELD_SUB_VIEW)
+        ReflectionTestUtil.setField(_printSettingsView!!, FIELD_SUB_VIEW, mockLayout)
+
+        val view = mockSubview()
+        ReflectionTestUtil.callMethod(_printSettingsView!!,
+            METHOD_DISPLAY_OPTIONS_SUBVIEW,
+            ReflectionTestUtil.Param(View::class.java, view),
+            ReflectionTestUtil.Param(Boolean::class.java, false)
+        )
+
+        ReflectionTestUtil.setField(_printSettingsView!!, FIELD_SUB_VIEW, subView)
+    }
+
+    // ================================================================================
+    // Private Method Tests - dismissOptionsSubview
+    // ================================================================================
+    @Test
+    fun testDismissOptionsSubview() {
+        val mockLayout = mockk<LinearLayout>(relaxed = true)
+        val subView = getLayout(FIELD_SUB_VIEW)
+        setLayout(FIELD_SUB_VIEW, mockLayout)
+        ReflectionTestUtil.callMethod(_printSettingsView!!,
+            METHOD_DISMISS_OPTIONS_SUBVIEW,
+            ReflectionTestUtil.Param(Boolean::class.java, false)
+        )
+        setLayout(FIELD_SUB_VIEW, subView)
+    }
+
+    // ================================================================================
+    // Private Method Tests - animateExpand
+    // ================================================================================
+    @Test
+    fun testAnimateExpand() {
+        // Store the print setting titles
+        val printSettingsTitles = ReflectionTestUtil.getField(
+            _printSettingsView!!, FIELD_PRINT_SETTING_TITLES
+        )
+
+        ReflectionTestUtil.callMethod(_printSettingsView!!,
+            METHOD_ANIMATE_EXPAND,
+            ReflectionTestUtil.Param(View::class.java, null)
+        )
+
+        val view = mockk<View>(relaxed = true)
+        val viewGroup = mockk<ViewGroup>(relaxed = true)
+        every { viewGroup.childCount } returns 3
+        every { viewGroup.getChildAt(0) } returns view
+        every { view.visibility } returns View.GONE
+        val visibleView = mockk<View>(relaxed = true)
+        every { viewGroup.getChildAt(1) } returns visibleView
+        every { viewGroup.getChildAt(2) } returns visibleView
+        every { visibleView.visibility } returns View.VISIBLE
+        every { view.getTag(ID_COLLAPSE_TARGET_GROUP) } returns viewGroup
+        val layout1 = mockk<LinearLayout>(relaxed = true)
+        every { layout1.getTag(ID_COLLAPSE_TARGET_GROUP) } returns view
+        val layout2 = mockk<LinearLayout>(relaxed = true)
+        every { layout2.getTag(ID_COLLAPSE_TARGET_GROUP) } returns visibleView
+        val titles = arrayListOf(view, layout1, layout2)
+        ReflectionTestUtil.setField(_printSettingsView!!, FIELD_PRINT_SETTING_TITLES, titles)
+
+        ReflectionTestUtil.callMethod(_printSettingsView!!,
+            METHOD_ANIMATE_EXPAND,
+            ReflectionTestUtil.Param(View::class.java, view)
+        )
+
+        // Revert the print setting titles
+        ReflectionTestUtil.setField(
+            _printSettingsView!!, FIELD_PRINT_SETTING_TITLES, printSettingsTitles
+        )
+    }
+
+    // ================================================================================
+    // Private Method Tests - animateCollapse
+    // ================================================================================
+    @Test
+    fun testAnimateCollapse() {
+        // Store the print setting titles
+        val printSettingsTitles = ReflectionTestUtil.getField(
+            _printSettingsView!!, FIELD_PRINT_SETTING_TITLES
+        )
+
+        ReflectionTestUtil.callMethod(_printSettingsView!!,
+            METHOD_ANIMATE_COLLAPSE,
+            ReflectionTestUtil.Param(View::class.java, null)
+        )
+
+        val view = mockk<View>(relaxed = true)
+        val viewGroup = mockk<ViewGroup>(relaxed = true)
+        every { viewGroup.childCount } returns 3
+        every { viewGroup.getChildAt(0) } returns view
+        every { view.visibility } returns View.GONE
+        val visibleView = mockk<View>(relaxed = true)
+        every { viewGroup.getChildAt(1) } returns visibleView
+        every { viewGroup.getChildAt(2) } returns visibleView
+        every { visibleView.visibility } returns View.VISIBLE
+        every { view.getTag(ID_COLLAPSE_TARGET_GROUP) } returns viewGroup
+        val layout1 = mockk<LinearLayout>(relaxed = true)
+        every { layout1.getTag(ID_COLLAPSE_TARGET_GROUP) } returns view
+        val layout2 = mockk<LinearLayout>(relaxed = true)
+        every { layout2.getTag(ID_COLLAPSE_TARGET_GROUP) } returns visibleView
+        val titles = arrayListOf(view, layout1, layout2)
+        ReflectionTestUtil.setField(_printSettingsView!!, FIELD_PRINT_SETTING_TITLES, titles)
+
+        ReflectionTestUtil.callMethod(_printSettingsView!!,
+            METHOD_ANIMATE_COLLAPSE,
+            ReflectionTestUtil.Param(View::class.java, view)
+        )
+
+        // Revert the print setting titles
+        ReflectionTestUtil.setField(
+            _printSettingsView!!, FIELD_PRINT_SETTING_TITLES, printSettingsTitles
+        )
+    }
+
+    // ================================================================================
+    // Private Method Tests - collapseControl
+    // ================================================================================
+    @Test
+    fun testCollapseControl() {
+        val view = mockSubview()
+
+        ReflectionTestUtil.callMethod(_printSettingsView!!,
+            METHOD_COLLAPSE,
+            ReflectionTestUtil.Param(View::class.java, view),
+            ReflectionTestUtil.Param(Boolean::class.java, false)
+        )
+
+        ReflectionTestUtil.callMethod(_printSettingsView!!,
+            METHOD_COLLAPSE,
+            ReflectionTestUtil.Param(View::class.java, view),
+            ReflectionTestUtil.Param(Boolean::class.java, true)
+        )
+    }
+
+    // ================================================================================
+    // Private Method Tests - expandControl
+    // ================================================================================
+    @Test
+    fun testExpandControl() {
+        val view = mockSubview()
+
+        ReflectionTestUtil.callMethod(_printSettingsView!!,
+            METHOD_EXPAND,
+            ReflectionTestUtil.Param(View::class.java, view),
+            ReflectionTestUtil.Param(Boolean::class.java, false)
+        )
+
+        ReflectionTestUtil.callMethod(_printSettingsView!!,
+            METHOD_EXPAND,
+            ReflectionTestUtil.Param(View::class.java, view),
+            ReflectionTestUtil.Param(Boolean::class.java, true)
+        )
+    }
+
+    // ================================================================================
+    // Private Method Tests - toggleCollapse
+    // ================================================================================
+    @Test
+    fun testToggleCollapse() {
+        var view = mockSubview()
+        every { view.isSelected } returns true
+
+        ReflectionTestUtil.callMethod(_printSettingsView!!,
+            METHOD_TOGGLE,
+            ReflectionTestUtil.Param(View::class.java, view)
+        )
+
+        view = mockSubview()
+        every { view.isSelected } returns false
+
+        ReflectionTestUtil.callMethod(_printSettingsView!!,
+            METHOD_TOGGLE,
+            ReflectionTestUtil.Param(View::class.java, view)
+        )
+    }
+
+    // ================================================================================
+    // Private Method Tests - checkEditTextValue
+    // ================================================================================
+    @Test
+    fun testCheckEditTextValue_NotNumber() {
+        val mockTextView = mockk<TextView>(relaxed = true)
+        every { mockTextView.inputType } returns InputType.TYPE_CLASS_TEXT
+        every { mockTextView.id } returns R.id.view_id_pin_code_edit_text
+
+        ReflectionTestUtil.callMethod(_printSettingsView!!,
+            METHOD_CHECK_EDIT_TEXT,
+            ReflectionTestUtil.Param(TextView::class.java, mockTextView)
+        )
+    }
+
+    @Test
+    fun testCheckEditTextValue_PinCode() {
+        val mockTextView = mockk<TextView>(relaxed = true)
+        every { mockTextView.inputType } returns InputType.TYPE_CLASS_NUMBER
+        every { mockTextView.id } returns R.id.view_id_pin_code_edit_text
+
+        ReflectionTestUtil.callMethod(_printSettingsView!!,
+            METHOD_CHECK_EDIT_TEXT,
+            ReflectionTestUtil.Param(TextView::class.java, mockTextView)
+        )
+    }
+
+    @Test
+    fun testCheckEditTextValue_EmptyString() {
+        val mockTextView = mockk<TextView>(relaxed = true)
+        every { mockTextView.inputType } returns InputType.TYPE_CLASS_NUMBER
+        every { mockTextView.id } returns R.id.edit_text_id
+        every { mockTextView.text } returns ""
+
+        ReflectionTestUtil.callMethod(_printSettingsView!!,
+            METHOD_CHECK_EDIT_TEXT,
+            ReflectionTestUtil.Param(TextView::class.java, mockTextView)
+        )
+    }
+
+    @Test
+    fun testCheckEditTextValue_0() {
+        val mockTextView = mockk<TextView>(relaxed = true)
+        every { mockTextView.inputType } returns InputType.TYPE_CLASS_NUMBER
+        every { mockTextView.id } returns R.id.edit_text_id
+        every { mockTextView.text } returns "0"
+
+        ReflectionTestUtil.callMethod(_printSettingsView!!,
+            METHOD_CHECK_EDIT_TEXT,
+            ReflectionTestUtil.Param(TextView::class.java, mockTextView)
+        )
+    }
+
+    @Test
+    fun testCheckEditTextValue_100() {
+        val mockTextView = mockk<TextView>(relaxed = true)
+        every { mockTextView.inputType } returns InputType.TYPE_CLASS_NUMBER
+        every { mockTextView.id } returns R.id.edit_text_id
+        every { mockTextView.text } returns "100"
+
+        ReflectionTestUtil.callMethod(_printSettingsView!!,
+            METHOD_CHECK_EDIT_TEXT,
+            ReflectionTestUtil.Param(TextView::class.java, mockTextView)
+        )
+    }
+
     companion object {
         private const val TEST_FILE_NAME = "test.pdf"
         private const val TEST_PRINTER_ID_FT = 1
@@ -2178,11 +2568,13 @@ class PrintSettingsViewTest {
         private const val TEST_IP_ADDRESS = "192.168.1.100"
         private const val FIELD_MAIN_VIEW = "_mainView"
         private const val FIELD_SUB_VIEW = "_subView"
+        private const val FIELD_SUB_SCROLL_VIEW = "_subScrollView"
         private const val FIELD_PRINT_CONTROLS = "_printControls"
         private const val FIELD_OPTIONS_LAYOUT = "_subOptionsLayout"
         private const val FIELD_PRINT_SETTINGS = "_printSettings"
         private const val FIELD_PRINTER_ID = "_printerId"
         private const val FIELD_PRINTER_LIST = "_printersList"
+        private const val FIELD_PRINT_SETTING_TITLES = "_printSettingsTitles"
         private const val METHOD_LOAD_PRINTERS_LIST = "loadPrintersList"
         private const val METHOD_DISPLAY_OPTION = "shouldDisplayOptionFromConstraints"
         private const val METHOD_GET_DEFAULT_VALUE = "getDefaultValueWithConstraints"
@@ -2207,10 +2599,27 @@ class PrintSettingsViewTest {
         private const val METHOD_ADD_OPTIONS_TITLE = "addSubviewOptionsTitle"
         private const val METHOD_CREATE_SUBVIEW = "createSubview"
         private const val METHOD_SUBVIEW_CLICKED = "subviewOptionsItemClicked"
+        private const val METHOD_DISPLAY_OPTIONS_SUBVIEW = "displayOptionsSubview"
+        private const val METHOD_DISMISS_OPTIONS_SUBVIEW = "dismissOptionsSubview"
+        private const val METHOD_ANIMATE_EXPAND = "animateExpand"
+        private const val METHOD_ANIMATE_COLLAPSE = "animateCollapse"
+        private const val METHOD_COLLAPSE = "collapseControl"
+        private const val METHOD_EXPAND = "expandControl"
+        private const val METHOD_TOGGLE = "toggleCollapse"
+        private const val METHOD_CHECK_EDIT_TEXT = "checkEditTextValue"
 
         // Copied from PrintSettingsView
         private const val KEY_TAG_PRINTER = "key_tag_printer"
+        private const val MSG_COLLAPSE = 0
+        private const val MSG_EXPAND = 1
+        private const val MSG_SET_SCROLL = 2
+        private const val MSG_SLIDE_IN = 3
+        private const val MSG_SLIDE_OUT = 4
+        private const val MSG_SET_SUB_SCROLL = 5
+        private const val MSG_SHOW_SUBVIEW = 6
         private const val ID_COLLAPSE_TARGET_GROUP = 0x11000002
+        private const val ID_TAG_TEXT = 0x11000008
+        private const val ID_TAG_ICON = 0x11000009
         private const val ID_TAG_SETTING = 0x1100000A
         private const val ID_TAG_SUB_OPTIONS = 0x1100000B
 
@@ -2223,6 +2632,7 @@ class PrintSettingsViewTest {
         private val selectedPrinterFT = ContentPrintPrinter()
         private val selectedPrinterGL = ContentPrintPrinter()
         private val selectedPrinterUnknown = ContentPrintPrinter()
+        private val selectedPrinterNoModel = ContentPrintPrinter()
         private val listener = TestPrintSettingsViewInterface()
 
         private fun callLoadPrintersList() {
@@ -2408,6 +2818,17 @@ class PrintSettingsViewTest {
             }
         }
 
+        private fun mockSubview(): View {
+            val mockSubview = mockk<View>(relaxed = true)
+            val mockSetting = mockk<Setting>(relaxed = true)
+            every { mockSubview.getTag(ID_TAG_TEXT) } returns "text"
+            every { mockSubview.getTag(ID_TAG_ICON) } returns "icon"
+            every { mockSubview.getTag(ID_TAG_SETTING) } returns mockSetting
+            every { mockSubview.getTag(ID_COLLAPSE_TARGET_GROUP) } returns mockSubview
+            every { mockSubview.tag } returns "tag"
+            return mockSubview
+        }
+
         private fun mockContext(): Context {
             val mockInflater = mockk<LayoutInflater>()
             val mockLayout = mockk<LinearLayout>(relaxed = true)
@@ -2476,6 +2897,11 @@ class PrintSettingsViewTest {
             selectedPrinterUnknown.printerName = ""
             selectedPrinterUnknown.model = ""
             selectedPrinterUnknown.printerCapabilities = null
+
+            selectedPrinterNoModel.serialNo = ""
+            selectedPrinterNoModel.printerName = ""
+            selectedPrinterNoModel.model = null
+            selectedPrinterNoModel.printerCapabilities = null
 
             val printerFT = Printer(TEST_PRINTER_MODEL_FT, TEST_IP_ADDRESS, null)
             printerFT.id = TEST_PRINTER_ID_FT
