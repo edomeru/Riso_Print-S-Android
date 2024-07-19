@@ -1,7 +1,7 @@
 {
-  "client_id" : "d422cdb7-6805-4119-9fcd-032fd0042715",
+  "client_id" : "c6cc0539-4cab-46d8-b6dc-408b099e0d72",
   "authorization_user_agent" : "DEFAULT",
-  "redirect_uri" : "msauth://jp.co.riso.smartprint/b9H4UbJYJvVjtc%2BhxWUzjb%2BGuD0%3D",
+  "redirect_uri" : "msauth://jp.co.riso.smartprint/5E717rYpOTmTEhtJVRGcIJulZqU%3D",
   "account_mode": "SINGLE",
   "broker_redirect_uri_registered": true,
   "logging": {
@@ -14,7 +14,7 @@
       "type": "AAD",
       "audience": {
         "type": "AzureADMyOrg",
-        "tenant_id": "03725d16-79b5-444e-ae4a-7612c6edbf26"
+        "tenant_id": "6354c3a0-38cc-471a-a581-2299be19e74e"
       }
     }
   ]

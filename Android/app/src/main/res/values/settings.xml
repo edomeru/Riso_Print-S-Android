@@ -5,12 +5,12 @@
     <string name="legal_html" translatable="false">legal.html</string>
     <string name="license_html" translatable="false">license.html</string>
     <!-- Azure Notification Hubs - START -->
-    <string name="azure_notification_hubs_name" translatable="false">cds-push-notification-hub</string>
-    <string name="azure_notification_hubs_connection_string" translatable="false">Endpoint=sb://cds-push-notifications.servicebus.windows.net/;SharedAccessKeyName=DefaultListenSharedAccessSignature;SharedAccessKey=Lga9wQ+7EatVehRU8mb7+Qcpo42hdI4SmjuFswcxzWM=</string>
+    <string name="azure_notification_hubs_name" translatable="false">dev-cds-push-notification-hub</string>
+    <string name="azure_notification_hubs_connection_string" translatable="false">Endpoint=sb://dev-cds-push-notifications.servicebus.windows.net/;SharedAccessKeyName=DefaultListenSharedAccessSignature;SharedAccessKey=30SlX2/ltgsYTmvHa7WhsKiQ6kfxwAUp15kRPzUCFvc=</string>
     <string name="azure_notification_channel_name" translatable="false">Azure Notification Hubs</string>
     <!-- Azure Notification Hubs - END -->
     <!-- Content Print - START -->
-    <string name="content_print_uri" translatable="false">https://cds-distribution-api.azurewebsites.net/</string>
-    <string name="content_print_scope" translatable="false">api://distribution-api/CDS.ReadWrite</string>
+    <string name="content_print_uri" translatable="false">https://devcontentdistributionserviceapp.azurewebsites.net</string>
+    <string name="content_print_scope" translatable="false">api://dev-distribution-api/CDS.ReadWrite</string>
     <!-- Content Print - END -->
 </resources>
