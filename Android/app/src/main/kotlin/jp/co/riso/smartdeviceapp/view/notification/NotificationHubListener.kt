@@ -19,12 +19,14 @@ import android.content.pm.PackageManager
 import android.media.AudioAttributes
 import android.media.RingtoneManager
 import android.os.Build
+import android.util.Log
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.google.firebase.messaging.RemoteMessage
 import com.microsoft.windowsazure.messaging.notificationhubs.NotificationListener
 import jp.co.riso.android.util.AppUtils
+import jp.co.riso.smartdeviceapp.controller.print.ContentPrintManager
 import jp.co.riso.smartdeviceapp.view.SplashActivity
 import jp.co.riso.smartprint.R
 
@@ -91,7 +93,13 @@ class NotificationHubListener: NotificationListener {
         fun displayNotification(context: Context?, title: String?, body: String?) {
             // Increment the notification ID
             notificationId += 1
-
+            body?.let {
+                val filename = ContentPrintManager.getFilenameFromString(body)
+                filename?.let {
+                    ContentPrintManager.newUploadedFiles.add(filename)
+                }
+                Log.d(ContentPrintManager.TAG, "displayNotification context: $context, title: $title, body: $body, filename: $filename")
+            }
             // The channel ID should be created when the App is started
             if (channelId != null && context != null && title != null && body != null) {
                 // https://developer.android.com/develop/ui/views/notifications/build-notification#lockscreenNotification

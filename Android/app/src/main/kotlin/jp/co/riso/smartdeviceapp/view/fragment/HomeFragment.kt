@@ -114,7 +114,13 @@ open class HomeFragment : BaseFragment(), View.OnClickListener, ConfirmDialogLis
         // Content Print - END
         // Azure Notification Hub - START
         if (ContentPrintManager.filenameFromNotification != null) {
-            downloadFileFromNotification()
+            if(ContentPrintManager.isFromPushNotification){
+                ContentPrintManager.isFromPushNotification = false
+                ContentPrintManager.filenameFromNotification = null
+                goToContentPrint()
+            }else {
+                downloadFileFromNotification()
+            }
         }
         // Azure Notification Hub - END
     }

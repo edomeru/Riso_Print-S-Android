@@ -43,6 +43,17 @@
             android:text="@string/default_textview"
             android:textColor="@color/selector_contentprint_text" />
 
+        <TextView
+            android:id="@+id/newFile"
+            android:layout_width="50dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textColor="@color/dialogErrorText"
+            android:gravity="right"
+            android:paddingRight="7dp"
+            android:visibility="invisible"
+            android:text="NEW" />
+
     </LinearLayout>
 
     <View

@@ -62,7 +62,11 @@ class SplashActivity : BaseActivity(), PauseableHandlerCallback, View.OnClickLis
 
     override fun onCreateContent(savedInstanceState: Bundle?) {
         // Azure Notification Hub - START
+        ContentPrintManager.isFromPushNotification = true
         val filename = ContentPrintManager.getFilename(intent)
+        filename?.let {
+            ContentPrintManager.newUploadedFiles.add(filename)
+        }
         if (filename != null) {
             if (intent.data == null) {
                 ContentPrintManager.filenameFromNotification = filename

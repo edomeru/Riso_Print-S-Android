@@ -17,6 +17,7 @@ import android.widget.ArrayAdapter
 import android.widget.ImageView
 import android.widget.TextView
 import jp.co.riso.smartdeviceapp.AppConstants
+import jp.co.riso.smartdeviceapp.controller.print.ContentPrintManager
 import jp.co.riso.smartdeviceapp.model.ContentPrintFile
 import jp.co.riso.smartprint.R
 
@@ -66,12 +67,17 @@ class ContentPrintFileAdapter(
 
         viewHolder.contentPrintFilename = convertView.findViewById(R.id.filenameText)
         viewHolder.thumbnailImage = convertView.findViewById(R.id.thumbnailImage)
+        viewHolder.newFileText = convertView.findViewById(R.id.newFile)
         viewHolder.position = position
 
         viewHolder.contentPrintFilename?.text = contentPrintFile.filename
         if (contentPrintFile.thumbnailImagePath != null) {
             val bitmap = BitmapFactory.decodeFile(contentPrintFile.thumbnailImagePath)
             viewHolder.thumbnailImage?.setImageBitmap(bitmap)
+        }
+
+        if (contentPrintFile.isRecentlyUploaded == true){
+            viewHolder.newFileText?.visibility = View.VISIBLE
         }
 
         val separator: View = convertView.findViewById(R.id.contentprint_separator)
@@ -105,6 +111,7 @@ class ContentPrintFileAdapter(
     inner class ViewHolder {
         internal var thumbnailImage: ImageView? = null
         internal var contentPrintFilename: TextView? = null
+        internal var newFileText: TextView? = null
         internal var position: Int = -1
     }
 
@@ -144,6 +151,7 @@ class ContentPrintFileAdapter(
 
             if (_adapterInterface!!.onFileSelect(contentPrintFile) != -1) {
                 v.isActivated = true
+                ContentPrintManager.newUploadedFiles.remove(contentPrintFile?.filename)
             }
         }
     }

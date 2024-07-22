@@ -187,6 +187,21 @@ class ContentPrintManager(context: Context?) {
         ) {
             fileCount = response.body()?.count ?: 0
             fileList = response.body()?.list ?: ArrayList()
+
+            for (file in fileList) {
+                if ( newUploadedFiles.contains(file.filename)) {
+                    file.isRecentlyUploaded = true
+                }
+            }
+
+            // Accessing contents of fileList
+            fileList.forEach { file ->
+                val fileId = file.fileId
+                val filename = file.filename
+                val isRecentlyUploaded = file.isRecentlyUploaded
+
+                Log.d(TAG, "File ID: $fileId, Filename: $filename, isRecentlyUploaded: $isRecentlyUploaded")
+            }
             callback?.onFileListUpdated(true)
             Log.d(TAG, "updateFileList - END")
         }
@@ -476,6 +491,14 @@ class ContentPrintManager(context: Context?) {
             return null
         }
 
+        fun getFilenameFromString(filename: String): String? {
+            if (filename != null) {
+                val filename = filename?.substringAfter("「")?.substringBefore("」")
+                return filename?.substringAfter("\"")?.substringBefore("\"")
+            }
+            return null
+        }
+
         private fun refreshToken(authenticationCallback: IAuthenticationCallback?) {
             if (_authority != null) {
                 CoroutineScope(Dispatchers.IO).launch {
@@ -644,5 +667,7 @@ class ContentPrintManager(context: Context?) {
         var fileCount: Int = 0
         var fileList: List<ContentPrintFile> = ArrayList()
         var printerList: List<ContentPrintPrinter> = ArrayList()
+        var isFromPushNotification: Boolean = false
+        var newUploadedFiles = mutableListOf<String>()
     }
 }
