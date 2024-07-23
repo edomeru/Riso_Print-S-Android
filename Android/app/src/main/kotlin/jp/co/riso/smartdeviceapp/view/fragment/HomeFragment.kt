@@ -117,7 +117,11 @@ open class HomeFragment : BaseFragment(), View.OnClickListener, ConfirmDialogLis
             if(ContentPrintManager.isFromPushNotification){
                 ContentPrintManager.isFromPushNotification = false
                 ContentPrintManager.filenameFromNotification = null
-                goToContentPrint()
+                if (!ContentPrintManager.isLoggedIn){
+                _contentPrintManager?.login(activity, this)
+                }else{
+                    goToContentPrint()
+                }
             }else {
                 downloadFileFromNotification()
             }
@@ -256,12 +260,8 @@ open class HomeFragment : BaseFragment(), View.OnClickListener, ConfirmDialogLis
             showLoginError()
         }
 
-        if (ContentPrintManager.isLoggedIn && ContentPrintManager.filenameFromNotification != null) {
-            // Download the file from the notification
-            _contentPrintManager?.downloadFile(
-                ContentPrintManager.filenameFromNotification,
-                this
-            )
+        if (ContentPrintManager.isLoggedIn && ContentPrintManager.newUploadedFiles != null) {
+            goToContentPrint()
         }
     }
 
