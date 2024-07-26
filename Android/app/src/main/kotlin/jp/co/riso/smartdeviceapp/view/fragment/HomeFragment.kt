@@ -260,7 +260,7 @@ open class HomeFragment : BaseFragment(), View.OnClickListener, ConfirmDialogLis
             showLoginError()
         }
 
-        if (ContentPrintManager.isLoggedIn && ContentPrintManager.newUploadedFiles != null) {
+        if (ContentPrintManager.isLoggedIn && ContentPrintManager.getAllViewedFiles() != null) {
             goToContentPrint()
         }
     }

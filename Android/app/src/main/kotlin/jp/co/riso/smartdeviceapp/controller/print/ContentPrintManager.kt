@@ -8,6 +8,7 @@
 package jp.co.riso.smartdeviceapp.controller.print
 
 import android.app.Activity
+import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
@@ -25,6 +26,8 @@ import com.microsoft.identity.client.PublicClientApplication
 import com.microsoft.identity.client.SilentAuthenticationCallback
 import com.microsoft.identity.client.exception.MsalException
 import jp.co.riso.smartdeviceapp.AppConstants
+import jp.co.riso.smartdeviceapp.controller.db.DatabaseManager
+import jp.co.riso.smartdeviceapp.controller.db.KeyConstants
 import jp.co.riso.smartdeviceapp.model.ContentPrintFile
 import jp.co.riso.smartdeviceapp.model.ContentPrintPrintSettings
 import jp.co.riso.smartdeviceapp.model.ContentPrintPrinter
@@ -187,10 +190,21 @@ class ContentPrintManager(context: Context?) {
         ) {
             fileCount = response.body()?.count ?: 0
             fileList = response.body()?.list ?: ArrayList()
+            var viewdFileList = dbHelper?.getAllViewedFiles()
 
+            if (viewdFileList != null) {
+                for (data in viewdFileList) {
+                    Log.e("SHOWFile", "FILE ID  ${data.fileId} FILE NAME:${data.fileName} ")
+                }
+            }
+
+            //Check the viewed files
             for (file in fileList) {
-                if ( newUploadedFiles.contains(file.filename)) {
-                    file.isRecentlyUploaded = true
+                if (viewdFileList != null) {
+                    for (data in viewdFileList) {
+                        Log.e("SHOWFile", "FILE ID  ${data.fileId} FILE NAME:${data.fileName} ")
+                        if(data.fileName.equals(file.filename)){file.isRecentlyUploaded = true}
+                    }
                 }
             }
 
@@ -319,6 +333,8 @@ class ContentPrintManager(context: Context?) {
             _accessToken = getKeyValue(KEY_TOKEN)
             _authority = getKeyValue(KEY_AUTHORITY)
             checkAccessToken(context as? IAuthenticationCallback)
+            dbHelper = DatabaseManager(context)
+
         } else {
             // Reset variables to null
             application = null
@@ -630,6 +646,26 @@ class ContentPrintManager(context: Context?) {
             }
         }
 
+        fun saveViewedFile(context: Context?, fileId: String,  fileName:String): Boolean {
+           val _databaseManager = DatabaseManager(context)
+
+            // Create Content
+            val viewedFile = ContentValues()
+            viewedFile.put(KeyConstants.KEY_SQL_CONTENT_FILE_ID, fileId)
+            viewedFile.put(KeyConstants.KEY_SQL_CONTENT_FILE_NAME, fileName)
+
+            if (!_databaseManager.insert(KeyConstants.KEY_SQL_CONTENT_PRINT_TABLE, null, viewedFile)) {
+                _databaseManager.close()
+                return false
+            }
+            _databaseManager.close()
+            return true
+        }
+
+        fun getAllViewedFiles(): List<DatabaseManager.ViewedFiles>? {
+            return dbHelper?.getAllViewedFiles()
+        }
+
         const val KEY_STORE = "ContentPrintKeyStore"
         const val KEY_TOKEN = "ContentPrintKeyToken"
         const val KEY_AUTHORITY = "ContentPrintKeyAuthority"
@@ -668,6 +704,8 @@ class ContentPrintManager(context: Context?) {
         var fileList: List<ContentPrintFile> = ArrayList()
         var printerList: List<ContentPrintPrinter> = ArrayList()
         var isFromPushNotification: Boolean = false
-        var newUploadedFiles = mutableListOf<String>()
+        //var newUploadedFiles = mutableListOf<String>()
+        private var dbHelper: DatabaseManager? = null
+        var viewedFiles: List<DatabaseManager.ViewedFiles> = emptyList()
     }
 }

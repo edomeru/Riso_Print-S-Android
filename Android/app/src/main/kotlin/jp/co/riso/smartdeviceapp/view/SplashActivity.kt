@@ -40,7 +40,6 @@ import jp.co.riso.smartdeviceapp.controller.pdf.PDFFileManager
 import jp.co.riso.smartdeviceapp.view.base.BaseActivity
 // Azure Notification Hub - START
 import jp.co.riso.smartdeviceapp.controller.print.ContentPrintManager
-import jp.co.riso.smartdeviceapp.view.notification.NotificationHubListener
 // Azure Notification Hub - END
 import jp.co.riso.smartdeviceapp.view.webkit.SDAWebView
 import jp.co.riso.smartprint.R
@@ -64,9 +63,9 @@ class SplashActivity : BaseActivity(), PauseableHandlerCallback, View.OnClickLis
         // Azure Notification Hub - START
         ContentPrintManager.isFromPushNotification = true
         val filename = ContentPrintManager.getFilename(intent)
-        filename?.let {
-            ContentPrintManager.newUploadedFiles.add(filename)
-        }
+//        filename?.let {
+//            ContentPrintManager.newUploadedFiles.add(filename)
+//        }
         if (filename != null) {
             if (intent.data == null) {
                 ContentPrintManager.filenameFromNotification = filename

@@ -10,6 +10,7 @@ package jp.co.riso.smartdeviceapp.view.contentprint
 import android.content.Context
 import android.graphics.BitmapFactory
 import android.os.SystemClock
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,6 +18,7 @@ import android.widget.ArrayAdapter
 import android.widget.ImageView
 import android.widget.TextView
 import jp.co.riso.smartdeviceapp.AppConstants
+import jp.co.riso.smartdeviceapp.controller.db.DatabaseManager
 import jp.co.riso.smartdeviceapp.controller.print.ContentPrintManager
 import jp.co.riso.smartdeviceapp.model.ContentPrintFile
 import jp.co.riso.smartprint.R
@@ -77,7 +79,7 @@ class ContentPrintFileAdapter(
         }
 
         if (contentPrintFile.isRecentlyUploaded == true){
-            viewHolder.newFileText?.visibility = View.VISIBLE
+            viewHolder.newFileText?.visibility = View.INVISIBLE
         }
 
         val separator: View = convertView.findViewById(R.id.contentprint_separator)
@@ -151,7 +153,40 @@ class ContentPrintFileAdapter(
 
             if (_adapterInterface!!.onFileSelect(contentPrintFile) != -1) {
                 v.isActivated = true
-                ContentPrintManager.newUploadedFiles.remove(contentPrintFile?.filename)
+               // ContentPrintManager.newUploadedFiles.remove(contentPrintFile?.filename)
+                //Save viewd file into the local DB
+                contentPrintFile?.filename?.let {
+                    ContentPrintManager.saveViewedFile(context,contentPrintFile.fileId.toString(),
+                        it
+                    )
+//                    if (saved) {
+//                        // Successfully saved in the database
+//                        Log.d("SaveFile", "File $it saved in the database")
+//                        // Handle success
+//                    } else {
+//                        // Failed to save in the database
+//                        Log.e("SaveFile", "Failed to save file $it in the database")
+//                        // Handle failure
+//                    }
+
+                }
+
+                val dbHelper = DatabaseManager(context)
+//                val columnTypes = dbHelper.getColumnTypes("ContentPrint")
+//                if (columnTypes != null) {
+//                    for ((columnName, columnType) in columnTypes) {
+//                        Log.e("Check column", "Column: $columnName ColumnType $columnType")
+//                    }
+//                }
+
+                // log all viewed files
+
+//                    val viewedFiles = ContentPrintManager.getAllViewedFiles()
+//                    viewedFiles?.forEach { file ->
+//                        Log.e("ContentPrintFileAdapter", "FileId: ${file.fileId}, FileName: ${file.fileName}")
+//                    }
+
+
             }
         }
     }
