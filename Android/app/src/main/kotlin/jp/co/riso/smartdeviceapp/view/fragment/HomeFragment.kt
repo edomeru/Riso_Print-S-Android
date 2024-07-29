@@ -261,6 +261,7 @@ open class HomeFragment : BaseFragment(), View.OnClickListener, ConfirmDialogLis
         }
 
         if (ContentPrintManager.isLoggedIn && ContentPrintManager.getAllViewedFiles() != null) {
+            _contentPrintManager?.getCurrentUser( this)
             goToContentPrint()
         }
     }

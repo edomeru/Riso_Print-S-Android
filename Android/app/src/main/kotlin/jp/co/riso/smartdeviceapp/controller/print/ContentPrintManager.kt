@@ -143,6 +143,9 @@ class ContentPrintManager(context: Context?) {
 
         @POST(API_REGISTER)
         fun registerToBox(@Body request: ContentPrintBoxRegistrationRequest): Call<ResponseBody>
+
+        @GET(API_CURRENT_USER)
+        fun getCurrentUser(): Call<CurrentUserResult>
     }
 
     interface IContentPrintCallback {
@@ -176,6 +179,14 @@ class ContentPrintManager(context: Context?) {
 
         @SerializedName("count")
         var count: Int = -1
+    }
+
+    class CurrentUserResult {
+        @SerializedName("user_id")
+        var userId: Int = -1
+
+        @SerializedName("email")
+        var userEmail: String? = ""
     }
 
     class ContentPrintFileResultCallback(var callback: IContentPrintCallback?) : Callback<ContentPrintFileResult> {
@@ -242,6 +253,23 @@ class ContentPrintManager(context: Context?) {
                     break
                 }
             }
+        }
+    }
+
+    class CurrentUserResultCallback(var callback: IContentPrintCallback?) : Callback<CurrentUserResult> {
+        override fun onFailure(call: Call<CurrentUserResult>, t: Throwable) {
+            Log.e(TAG, "updateFileList - Error ${t.message}")
+            callback?.onFileListUpdated(false)
+        }
+
+        override fun onResponse(
+            call: Call<CurrentUserResult>,
+            response: Response<CurrentUserResult>
+        ) {
+            userId = response.body()?.userId ?: 0
+            (response.body()?.userEmail ?: "").also { email = it.toString() }
+
+            Log.e("CurrentUserResultCallback_TEST", "userId  $userId email:$email ")
         }
     }
 
@@ -400,6 +428,14 @@ class ContentPrintManager(context: Context?) {
     fun downloadFile(contentPrintFile: ContentPrintFile, callback: IContentPrintCallback?) {
         CoroutineScope(Dispatchers.IO).launch {
             downloadFile(contentPrintFile, callback, false)
+        }
+    }
+
+    fun getCurrentUser(callback: IContentPrintCallback?) {
+        Log.e("getCurrentUser", "getCurrentUser")
+        CoroutineScope(Dispatchers.IO).launch {
+            contentPrintService?.getCurrentUser()
+                ?.enqueue(CurrentUserResultCallback(callback))
         }
     }
 
@@ -680,6 +716,7 @@ class ContentPrintManager(context: Context?) {
         private const val API_DOWNLOAD_FILE = "api/content/preview/{file_id}"
         private const val API_LIST_PRINTERS = "api/device/printerList"
         private const val API_REGISTER = "api/content/registered"
+        private const val API_CURRENT_USER = "api/user/me"
 
         val TAG: String = ContentPrintManager::class.java.simpleName ?: "Content Print"
 
@@ -704,6 +741,8 @@ class ContentPrintManager(context: Context?) {
         var fileList: List<ContentPrintFile> = ArrayList()
         var printerList: List<ContentPrintPrinter> = ArrayList()
         var isFromPushNotification: Boolean = false
+        var userId: Int = 0
+        var email: String? = null
         //var newUploadedFiles = mutableListOf<String>()
         private var dbHelper: DatabaseManager? = null
         var viewedFiles: List<DatabaseManager.ViewedFiles> = emptyList()
