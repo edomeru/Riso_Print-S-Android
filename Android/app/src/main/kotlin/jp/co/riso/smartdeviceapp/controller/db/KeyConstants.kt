@@ -100,4 +100,7 @@ object KeyConstants {
     /// SQL key for content file name
     const val KEY_SQL_CONTENT_FILE_NAME= "fileName"
 
+    /// SQL key for user current email
+    const val KEY_SQL_CONTENT_USER_CURRENT_EMAIL = "email"
+
 }

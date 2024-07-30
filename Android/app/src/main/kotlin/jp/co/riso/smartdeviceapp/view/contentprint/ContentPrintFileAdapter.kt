@@ -80,6 +80,8 @@ class ContentPrintFileAdapter(
 
         if (contentPrintFile.isRecentlyUploaded == true){
             viewHolder.newFileText?.visibility = View.INVISIBLE
+        }else{
+            viewHolder.newFileText?.visibility = View.VISIBLE
         }
 
         val separator: View = convertView.findViewById(R.id.contentprint_separator)
@@ -156,35 +158,35 @@ class ContentPrintFileAdapter(
                // ContentPrintManager.newUploadedFiles.remove(contentPrintFile?.filename)
                 //Save viewd file into the local DB
                 contentPrintFile?.filename?.let {
-                    ContentPrintManager.saveViewedFile(context,contentPrintFile.fileId.toString(),
+                    var saved = ContentPrintManager.saveViewedFile(context,contentPrintFile.fileId.toString(),
                         it
                     )
-//                    if (saved) {
-//                        // Successfully saved in the database
-//                        Log.d("SaveFile", "File $it saved in the database")
-//                        // Handle success
-//                    } else {
-//                        // Failed to save in the database
-//                        Log.e("SaveFile", "Failed to save file $it in the database")
-//                        // Handle failure
-//                    }
+                    if (saved) {
+                        // Successfully saved in the database
+                        Log.d("SaveFile", "File $it saved in the database")
+                        // Handle success
+                    } else {
+                        // Failed to save in the database
+                        Log.e("SaveFile", "Failed to save file $it in the database")
+                        // Handle failure
+                    }
 
                 }
 
                 val dbHelper = DatabaseManager(context)
-//                val columnTypes = dbHelper.getColumnTypes("ContentPrint")
-//                if (columnTypes != null) {
-//                    for ((columnName, columnType) in columnTypes) {
-//                        Log.e("Check column", "Column: $columnName ColumnType $columnType")
-//                    }
-//                }
+                val columnTypes = dbHelper.getColumnTypes("ContentPrint")
+                if (columnTypes != null) {
+                    for ((columnName, columnType) in columnTypes) {
+                        Log.e("Check column", "Column: $columnName ColumnType $columnType")
+                    }
+                }
 
                 // log all viewed files
 
-//                    val viewedFiles = ContentPrintManager.getAllViewedFiles()
-//                    viewedFiles?.forEach { file ->
-//                        Log.e("ContentPrintFileAdapter", "FileId: ${file.fileId}, FileName: ${file.fileName}")
-//                    }
+                    val viewedFiles = ContentPrintManager.getAllViewedFiles()
+                    viewedFiles?.forEach { file ->
+                        Log.e("ContentPrintFileAdapter", "FileId: ${file.fileId}, FileName: ${file.fileName} Email: ${file.email}")
+                    }
 
 
             }

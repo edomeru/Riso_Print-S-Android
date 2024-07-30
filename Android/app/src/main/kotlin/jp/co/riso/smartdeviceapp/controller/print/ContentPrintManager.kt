@@ -201,22 +201,32 @@ class ContentPrintManager(context: Context?) {
         ) {
             fileCount = response.body()?.count ?: 0
             fileList = response.body()?.list ?: ArrayList()
-            var viewdFileList = dbHelper?.getAllViewedFiles()
+           // getAllViewedFiles()
+            Log.e("CHECK_EMAIL", "EMAIL1  ${_email}")
+            var viewdFileList = dbHelper?.getAllViewedFiles(_email)
 
             if (viewdFileList != null) {
                 for (data in viewdFileList) {
-                    Log.e("SHOWFile", "FILE ID  ${data.fileId} FILE NAME:${data.fileName} ")
+                    Log.e("SHOWFilesf", "FILE ID  ${data.fileId} FILE NAME:${data.fileName} EMAIL:${data.email} ")
                 }
             }
 
-            //Check the viewed files
+            // Check the viewed files
             for (file in fileList) {
+                var isUploaded = false // Assume the file is not recently uploaded initially
+
                 if (viewdFileList != null) {
                     for (data in viewdFileList) {
-                        Log.e("SHOWFile", "FILE ID  ${data.fileId} FILE NAME:${data.fileName} ")
-                        if(data.fileName.equals(file.filename)){file.isRecentlyUploaded = true}
+                        Log.e("SHOWFileTESTTTTTTT", "VIEWED FILE ID  ${data.fileId} SERVER FILE ID  ${file.fileId} FILE NAME:${data.fileName} email:${data.email}")
+
+                        if (data.fileId.equals(file.fileId.toString())) {
+                            isUploaded = true
+                            break // No need to check further if a match is found
+                        }
                     }
                 }
+
+                file.isRecentlyUploaded = isUploaded // Set the property based on the match
             }
 
             // Accessing contents of fileList
@@ -266,10 +276,13 @@ class ContentPrintManager(context: Context?) {
             call: Call<CurrentUserResult>,
             response: Response<CurrentUserResult>
         ) {
-            userId = response.body()?.userId ?: 0
-            (response.body()?.userEmail ?: "").also { email = it.toString() }
+            var uId = response.body()?.userId ?: 0
+            (response.body()?.userEmail ?: "").also { email = it }
 
             Log.e("CurrentUserResultCallback_TEST", "userId  $userId email:$email ")
+            _userId = uId
+            _email = email
+            emailAdress = email
         }
     }
 
@@ -374,7 +387,7 @@ class ContentPrintManager(context: Context?) {
     fun login(activity: Activity?, authenticationCallback: IAuthenticationCallback) {
         if (application != null && !isLoggedIn) {
             authenticationCallback.onAuthenticationStarted()
-
+            Log.d(ContentPrintManager.TAG, "loginTEST")
             val params = AcquireTokenParameters.Builder()
                 .startAuthorizationFromActivity(activity)
                 .withScopes(scopes)
@@ -432,7 +445,7 @@ class ContentPrintManager(context: Context?) {
     }
 
     fun getCurrentUser(callback: IContentPrintCallback?) {
-        Log.e("getCurrentUser", "getCurrentUser")
+        Log.d(TAG, "getCurrentUser")
         CoroutineScope(Dispatchers.IO).launch {
             contentPrintService?.getCurrentUser()
                 ?.enqueue(CurrentUserResultCallback(callback))
@@ -689,6 +702,8 @@ class ContentPrintManager(context: Context?) {
             val viewedFile = ContentValues()
             viewedFile.put(KeyConstants.KEY_SQL_CONTENT_FILE_ID, fileId)
             viewedFile.put(KeyConstants.KEY_SQL_CONTENT_FILE_NAME, fileName)
+            Log.e("saveViewedFile", "_email: $_email")
+            viewedFile.put(KeyConstants.KEY_SQL_CONTENT_USER_CURRENT_EMAIL, _email)
 
             if (!_databaseManager.insert(KeyConstants.KEY_SQL_CONTENT_PRINT_TABLE, null, viewedFile)) {
                 _databaseManager.close()
@@ -699,7 +714,7 @@ class ContentPrintManager(context: Context?) {
         }
 
         fun getAllViewedFiles(): List<DatabaseManager.ViewedFiles>? {
-            return dbHelper?.getAllViewedFiles()
+            return dbHelper?.getAllViewedFiles(_email)
         }
 
         const val KEY_STORE = "ContentPrintKeyStore"
@@ -725,6 +740,8 @@ class ContentPrintManager(context: Context?) {
         private var _uri: String? = null
         private var _authority: String? = null
         private var _accessToken: String? = null
+        private var _userId: Int = 0
+        private var _email: String? = null
 
         var preferences: SharedPreferences? = null
         var application: ISingleAccountPublicClientApplication? = null
@@ -743,6 +760,7 @@ class ContentPrintManager(context: Context?) {
         var isFromPushNotification: Boolean = false
         var userId: Int = 0
         var email: String? = null
+        var emailAdress: String? = null
         //var newUploadedFiles = mutableListOf<String>()
         private var dbHelper: DatabaseManager? = null
         var viewedFiles: List<DatabaseManager.ViewedFiles> = emptyList()

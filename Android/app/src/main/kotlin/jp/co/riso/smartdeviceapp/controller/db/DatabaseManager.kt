@@ -23,6 +23,7 @@ import android.util.Log
 import jp.co.riso.smartdeviceapp.controller.db.KeyConstants.KEY_SQL_CONTENT_FILE_ID
 import jp.co.riso.smartdeviceapp.controller.db.KeyConstants.KEY_SQL_CONTENT_FILE_NAME
 import jp.co.riso.smartdeviceapp.controller.db.KeyConstants.KEY_SQL_CONTENT_PRINT_TABLE
+import jp.co.riso.smartdeviceapp.controller.db.KeyConstants.KEY_SQL_CONTENT_USER_CURRENT_EMAIL
 import jp.co.riso.smartdeviceapp.controller.print.ContentPrintManager
 import jp.co.riso.smartdeviceapp.controller.print.ContentPrintManager.Companion.TAG
 import java.util.*
@@ -120,17 +121,25 @@ open class DatabaseManager (private val _context: Context?) :
         return columns
     }
     @SuppressLint("Range")
-    fun getAllViewedFiles(): List<ViewedFiles> {
+    fun getAllViewedFiles(emailAdd: String?): List<ViewedFiles> {
         val dataList = mutableListOf<ViewedFiles>()
         val db = readableDatabase
         var cursor: Cursor? = null
         try {
-            cursor = db.rawQuery("SELECT * FROM $KEY_SQL_CONTENT_PRINT_TABLE", null)
+            if (emailAdd == null) {
+                Log.e(TAG, "Email address is null")
+                return dataList // Return empty list
+            }
+
+            val query = "SELECT * FROM $KEY_SQL_CONTENT_PRINT_TABLE WHERE $KEY_SQL_CONTENT_USER_CURRENT_EMAIL  = ?"
+            cursor = db.rawQuery(query, arrayOf(emailAdd))
             if (cursor.moveToFirst()) {
                 do {
                     val fileId = cursor.getString(cursor.getColumnIndex(KEY_SQL_CONTENT_FILE_ID))
                     val fileName = cursor.getString(cursor.getColumnIndex(KEY_SQL_CONTENT_FILE_NAME))
-                    val data = ViewedFiles(fileId, fileName)
+                    val email = cursor.getString(cursor.getColumnIndex(
+                        KEY_SQL_CONTENT_USER_CURRENT_EMAIL))
+                    val data = ViewedFiles(fileId, fileName, email)
                     dataList.add(data)
                 } while (cursor.moveToNext())
             }
@@ -145,7 +154,8 @@ open class DatabaseManager (private val _context: Context?) :
 
     data class ViewedFiles(
         val fileId: String,
-        val fileName: String
+        val fileName: String,
+        val email: String
     )
 
 
@@ -372,7 +382,8 @@ open class DatabaseManager (private val _context: Context?) :
             "CREATE TABLE IF NOT EXISTS ContentPrint (" +
                     "_id INTEGER PRIMARY KEY AUTOINCREMENT," +
                     "fileId TEXT NOT NULL," +
-                    "fileName TEXT NOT NULL" +
+                    "fileName TEXT NOT NULL," +
+                    "email TEXT NOT NULL" +
                     ");"
 
         /**
