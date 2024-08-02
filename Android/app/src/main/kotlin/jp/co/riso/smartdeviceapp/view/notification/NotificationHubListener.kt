@@ -36,7 +36,7 @@ import jp.co.riso.smartprint.R
  *
  * @brief A class that listens for notifications from the Azure Notification Hubs
  */
-class NotificationHubListener: NotificationListener {
+class NotificationHubListener : NotificationListener {
     override fun onPushNotificationReceived(context: Context?, message: RemoteMessage?) {
         val notification = message?.notification
         val title = notification?.title
@@ -98,16 +98,16 @@ class NotificationHubListener: NotificationListener {
             if (channelId != null && context != null && title != null && body != null) {
                 // https://developer.android.com/develop/ui/views/notifications/build-notification#lockscreenNotification
                 val launchIntent =
-                        AppUtils.createActivityIntent(context, SplashActivity::class.java)
+                    AppUtils.createActivityIntent(context, SplashActivity::class.java)
                 launchIntent!!.putExtra("body", body)
                 launchIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
 
                 // https://developer.android.com/about/versions/12/behavior-changes-12#pending-intent-mutability
                 val pendingIntent = PendingIntent.getActivity(
                     context,
-                   0,
+                    0,
                     launchIntent,
-                   PendingIntent.FLAG_MUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
+                    PendingIntent.FLAG_MUTABLE or PendingIntent.FLAG_UPDATE_CURRENT
                 )
 
                 val bigTextStyle = NotificationCompat.BigTextStyle()
@@ -141,7 +141,7 @@ class NotificationHubListener: NotificationListener {
             }
         }
 
-        fun getNotification(builder: NotificationCompat.Builder) : Notification {
+        fun getNotification(builder: NotificationCompat.Builder): Notification {
             return builder.build()
         }
     }

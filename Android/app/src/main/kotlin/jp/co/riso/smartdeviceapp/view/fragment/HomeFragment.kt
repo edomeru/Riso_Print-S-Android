@@ -66,9 +66,11 @@ open class HomeFragment : BaseFragment(), View.OnClickListener, ConfirmDialogLis
     private var _homeButtons: LinearLayout? = null
     private var _fileButton: LinearLayout? = null
     private var _photosButton: LinearLayout? = null
+
     // private var _cameraButton: LinearLayout? = null aLINK edit: HIDE_NEW_FEATURES: Capture Photo function is hidden. Hide camera permission declaration
     private var _confirmDialogFragment: ConfirmDialogFragment? = null
     private var _buttonTapped: LinearLayout? = null
+
     // Content Print - START
     private var _contentPrintButton: LinearLayout? = null
     private var _downloadingDialog: WaitingDialogFragment? = null
@@ -76,7 +78,8 @@ open class HomeFragment : BaseFragment(), View.OnClickListener, ConfirmDialogLis
     // Content Print - END
 
     private val _permissionsStorage = arrayOf(
-        WRITE_EXTERNAL_STORAGE)
+        WRITE_EXTERNAL_STORAGE
+    )
 
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     private val _permissionsStorageAndroid13 = arrayOf(
@@ -85,7 +88,8 @@ open class HomeFragment : BaseFragment(), View.OnClickListener, ConfirmDialogLis
 
     private val _permissionsCameraStorage = arrayOf(
         CAMERA,
-        WRITE_EXTERNAL_STORAGE)
+        WRITE_EXTERNAL_STORAGE
+    )
 
     // to prevent double tap
     private var _lastClickTime: Long = 0
@@ -105,7 +109,11 @@ open class HomeFragment : BaseFragment(), View.OnClickListener, ConfirmDialogLis
                     // Display error message that an invalid intent was sent by a third-party app
                     val message = resources.getString(R.string.ids_err_msg_invalid_contents_android)
                     val button = resources.getString(R.string.ids_lbl_ok)
-                    displayDialog(requireActivity(), FRAGMENT_TAG_DIALOG, newInstance(message, button))
+                    displayDialog(
+                        requireActivity(),
+                        FRAGMENT_TAG_DIALOG,
+                        newInstance(message, button)
+                    )
                 }
             }
         }
@@ -114,16 +122,16 @@ open class HomeFragment : BaseFragment(), View.OnClickListener, ConfirmDialogLis
         // Content Print - END
         // Azure Notification Hub - START
         if (ContentPrintManager.filenameFromNotification != null) {
-            if(ContentPrintManager.isFromPushNotification){
+            if (ContentPrintManager.isFromPushNotification) {
                 ContentPrintManager.isFromPushNotification = false
                 ContentPrintManager.filenameFromNotification = null
-                if (!ContentPrintManager.isLoggedIn){
-                _contentPrintManager?.login(activity, this)
-                }else{
+                if (!ContentPrintManager.isLoggedIn) {
+                    _contentPrintManager?.login(activity, this)
+                } else {
                     _contentPrintManager?.getCurrentUser(this)
                     goToContentPrint()
                 }
-            }else {
+            } else {
                 downloadFileFromNotification()
             }
         }
@@ -181,7 +189,10 @@ open class HomeFragment : BaseFragment(), View.OnClickListener, ConfirmDialogLis
                 photosPickerIntent.type = "*/*"
                 if (!isChromeBook) {
                     if (SDK_INT >= Build.VERSION_CODES.S) {
-                        photosPickerIntent.putExtra(Intent.EXTRA_MIME_TYPES, AppConstants.IMAGE_TYPES_ANDROID_12)
+                        photosPickerIntent.putExtra(
+                            Intent.EXTRA_MIME_TYPES,
+                            AppConstants.IMAGE_TYPES_ANDROID_12
+                        )
                     } else {
                         if (SDK_INT >= Build.VERSION_CODES.P) {
                             photosPickerIntent.putExtra(
@@ -263,7 +274,7 @@ open class HomeFragment : BaseFragment(), View.OnClickListener, ConfirmDialogLis
             }
         }
         if (ContentPrintManager.isLoggedIn && ContentPrintManager.getAllViewedFiles() != null) {
-            _contentPrintManager?.getCurrentUser( this)
+            _contentPrintManager?.getCurrentUser(this)
             goToContentPrint()
         }
     }
@@ -275,7 +286,11 @@ open class HomeFragment : BaseFragment(), View.OnClickListener, ConfirmDialogLis
         // Do nothing
     }
 
-    override fun onThumbnailDownloaded(contentPrintFile: ContentPrintFile, filePath: String, success: Boolean) {
+    override fun onThumbnailDownloaded(
+        contentPrintFile: ContentPrintFile,
+        filePath: String,
+        success: Boolean
+    ) {
         // Do nothing
     }
 
@@ -283,7 +298,11 @@ open class HomeFragment : BaseFragment(), View.OnClickListener, ConfirmDialogLis
         showLoadingPreviewDialog()
     }
 
-    override fun onFileDownloaded(contentPrintFile: ContentPrintFile, filePath: String, success: Boolean) {
+    override fun onFileDownloaded(
+        contentPrintFile: ContentPrintFile,
+        filePath: String,
+        success: Boolean
+    ) {
         if (success) {
             ContentPrintManager.filePath = filePath
             ContentPrintManager.isFileFromContentPrint = true
@@ -354,13 +373,22 @@ open class HomeFragment : BaseFragment(), View.OnClickListener, ConfirmDialogLis
                         requireActivity().getString(R.string.ids_err_msg_storage_permission_not_allowed)
                     val positiveButton = requireActivity().getString(R.string.ids_lbl_ok)
                     _confirmDialogFragment =
-                        ConfirmDialogFragment.newInstance(message, positiveButton, null, TAG_PERMISSION_STORAGE_DIALOG)
+                        ConfirmDialogFragment.newInstance(
+                            message,
+                            positiveButton,
+                            null,
+                            TAG_PERMISSION_STORAGE_DIALOG
+                        )
                     setResultListenerConfirmDialog(
                         requireActivity().supportFragmentManager,
                         this,
                         TAG_PERMISSION_STORAGE_DIALOG
                     )
-                    displayDialog(requireActivity(), TAG_PERMISSION_STORAGE_DIALOG, _confirmDialogFragment!!)
+                    displayDialog(
+                        requireActivity(),
+                        TAG_PERMISSION_STORAGE_DIALOG,
+                        _confirmDialogFragment!!
+                    )
                 }
             } else {
                 if (SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -387,13 +415,22 @@ open class HomeFragment : BaseFragment(), View.OnClickListener, ConfirmDialogLis
                         requireActivity().getString(R.string.ids_err_msg_camera_permission_not_allowed)
                     val positiveButton = requireActivity().getString(R.string.ids_lbl_ok)
                     _confirmDialogFragment =
-                        ConfirmDialogFragment.newInstance(message, positiveButton, null, TAG_PERMISSION_CAMERA_STORAGE_DIALOG)
+                        ConfirmDialogFragment.newInstance(
+                            message,
+                            positiveButton,
+                            null,
+                            TAG_PERMISSION_CAMERA_STORAGE_DIALOG
+                        )
                     setResultListenerConfirmDialog(
                         requireActivity().supportFragmentManager,
                         this,
                         TAG_PERMISSION_CAMERA_STORAGE_DIALOG
                     )
-                    displayDialog(requireActivity(), TAG_PERMISSION_CAMERA_STORAGE_DIALOG, _confirmDialogFragment!!)
+                    displayDialog(
+                        requireActivity(),
+                        TAG_PERMISSION_CAMERA_STORAGE_DIALOG,
+                        _confirmDialogFragment!!
+                    )
                 }
             } else {
                 _resultLauncherPermissionCameraStorage.launch(_permissionsCameraStorage)
@@ -575,45 +612,61 @@ open class HomeFragment : BaseFragment(), View.OnClickListener, ConfirmDialogLis
     // ================================================================================
     // Register for Activity Result
     // ================================================================================
-    private val _resultLauncherFile = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-        val data: Intent? = result.data
-        if (result.resultCode == Activity.RESULT_OK && data != null) {
-            val contentType = FileUtils.getMimeType(activity, data.data)
-            if (!listOf(*AppConstants.DOC_TYPES).contains(contentType)) {
-                val message = resources.getString(R.string.ids_err_msg_open_failed)
-                val button = resources.getString(R.string.ids_lbl_ok)
-                displayDialog(requireActivity(), FRAGMENT_TAG_DIALOG, newInstance(message, button))
-            } else {
-                val fileType =
-                    if (contentType == AppConstants.DOC_TYPES[0]) PDF_FROM_PICKER else TEXT_FROM_PICKER
-                openFile(data.data, null, fileType)
+    private val _resultLauncherFile =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            val data: Intent? = result.data
+            if (result.resultCode == Activity.RESULT_OK && data != null) {
+                val contentType = FileUtils.getMimeType(activity, data.data)
+                if (!listOf(*AppConstants.DOC_TYPES).contains(contentType)) {
+                    val message = resources.getString(R.string.ids_err_msg_open_failed)
+                    val button = resources.getString(R.string.ids_lbl_ok)
+                    displayDialog(
+                        requireActivity(),
+                        FRAGMENT_TAG_DIALOG,
+                        newInstance(message, button)
+                    )
+                } else {
+                    val fileType =
+                        if (contentType == AppConstants.DOC_TYPES[0]) PDF_FROM_PICKER else TEXT_FROM_PICKER
+                    openFile(data.data, null, fileType)
+                }
             }
         }
-    }
 
-    private val _resultLauncherPhoto = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-        val data: Intent? = result.data
-        if (result.resultCode == Activity.RESULT_OK && data != null) {
-            // There are no request codes
-            if (data.clipData != null) { // multiple image files
-                if (!ImageUtils.isImageFileSupported(activity, data.clipData)) {
-                    val message = resources.getString(R.string.ids_err_msg_invalid_file_selection)
-                    val button = resources.getString(R.string.ids_lbl_ok)
-                    displayDialog(requireActivity(), FRAGMENT_TAG_DIALOG, newInstance(message, button))
-                } else {
-                    openFile(null, data.clipData, IMAGES_FROM_PICKER)
-                }
-            } else {    // single image file
-                if (!ImageUtils.isImageFileSupported(activity, data.data)) {
-                    val message = resources.getString(R.string.ids_err_msg_invalid_file_selection)
-                    val button = resources.getString(R.string.ids_lbl_ok)
-                    displayDialog(requireActivity(), FRAGMENT_TAG_DIALOG, newInstance(message, button))
-                } else {
-                    openFile(data.data, null, IMAGE_FROM_PICKER)
+    private val _resultLauncherPhoto =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            val data: Intent? = result.data
+            if (result.resultCode == Activity.RESULT_OK && data != null) {
+                // There are no request codes
+                if (data.clipData != null) { // multiple image files
+                    if (!ImageUtils.isImageFileSupported(activity, data.clipData)) {
+                        val message =
+                            resources.getString(R.string.ids_err_msg_invalid_file_selection)
+                        val button = resources.getString(R.string.ids_lbl_ok)
+                        displayDialog(
+                            requireActivity(),
+                            FRAGMENT_TAG_DIALOG,
+                            newInstance(message, button)
+                        )
+                    } else {
+                        openFile(null, data.clipData, IMAGES_FROM_PICKER)
+                    }
+                } else {    // single image file
+                    if (!ImageUtils.isImageFileSupported(activity, data.data)) {
+                        val message =
+                            resources.getString(R.string.ids_err_msg_invalid_file_selection)
+                        val button = resources.getString(R.string.ids_lbl_ok)
+                        displayDialog(
+                            requireActivity(),
+                            FRAGMENT_TAG_DIALOG,
+                            newInstance(message, button)
+                        )
+                    } else {
+                        openFile(data.data, null, IMAGE_FROM_PICKER)
+                    }
                 }
             }
         }
-    }
 
     /* aLINK edit: HIDE_NEW_FEATURES: Capture Photo function is hidden. Hide camera permission declaration
     private inline fun <reified T : Parcelable> Bundle.parcelable(key: String): T? = when {
@@ -634,58 +687,60 @@ open class HomeFragment : BaseFragment(), View.OnClickListener, ConfirmDialogLis
         }
     } */
 
-    private val _resultLauncherPermissionStorage = registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
-        var permissionType = WRITE_EXTERNAL_STORAGE
+    private val _resultLauncherPermissionStorage =
+        registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
+            var permissionType = WRITE_EXTERNAL_STORAGE
 
-        // Check first if device is Android 13
-        if (SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            permissionType = READ_MEDIA_IMAGES
-        }
+            // Check first if device is Android 13
+            if (SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                permissionType = READ_MEDIA_IMAGES
+            }
 
-        // ignore if result is empty which is due to repeated permission request because of quick taps
-        if (permissions.isNotEmpty()) {
-            if (permissions[permissionType] == true) {
-                // permission was granted, start picker intent
-                if (_buttonTapped != null) {
-                    _buttonTapped!!.performClick()
+            // ignore if result is empty which is due to repeated permission request because of quick taps
+            if (permissions.isNotEmpty()) {
+                if (permissions[permissionType] == true) {
+                    // permission was granted, start picker intent
+                    if (_buttonTapped != null) {
+                        _buttonTapped!!.performClick()
+                    }
+                }
+                if (!_checkPermission && !shouldShowRequestPermissionRationale(permissionType)) {
+                    val message =
+                        resources.getString(R.string.ids_err_msg_write_external_storage_permission_not_granted)
+                    val button = resources.getString(R.string.ids_lbl_ok)
+                    displayDialog(
+                        requireActivity(),
+                        FRAGMENT_TAG_DIALOG,
+                        newInstance(message, button)
+                    )
                 }
             }
-            if (!_checkPermission && !shouldShowRequestPermissionRationale(permissionType)) {
-                val message =
-                    resources.getString(R.string.ids_err_msg_write_external_storage_permission_not_granted)
-                val button = resources.getString(R.string.ids_lbl_ok)
-                displayDialog(
-                    requireActivity(),
-                    FRAGMENT_TAG_DIALOG,
-                    newInstance(message, button)
-                )
-            }
         }
-    }
 
-    private val _resultLauncherPermissionCameraStorage = registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
-        // ignore if result is empty which is due to repeated permission request because of quick taps
-        if (permissions.isNotEmpty()) {
-            if (permissions[CAMERA] == true && permissions[WRITE_EXTERNAL_STORAGE] == true) {
-                // permission was granted, start picker intent
-                if (_buttonTapped != null) {
-                    _buttonTapped!!.performClick()
+    private val _resultLauncherPermissionCameraStorage =
+        registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
+            // ignore if result is empty which is due to repeated permission request because of quick taps
+            if (permissions.isNotEmpty()) {
+                if (permissions[CAMERA] == true && permissions[WRITE_EXTERNAL_STORAGE] == true) {
+                    // permission was granted, start picker intent
+                    if (_buttonTapped != null) {
+                        _buttonTapped!!.performClick()
+                    }
+                }
+                if (!_checkPermission && !shouldShowRequestPermissionRationale(CAMERA) &&
+                    !shouldShowRequestPermissionRationale(WRITE_EXTERNAL_STORAGE)
+                ) {
+                    val message =
+                        resources.getString(R.string.ids_err_msg_camera_permission_not_granted)
+                    val button = resources.getString(R.string.ids_lbl_ok)
+                    displayDialog(
+                        requireActivity(),
+                        FRAGMENT_TAG_DIALOG,
+                        newInstance(message, button)
+                    )
                 }
             }
-            if (!_checkPermission && !shouldShowRequestPermissionRationale(CAMERA) &&
-                !shouldShowRequestPermissionRationale(WRITE_EXTERNAL_STORAGE)
-            ) {
-                val message =
-                    resources.getString(R.string.ids_err_msg_camera_permission_not_granted)
-                val button = resources.getString(R.string.ids_lbl_ok)
-                displayDialog(
-                    requireActivity(),
-                    FRAGMENT_TAG_DIALOG,
-                    newInstance(message, button)
-                )
-            }
         }
-    }
 
     companion object {
         // flags for file types picked

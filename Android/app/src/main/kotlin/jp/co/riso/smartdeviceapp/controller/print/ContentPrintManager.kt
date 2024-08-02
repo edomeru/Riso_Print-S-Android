@@ -70,7 +70,7 @@ class ContentPrintManager(context: Context?) {
     /**
      *  MSAL interface and classes
      */
-    open class SingleAccountApplicationCreatedListener: ISingleAccountApplicationCreatedListener {
+    open class SingleAccountApplicationCreatedListener : ISingleAccountApplicationCreatedListener {
         // This variable is saved for testing purposes
         var application: ISingleAccountPublicClientApplication? = null
 
@@ -92,7 +92,8 @@ class ContentPrintManager(context: Context?) {
         fun onAuthenticationFinished()
     }
 
-    class InteractiveAuthenticationCallback(private var authenticationCallback: IAuthenticationCallback?) : AuthenticationCallback {
+    class InteractiveAuthenticationCallback(private var authenticationCallback: IAuthenticationCallback?) :
+        AuthenticationCallback {
         override fun onSuccess(authenticationResult: IAuthenticationResult?) {
             isLoggedIn = true
             receiveAuthenticationResult(authenticationResult, this.authenticationCallback)
@@ -111,7 +112,8 @@ class ContentPrintManager(context: Context?) {
         }
     }
 
-    class RefreshAuthenticationCallback(private var authenticationCallback: IAuthenticationCallback?) : SilentAuthenticationCallback {
+    class RefreshAuthenticationCallback(private var authenticationCallback: IAuthenticationCallback?) :
+        SilentAuthenticationCallback {
         override fun onSuccess(authenticationResult: IAuthenticationResult?) {
             isLoggedIn = true
             receiveAuthenticationResult(authenticationResult, this.authenticationCallback)
@@ -129,11 +131,18 @@ class ContentPrintManager(context: Context?) {
      */
     interface IContentPrintService {
         @GET(API_LIST_FILES)
-        fun listFiles(@Query("limit") limit: Int, @Query("page") page: Int, @Query("printer_type") printerType: Int): Call<ContentPrintFileResult>
+        fun listFiles(
+            @Query("limit") limit: Int,
+            @Query("page") page: Int,
+            @Query("printer_type") printerType: Int
+        ): Call<ContentPrintFileResult>
 
         @Streaming
         @GET(API_DOWNLOAD_FILE)
-        suspend fun downloadThumbnail(@Path("file_id") fileId: Int, @Query("thumbnail") thumbnail: Int): Response<ResponseBody>
+        suspend fun downloadThumbnail(
+            @Path("file_id") fileId: Int,
+            @Query("thumbnail") thumbnail: Int
+        ): Response<ResponseBody>
 
         @Streaming
         @GET(API_DOWNLOAD_FILE)
@@ -152,7 +161,11 @@ class ContentPrintManager(context: Context?) {
     interface IContentPrintCallback {
         fun onFileListUpdated(success: Boolean)
 
-        fun onThumbnailDownloaded(contentPrintFile: ContentPrintFile, filePath: String, success: Boolean)
+        fun onThumbnailDownloaded(
+            contentPrintFile: ContentPrintFile,
+            filePath: String,
+            success: Boolean
+        )
 
         fun onStartFileDownload()
 
@@ -190,7 +203,8 @@ class ContentPrintManager(context: Context?) {
         var userEmail: String? = ""
     }
 
-    class ContentPrintFileResultCallback(var callback: IContentPrintCallback?) : Callback<ContentPrintFileResult> {
+    class ContentPrintFileResultCallback(var callback: IContentPrintCallback?) :
+        Callback<ContentPrintFileResult> {
         override fun onFailure(call: Call<ContentPrintFileResult>, t: Throwable) {
             Log.e(TAG, "updateFileList - Error ${t.message}")
             callback?.onFileListUpdated(false)
@@ -225,7 +239,11 @@ class ContentPrintManager(context: Context?) {
         }
     }
 
-    class ContentPrintFileDownloadCallback(var manager: ContentPrintManager, var filename: String?, var callback: IContentPrintCallback?) : Callback<ContentPrintFileResult> {
+    class ContentPrintFileDownloadCallback(
+        var manager: ContentPrintManager,
+        var filename: String?,
+        var callback: IContentPrintCallback?
+    ) : Callback<ContentPrintFileResult> {
         override fun onFailure(call: Call<ContentPrintFileResult>, t: Throwable) {
             Log.e(TAG, "listFiles - Error ${t.message}")
             callback?.onFileListUpdated(false)
@@ -249,7 +267,8 @@ class ContentPrintManager(context: Context?) {
         }
     }
 
-    class CurrentUserResultCallback(var callback: IContentPrintCallback?) : Callback<CurrentUserResult> {
+    class CurrentUserResultCallback(var callback: IContentPrintCallback?) :
+        Callback<CurrentUserResult> {
         override fun onFailure(call: Call<CurrentUserResult>, t: Throwable) {
             Log.e(TAG, "updateFileList - Error ${t.message}")
             callback?.onFileListUpdated(false)
@@ -275,7 +294,8 @@ class ContentPrintManager(context: Context?) {
         var count: Int = -1
     }
 
-    class ContentPrintPrinterResultCallback(var callback: IContentPrintCallback?): Callback<ContentPrintPrinterResult> {
+    class ContentPrintPrinterResultCallback(var callback: IContentPrintCallback?) :
+        Callback<ContentPrintPrinterResult> {
         override fun onFailure(call: Call<ContentPrintPrinterResult>, t: Throwable) {
             Log.e(TAG, "updatePrinterList - Error ${t.message}")
             callback?.onPrinterListUpdated(false)
@@ -306,7 +326,8 @@ class ContentPrintManager(context: Context?) {
         var printSettings: ContentPrintPrintSettings? = null
     }
 
-    class ContentPrintBoxRegistrationResultCallback(var callback: IRegisterToBoxCallback?) : Callback<ResponseBody> {
+    class ContentPrintBoxRegistrationResultCallback(var callback: IRegisterToBoxCallback?) :
+        Callback<ResponseBody> {
         override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
             callback?.onBoxRegistered(false)
             Log.e(TAG, "registerToBox - Error ${t.message}")
@@ -409,7 +430,13 @@ class ContentPrintManager(context: Context?) {
         CoroutineScope(Dispatchers.IO).launch {
             // Get the file from the file list
             contentPrintService?.listFiles(0, 0, PRINTER_TYPE)
-                ?.enqueue(ContentPrintFileDownloadCallback(this@ContentPrintManager, filename, callback))
+                ?.enqueue(
+                    ContentPrintFileDownloadCallback(
+                        this@ContentPrintManager,
+                        filename,
+                        callback
+                    )
+                )
         }
     }
 
@@ -433,9 +460,11 @@ class ContentPrintManager(context: Context?) {
         }
     }
 
-    private suspend fun downloadFile(contentPrintFile: ContentPrintFile,
-                             callback: IContentPrintCallback?,
-                             isThumbnail: Boolean) {
+    private suspend fun downloadFile(
+        contentPrintFile: ContentPrintFile,
+        callback: IContentPrintCallback?,
+        isThumbnail: Boolean
+    ) {
         try {
             if (!isThumbnail) {
                 callback?.onStartFileDownload()
@@ -488,9 +517,9 @@ class ContentPrintManager(context: Context?) {
         } catch (e: Exception) {
             Log.e(TAG, "Error in downloading file ${contentPrintFile.filename}: $e")
             if (isThumbnail) {
-               callback?.onThumbnailDownloaded(contentPrintFile, "", false)
+                callback?.onThumbnailDownloaded(contentPrintFile, "", false)
             } else {
-               callback?.onFileDownloaded(contentPrintFile, "", false)
+                callback?.onFileDownloaded(contentPrintFile, "", false)
             }
         }
     }
@@ -503,7 +532,12 @@ class ContentPrintManager(context: Context?) {
         }
     }
 
-    fun registerToBox(fileId: Int, serialNo: String, printSettings: ContentPrintPrintSettings, callback: IRegisterToBoxCallback?) {
+    fun registerToBox(
+        fileId: Int,
+        serialNo: String,
+        printSettings: ContentPrintPrintSettings,
+        callback: IRegisterToBoxCallback?
+    ) {
         Log.d(TAG, "registerToBox - START")
         callback?.onStartBoxRegistration()
 
@@ -578,10 +612,12 @@ class ContentPrintManager(context: Context?) {
 
         private fun receiveAuthenticationResult(
             authenticationResult: IAuthenticationResult?,
-            authenticationCallback: IAuthenticationCallback?) {
+            authenticationCallback: IAuthenticationCallback?
+        ) {
             _authority = authenticationResult?.account?.authority
             _accessToken = authenticationResult?.accessToken
-            val expiresOn = authenticationResult?.expiresOn?.toInstant()?.atZone(ZoneId.of(TIME_ZONE))
+            val expiresOn =
+                authenticationResult?.expiresOn?.toInstant()?.atZone(ZoneId.of(TIME_ZONE))
 
             // Save the access token in the key store
             saveKeyValue(KEY_TOKEN, _accessToken)
@@ -622,13 +658,13 @@ class ContentPrintManager(context: Context?) {
         }
 
         private fun dateToString(date: ZonedDateTime?): String {
-            val formatter =  DateTimeFormatter.ofPattern(ISO_FORMAT)
+            val formatter = DateTimeFormatter.ofPattern(ISO_FORMAT)
             Log.d("TEST", "dateToString: ${formatter.format(date)}")
             return formatter.format(date)
         }
 
         private fun stringToDate(dateStr: String?): ZonedDateTime? {
-            val formatter =  DateTimeFormatter.ofPattern(ISO_FORMAT)
+            val formatter = DateTimeFormatter.ofPattern(ISO_FORMAT)
             val dateTime = LocalDateTime.parse(dateStr, formatter)
             Log.d("TEST", "stringToDate: $dateStr")
             return dateTime.atZone(ZoneId.of(TIME_ZONE))
@@ -679,8 +715,8 @@ class ContentPrintManager(context: Context?) {
             }
         }
 
-        fun saveViewedFile(context: Context?, fileId: String,  fileName:String): Boolean {
-           val _databaseManager = DatabaseManager(context)
+        fun saveViewedFile(context: Context?, fileId: String, fileName: String): Boolean {
+            val _databaseManager = DatabaseManager(context)
 
             // Create Content
             val viewedFile = ContentValues()
@@ -689,7 +725,12 @@ class ContentPrintManager(context: Context?) {
             Log.e("saveViewedFile", "_email: $_email")
             viewedFile.put(KeyConstants.KEY_SQL_CONTENT_USER_CURRENT_EMAIL, _email)
 
-            if (!_databaseManager.insert(KeyConstants.KEY_SQL_CONTENT_PRINT_TABLE, null, viewedFile)) {
+            if (!_databaseManager.insert(
+                    KeyConstants.KEY_SQL_CONTENT_PRINT_TABLE,
+                    null,
+                    viewedFile
+                )
+            ) {
                 _databaseManager.close()
                 return false
             }

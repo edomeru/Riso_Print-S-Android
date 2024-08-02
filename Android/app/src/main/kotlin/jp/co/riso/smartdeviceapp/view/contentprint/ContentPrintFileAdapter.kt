@@ -78,9 +78,9 @@ class ContentPrintFileAdapter(
             viewHolder.thumbnailImage?.setImageBitmap(bitmap)
         }
 
-        if (contentPrintFile.isRecentlyUploaded == true){
+        if (contentPrintFile.isRecentlyUploaded == true) {
             viewHolder.newFileText?.visibility = View.INVISIBLE
-        }else{
+        } else {
             viewHolder.newFileText?.visibility = View.VISIBLE
         }
 
@@ -146,7 +146,8 @@ class ContentPrintFileAdapter(
     // ================================================================================
     override fun onClick(v: View) {
         if (v.id == R.id.content_print_row &&
-            SystemClock.elapsedRealtime() - _lastClickTime > AppConstants.DOUBLE_TAP_TIME_ELAPSED) {
+            SystemClock.elapsedRealtime() - _lastClickTime > AppConstants.DOUBLE_TAP_TIME_ELAPSED
+        ) {
             // prevent double tap
             _lastClickTime = SystemClock.elapsedRealtime()
 
@@ -158,7 +159,8 @@ class ContentPrintFileAdapter(
 
                 //Save viewed file into the local DB
                 contentPrintFile?.filename?.let {
-                    ContentPrintManager.saveViewedFile(context,contentPrintFile.fileId.toString(),
+                    ContentPrintManager.saveViewedFile(
+                        context, contentPrintFile.fileId.toString(),
                         it
                     )
                 }

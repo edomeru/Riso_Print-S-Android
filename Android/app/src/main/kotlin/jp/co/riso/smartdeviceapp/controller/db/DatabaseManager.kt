@@ -36,7 +36,7 @@ import java.util.*
  *
  * @param _context Context to use to open or create the database.
  */
-open class DatabaseManager (private val _context: Context?) :
+open class DatabaseManager(private val _context: Context?) :
     SQLiteOpenHelper(_context, DATABASE_NAME, null, DATABASE_VERSION) {
     override fun onOpen(db: SQLiteDatabase) {
         // http://stackoverflow.com/questions/13641250/sqlite-delete-cascade-not-working
@@ -121,6 +121,7 @@ open class DatabaseManager (private val _context: Context?) :
         }
         return columns
     }
+
     @SuppressLint("Range")
     fun getAllViewedFiles(emailAdd: String?): List<ViewedFiles> {
         val dataList = mutableListOf<ViewedFiles>()
@@ -132,14 +133,19 @@ open class DatabaseManager (private val _context: Context?) :
                 return dataList
             }
 
-            val query = "SELECT * FROM $KEY_SQL_CONTENT_PRINT_TABLE WHERE $KEY_SQL_CONTENT_USER_CURRENT_EMAIL  = ?"
+            val query =
+                "SELECT * FROM $KEY_SQL_CONTENT_PRINT_TABLE WHERE $KEY_SQL_CONTENT_USER_CURRENT_EMAIL  = ?"
             cursor = db.rawQuery(query, arrayOf(emailAdd))
             if (cursor.moveToFirst()) {
                 do {
                     val fileId = cursor.getString(cursor.getColumnIndex(KEY_SQL_CONTENT_FILE_ID))
-                    val fileName = cursor.getString(cursor.getColumnIndex(KEY_SQL_CONTENT_FILE_NAME))
-                    val email = cursor.getString(cursor.getColumnIndex(
-                        KEY_SQL_CONTENT_USER_CURRENT_EMAIL))
+                    val fileName =
+                        cursor.getString(cursor.getColumnIndex(KEY_SQL_CONTENT_FILE_NAME))
+                    val email = cursor.getString(
+                        cursor.getColumnIndex(
+                            KEY_SQL_CONTENT_USER_CURRENT_EMAIL
+                        )
+                    )
                     val data = ViewedFiles(fileId, fileName, email)
                     dataList.add(data)
                 } while (cursor.moveToNext())
@@ -370,6 +376,7 @@ open class DatabaseManager (private val _context: Context?) :
         private const val DATABASE_VERSION_02 = 2
         private const val DATABASE_VERSION_03 = 3
         private const val DATABASE_VERSION_04 = 4 ///< current database version of the application
+
         @JvmField
         val DATABASE_VERSION =
             if (AppConstants.DEBUG_LOWER_DB_VERSION) DATABASE_VERSION_03 else DATABASE_VERSION_04

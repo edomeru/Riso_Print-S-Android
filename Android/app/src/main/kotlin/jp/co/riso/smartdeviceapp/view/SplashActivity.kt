@@ -143,6 +143,7 @@ class SplashActivity : BaseActivity(), PauseableHandlerCallback, View.OnClickLis
                 }
                 super.onKeyUp(keyCode, event)
             }
+
             else -> super.onKeyUp(keyCode, event)
         }
     }
@@ -187,7 +188,11 @@ class SplashActivity : BaseActivity(), PauseableHandlerCallback, View.OnClickLis
                     }
 
                     override fun onPageFinished(view: WebView, url: String) {
-                        Logger.logStopTime(context, SplashActivity::class.java, "License Activity load")
+                        Logger.logStopTime(
+                            context,
+                            SplashActivity::class.java,
+                            "License Activity load"
+                        )
                     }
                 }
                 loadUrl(_urlString)
@@ -231,7 +236,9 @@ class SplashActivity : BaseActivity(), PauseableHandlerCallback, View.OnClickLis
                 data = intent.data
             } else if (Intent.ACTION_SEND == action) {
                 if (intent.extras!!.parcelable<Parcelable>(Intent.EXTRA_STREAM) != null) {
-                    data = Uri.parse(intent.extras!!.parcelable<Parcelable>(Intent.EXTRA_STREAM).toString())
+                    data = Uri.parse(
+                        intent.extras!!.parcelable<Parcelable>(Intent.EXTRA_STREAM).toString()
+                    )
                 } else {
                     // An invalid intent was sent by the third party app
                     launchIntent.putExtra(Intent.EXTRA_TEXT, AppConstants.ERR_KEY_INVALID_INTENT)
@@ -251,10 +258,12 @@ class SplashActivity : BaseActivity(), PauseableHandlerCallback, View.OnClickLis
             data != null -> {
                 launchIntent.data = data
             }
+
             clipData != null -> {
                 launchIntent.clipData = clipData
                 launchIntent.action = Intent.ACTION_SEND_MULTIPLE
             }
+
             else -> {
                 // delete PDF cache
                 val file = File(PDFFileManager.sandboxPath)
@@ -368,9 +377,13 @@ class SplashActivity : BaseActivity(), PauseableHandlerCallback, View.OnClickLis
                 findViewById<View>(R.id.startButton).setOnClickListener(this)
                 val infoText = findViewById<View>(R.id.txtPermissionInfo) as TextView
                 infoText.text =
-                    getString(R.string.ids_lbl_permission_information, getString(R.string.ids_app_name))
+                    getString(
+                        R.string.ids_lbl_permission_information,
+                        getString(R.string.ids_app_name)
+                    )
                 (findViewById<View>(R.id.viewFlipper) as ViewFlipper).showNext()
             }
+
             R.id.licenseDisagreeButton -> {
                 // alert box
                 val title = getString(R.string.ids_lbl_license)
@@ -387,10 +400,12 @@ class SplashActivity : BaseActivity(), PauseableHandlerCallback, View.OnClickLis
                     .create()
                     .show()
             }
+
             R.id.startButton -> {
                 // start Home Screen
                 runMainActivity()
             }
+
             R.id.settingsButton -> {
                 // Go to Settings screen screen
                 val intent = Intent()
@@ -399,15 +414,17 @@ class SplashActivity : BaseActivity(), PauseableHandlerCallback, View.OnClickLis
                 intent.data = uri
                 _resultLauncher.launch(intent)
             }
+
             else -> {
                 v.performClick()
             }
         }
     }
 
-    private var _resultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-        runMainActivity()
-    }
+    private var _resultLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            runMainActivity()
+        }
 
     companion object {
         /// Message ID for running main activity
