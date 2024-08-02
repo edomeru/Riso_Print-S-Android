@@ -155,40 +155,13 @@ class ContentPrintFileAdapter(
 
             if (_adapterInterface!!.onFileSelect(contentPrintFile) != -1) {
                 v.isActivated = true
-               // ContentPrintManager.newUploadedFiles.remove(contentPrintFile?.filename)
-                //Save viewd file into the local DB
+
+                //Save viewed file into the local DB
                 contentPrintFile?.filename?.let {
-                    var saved = ContentPrintManager.saveViewedFile(context,contentPrintFile.fileId.toString(),
+                    ContentPrintManager.saveViewedFile(context,contentPrintFile.fileId.toString(),
                         it
                     )
-                    if (saved) {
-                        // Successfully saved in the database
-                        Log.d("SaveFile", "File $it saved in the database")
-                        // Handle success
-                    } else {
-                        // Failed to save in the database
-                        Log.e("SaveFile", "Failed to save file $it in the database")
-                        // Handle failure
-                    }
-
                 }
-
-                val dbHelper = DatabaseManager(context)
-                val columnTypes = dbHelper.getColumnTypes("ContentPrint")
-                if (columnTypes != null) {
-                    for ((columnName, columnType) in columnTypes) {
-                        Log.e("Check column", "Column: $columnName ColumnType $columnType")
-                    }
-                }
-
-                // log all viewed files
-
-                    val viewedFiles = ContentPrintManager.getAllViewedFiles()
-                    viewedFiles?.forEach { file ->
-                        Log.e("ContentPrintFileAdapter", "FileId: ${file.fileId}, FileName: ${file.fileName} Email: ${file.email}")
-                    }
-
-
             }
         }
     }

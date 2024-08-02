@@ -113,7 +113,6 @@ open class HomeFragment : BaseFragment(), View.OnClickListener, ConfirmDialogLis
         _contentPrintManager = ContentPrintManager.getInstance()
         // Content Print - END
         // Azure Notification Hub - START
-        Log.d(ContentPrintManager.TAG, "initializeFragmentTEST")
         if (ContentPrintManager.filenameFromNotification != null) {
             if(ContentPrintManager.isFromPushNotification){
                 ContentPrintManager.isFromPushNotification = false
@@ -255,21 +254,15 @@ open class HomeFragment : BaseFragment(), View.OnClickListener, ConfirmDialogLis
     // ================================================================================
     override fun onAuthenticationStarted() {
         // Do nothing
-        Log.d(ContentPrintManager.TAG, "onAuthenticationFinishedTEST1 - START")
     }
 
     override fun onAuthenticationFinished() {
-        Log.d(ContentPrintManager.TAG, "onAuthenticationFinishedTEST1 - END")
         CoroutineScope(Dispatchers.Main).launch {
             if (!ContentPrintManager.isLoggedIn) {
-                Log.d(ContentPrintManager.TAG, "onAuthenticationFinishedTEST4 - END")
-                //showLoginError()
                 _contentPrintManager?.login(activity, this@HomeFragment)
             }
         }
-        Log.d(ContentPrintManager.TAG, "onAuthenticationFinishedTEST3 - END")
         if (ContentPrintManager.isLoggedIn && ContentPrintManager.getAllViewedFiles() != null) {
-            Log.d(ContentPrintManager.TAG, "onAuthenticationFinishedTEST2 - END")
             _contentPrintManager?.getCurrentUser( this)
             goToContentPrint()
         }

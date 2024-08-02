@@ -93,13 +93,7 @@ class NotificationHubListener: NotificationListener {
         fun displayNotification(context: Context?, title: String?, body: String?) {
             // Increment the notification ID
             notificationId += 1
-//            body?.let {
-//                val filename = ContentPrintManager.getFilenameFromString(body)
-//                filename?.let {
-//                    ContentPrintManager.newUploadedFiles.add(filename)
-//                }
-//                Log.d(ContentPrintManager.TAG, "displayNotification context: $context, title: $title, body: $body, filename: $filename")
-//            }
+
             // The channel ID should be created when the App is started
             if (channelId != null && context != null && title != null && body != null) {
                 // https://developer.android.com/develop/ui/views/notifications/build-notification#lockscreenNotification

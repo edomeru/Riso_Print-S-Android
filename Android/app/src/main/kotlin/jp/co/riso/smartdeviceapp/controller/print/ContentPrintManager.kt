@@ -58,6 +58,7 @@ import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
+import java.util.concurrent.TimeUnit
 
 
 /**
@@ -201,15 +202,8 @@ class ContentPrintManager(context: Context?) {
         ) {
             fileCount = response.body()?.count ?: 0
             fileList = response.body()?.list ?: ArrayList()
-           // getAllViewedFiles()
-            Log.e("CHECK_EMAIL", "EMAIL1  ${_email}")
-            var viewdFileList = dbHelper?.getAllViewedFiles(_email)
 
-            if (viewdFileList != null) {
-                for (data in viewdFileList) {
-                    Log.e("SHOWFilesf", "FILE ID  ${data.fileId} FILE NAME:${data.fileName} EMAIL:${data.email} ")
-                }
-            }
+            var viewdFileList = dbHelper?.getAllViewedFiles(_email)
 
             // Check the viewed files
             for (file in fileList) {
@@ -217,26 +211,15 @@ class ContentPrintManager(context: Context?) {
 
                 if (viewdFileList != null) {
                     for (data in viewdFileList) {
-                        Log.e("SHOWFileTESTTTTTTT", "VIEWED FILE ID  ${data.fileId} SERVER FILE ID  ${file.fileId} FILE NAME:${data.fileName} email:${data.email}")
-
                         if (data.fileId.equals(file.fileId.toString())) {
                             isUploaded = true
                             break // No need to check further if a match is found
                         }
                     }
                 }
-
                 file.isRecentlyUploaded = isUploaded // Set the property based on the match
             }
 
-            // Accessing contents of fileList
-            fileList.forEach { file ->
-                val fileId = file.fileId
-                val filename = file.filename
-                val isRecentlyUploaded = file.isRecentlyUploaded
-
-                Log.d(TAG, "File ID: $fileId, Filename: $filename, isRecentlyUploaded: $isRecentlyUploaded")
-            }
             callback?.onFileListUpdated(true)
             Log.d(TAG, "updateFileList - END")
         }
@@ -278,8 +261,6 @@ class ContentPrintManager(context: Context?) {
         ) {
             var uId = response.body()?.userId ?: 0
             (response.body()?.userEmail ?: "").also { email = it }
-
-            Log.e("CurrentUserResultCallback_TEST", "userId  $userId email:$email ")
             _userId = uId
             _email = email
             emailAdress = email
@@ -583,6 +564,9 @@ class ContentPrintManager(context: Context?) {
         private fun initializeHttpClient() {
             val client = OkHttpClient.Builder()
                 .addInterceptor(AuthInterceptor())
+                .connectTimeout(60, TimeUnit.SECONDS)  // Set connection timeout
+                .writeTimeout(60, TimeUnit.SECONDS)     // Set write timeout
+                .readTimeout(60, TimeUnit.SECONDS)      // Set read timeout
                 .build()
             val retrofit = Retrofit.Builder()
                 .baseUrl(_uri!!)
@@ -758,11 +742,8 @@ class ContentPrintManager(context: Context?) {
         var fileList: List<ContentPrintFile> = ArrayList()
         var printerList: List<ContentPrintPrinter> = ArrayList()
         var isFromPushNotification: Boolean = false
-        var userId: Int = 0
         var email: String? = null
         var emailAdress: String? = null
-        //var newUploadedFiles = mutableListOf<String>()
         private var dbHelper: DatabaseManager? = null
-        var viewedFiles: List<DatabaseManager.ViewedFiles> = emptyList()
     }
 }

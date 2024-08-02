@@ -49,6 +49,7 @@ open class DatabaseManager (private val _context: Context?) :
 
     override fun onCreate(db: SQLiteDatabase) {
         logInfo(DatabaseManager::class.java, "onCreate - Begin")
+
         db.execSQL(SQL_CREATE_CONTENT_PRINT_TABLE)
         // initial database structure
         executeSqlCommandFromScript(db, DATABASE_SQL)
@@ -128,7 +129,7 @@ open class DatabaseManager (private val _context: Context?) :
         try {
             if (emailAdd == null) {
                 Log.e(TAG, "Email address is null")
-                return dataList // Return empty list
+                return dataList
             }
 
             val query = "SELECT * FROM $KEY_SQL_CONTENT_PRINT_TABLE WHERE $KEY_SQL_CONTENT_USER_CURRENT_EMAIL  = ?"

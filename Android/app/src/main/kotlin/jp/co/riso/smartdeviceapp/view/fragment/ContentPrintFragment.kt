@@ -228,25 +228,15 @@ open class ContentPrintFragment : BaseFragment(),
             // Update the action bar
             updateActionBar()
             // Display error
-            Log.e("lastAuthentication1", "lastAuthentication: ${lastAuthentication} Authentication.LOGIN: ${Authentication.LOGIN} LOGIN?: ${ContentPrintManager.isLoggedIn}")
             if (lastAuthentication == Authentication.LOGIN && !ContentPrintManager.isLoggedIn) {
-                Log.e("lastAuthentication2", "lastAuthentication: ${lastAuthentication} Authentication.LOGIN: ${Authentication.LOGIN} LOGIN?: ${ContentPrintManager.isLoggedIn}")
-                //showLoginError()
                 _contentPrintManager?.login(activity, this@ContentPrintFragment)
             }
         }
 
         if (ContentPrintManager.isLoggedIn) {
-            // Download the file from the notification
-//            _contentPrintManager?.downloadFile(
-//                ContentPrintManager.filenameFromNotification,
-//                this
-//            )
-            Log.e("lastAuthentication3", "lastAuthentication: ${lastAuthentication} Authentication.LOGIN: ${Authentication.LOGIN} LOGIN?: ${ContentPrintManager.isLoggedIn}")
             _contentPrintManager?.getCurrentUser( this)
             refreshFileList()
         } else {
-            Log.e("lastAuthentication4", "lastAuthentication: ${lastAuthentication} Authentication.LOGIN: ${Authentication.LOGIN} LOGIN?: ${ContentPrintManager.isLoggedIn}")
             // Update the file list
             refreshFileList()
         }
