@@ -122,6 +122,7 @@ open class DatabaseManager(private val _context: Context?) :
         return columns
     }
 
+
     @SuppressLint("Range")
     fun getAllViewedFiles(emailAdd: String?): List<ViewedFiles> {
         val dataList = mutableListOf<ViewedFiles>()

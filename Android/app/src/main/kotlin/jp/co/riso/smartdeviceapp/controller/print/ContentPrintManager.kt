@@ -571,14 +571,6 @@ class ContentPrintManager(context: Context?) {
             return null
         }
 
-        fun getFilenameFromString(filename: String): String? {
-            if (filename != null) {
-                val filename = filename?.substringAfter("「")?.substringBefore("」")
-                return filename?.substringAfter("\"")?.substringBefore("\"")
-            }
-            return null
-        }
-
         private fun refreshToken(authenticationCallback: IAuthenticationCallback?) {
             if (_authority != null) {
                 CoroutineScope(Dispatchers.IO).launch {

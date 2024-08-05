@@ -73,7 +73,7 @@ object KeyConstants {
     /// SQL key for print job table
     const val KEY_SQL_PRINTJOB_TABLE = "PrintJob"
 
-    /// SQL key for print job table
+    /// SQL key for content print table
     const val KEY_SQL_CONTENT_PRINT_TABLE = "ContentPrint"
 
     /// SQL key for print job ID

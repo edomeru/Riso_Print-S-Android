@@ -19,14 +19,12 @@ import android.content.pm.PackageManager
 import android.media.AudioAttributes
 import android.media.RingtoneManager
 import android.os.Build
-import android.util.Log
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.google.firebase.messaging.RemoteMessage
 import com.microsoft.windowsazure.messaging.notificationhubs.NotificationListener
 import jp.co.riso.android.util.AppUtils
-import jp.co.riso.smartdeviceapp.controller.print.ContentPrintManager
 import jp.co.riso.smartdeviceapp.view.SplashActivity
 import jp.co.riso.smartprint.R
 
