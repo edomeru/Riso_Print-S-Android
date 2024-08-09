@@ -87,8 +87,12 @@
     public protected private *;
 }
 
-# Keep the ContentPrintFileResult class and its members to avoid JNI issues
+# Keep the ContentPrintFileResult and ContentPrintPrintSettings classes and their members to avoid JNI issues
 -keep class jp.co.riso.smartdeviceapp.model.ContentPrintFile {
+    *;
+}
+
+-keep class jp.co.riso.smartdeviceapp.model.ContentPrintPrintSettings {
     *;
 }
 
