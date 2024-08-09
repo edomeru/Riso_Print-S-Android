@@ -83,6 +83,11 @@
     public protected private *;
 }
 
+# Keep the ContentPrintFileResult class and its members to avoid JNI issues
+-keep class jp.co.riso.smartdeviceapp.controller.print.ContentPrintManager$ContentPrintFileResult {
+    *;
+}
+
 # RM769 Fix: to keep string and drawable resources in release APK -- start
 -keep public class jp.co.riso.smartprint.R$string {
     public static final int *;
