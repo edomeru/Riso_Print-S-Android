@@ -185,12 +185,18 @@ class ContentPrintManager(context: Context?) {
             call: Call<ContentPrintFileResult>,
             response: Response<ContentPrintFileResult>
         ) {
-            Log.e(TAG, "response body ${response.body()}")
-            Log.e(TAG, "response body count ${response.body()?.count}")
-            Log.e(TAG, "response body list ${response.body()?.list}")
-            fileCount = response.body()?.count ?: 0
-            fileList = response.body()?.list ?: ArrayList()
-            callback?.onFileListUpdated(true)
+            val responseBody = response.body()
+            if (responseBody is ContentPrintFileResult) {
+                Log.e(TAG, "response body $responseBody")
+                Log.e(TAG, "response body count ${responseBody.count}")
+                Log.e(TAG, "response body list ${responseBody.list}")
+                fileCount = responseBody.count
+                fileList = responseBody.list
+                callback?.onFileListUpdated(true)
+            } else {
+                Log.e(TAG, "Unexpected response body type: ${responseBody?.javaClass?.name}")
+                callback?.onFileListUpdated(false)
+            }
             Log.d(TAG, "updateFileList - END")
         }
     }
