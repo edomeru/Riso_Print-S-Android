@@ -185,6 +185,9 @@ class ContentPrintManager(context: Context?) {
             call: Call<ContentPrintFileResult>,
             response: Response<ContentPrintFileResult>
         ) {
+            Log.e(TAG, "response body ${response.body()}")
+            Log.e(TAG, "response body count ${response.body()?.count}")
+            Log.e(TAG, "response body list ${response.body()?.list}")
             fileCount = response.body()?.count ?: 0
             fileList = response.body()?.list ?: ArrayList()
             callback?.onFileListUpdated(true)
