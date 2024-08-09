@@ -50,6 +50,7 @@ android {
             debuggable false
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-project.txt'
+            buildConfigField "boolean", "ENABLE_LOGGING", "true" // Add this line
         }
     }
 
