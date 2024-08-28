@@ -1,36 +1,26 @@
 {
   "project_info": {
-    "project_number": "649045428135",
-    "project_id": "push-notification-projec-413b5",
-    "storage_bucket": "push-notification-projec-413b5.appspot.com"
+    "project_number": "375060601142",
+    "project_id": "push-notification-projec-1ce00",
+    "storage_bucket": "push-notification-projec-1ce00.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:649045428135:android:e011bb0d9e2412adb1d882",
+        "mobilesdk_app_id": "1:375060601142:android:44acc94372c8f4b38bbb97",
         "android_client_info": {
           "package_name": "jp.co.riso.smartprint"
         }
       },
-      "oauth_client": [
-        {
-          "client_id": "649045428135-qqiospc8v6sdfk26lu8ggc6f3q0v597e.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
+      "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyA-XEWkD0n-a4E8sn5Zu331qdL-ggLJLio"
+          "current_key": "AIzaSyAGayZW4bJgE3GGoRWVf20M4Eqd3YoZ2Qk"
         }
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "649045428135-qqiospc8v6sdfk26lu8ggc6f3q0v597e.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
+          "other_platform_oauth_client": []
         }
       }
     }
