@@ -125,11 +125,18 @@
                 <category android:name="android.intent.category.BROWSABLE" />
                 <data
                     android:host="jp.co.riso.smartprint"
-                    android:path="/b9H4UbJYJvVjtc+hxWUzjb+GuD0="
+                    android:path="/o1y2df8OV3aI9a1gMYLH1a95q4c="
                     android:scheme="msauth" />
             </intent-filter>
+
         </activity>
-        <!-- Content Print - END -->
+<!--         Content Print - END -->
+        <service android:name="jp.co.riso.smartdeviceapp.view.notification.FirebaseMessagingServiceImpl"  android:exported="false">
+        <intent-filter>
+            <action android:name="com.google.firebase.MESSAGING_EVENT" />
+        </intent-filter>
+        </service>
+
     </application>
 
 </manifest>

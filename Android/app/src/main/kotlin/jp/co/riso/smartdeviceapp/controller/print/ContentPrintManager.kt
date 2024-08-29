@@ -214,27 +214,18 @@ class ContentPrintManager(context: Context?) {
             call: Call<ContentPrintFileResult>,
             response: Response<ContentPrintFileResult>
         ) {
-            fileCount = response.body()?.count ?: 0
-            fileList = response.body()?.list ?: ArrayList()
-
-            var viewdFileList = dbHelper?.getAllViewedFiles(_email)
-
-            // Check the viewed files
-            for (file in fileList) {
-                var isUploaded = false // Assume the file is not recently uploaded initially
-
-                if (viewdFileList != null) {
-                    for (data in viewdFileList) {
-                        if (data.fileId.equals(file.fileId.toString())) {
-                            isUploaded = true
-                            break // No need to check further if a match is found
-                        }
-                    }
-                }
-                file.isRecentlyUploaded = isUploaded // Set the property based on the match
+            val responseBody = response.body()
+            if (responseBody is ContentPrintFileResult) {
+                Log.e(TAG, "response body $responseBody")
+                Log.e(TAG, "response body count ${responseBody.count}")
+                Log.e(TAG, "response body list ${responseBody.list}")
+                fileCount = responseBody.count
+                fileList = responseBody.list
+                callback?.onFileListUpdated(true)
+            } else {
+                Log.e(TAG, "Unexpected response body type: ${responseBody?.javaClass?.name}")
+                callback?.onFileListUpdated(false)
             }
-
-            callback?.onFileListUpdated(true)
             Log.d(TAG, "updateFileList - END")
         }
     }

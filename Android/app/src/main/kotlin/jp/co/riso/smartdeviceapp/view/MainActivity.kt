@@ -8,6 +8,7 @@
 package jp.co.riso.smartdeviceapp.view
 
 import android.Manifest
+import android.Manifest.permission.POST_NOTIFICATIONS
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.pm.PackageManager
@@ -41,14 +42,17 @@ import java.io.File
 import java.io.IOException
 import kotlin.math.abs
 // Azure Notification Hubs - START
-import android.Manifest.permission.POST_NOTIFICATIONS
-import android.content.Intent
 import android.util.Log
 import androidx.core.app.ActivityCompat
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.google.firebase.messaging.FirebaseMessaging
-import com.microsoft.windowsazure.messaging.notificationhubs.NotificationHub
 import jp.co.riso.smartdeviceapp.controller.print.ContentPrintManager
-import jp.co.riso.smartdeviceapp.view.notification.NotificationHubListener
+import jp.co.riso.smartdeviceapp.view.notification.NotificationHubHelper
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
+
 // Azure Notification Hubs - END
 
 
@@ -158,22 +162,47 @@ class MainActivity : BaseActivity(), PauseableHandlerCallback {
         NetUtils.registerNetworkCallback(this)
 
         // Azure Notification Hubs - START
-        val channelName = getString(R.string.azure_notification_channel_name)
-        NotificationHubListener.createNotificationChannel(this, channelName)
-
-        NotificationHub.setListener(NotificationHubListener())
-        NotificationHub.start(
+        notificationHubHelper = NotificationHubHelper(
             this.application,
             getString(R.string.azure_notification_hubs_name),
             getString(R.string.azure_notification_hubs_connection_string)
         )
+
+        registerWithNotificationHubs()
         // Azure Notification Hubs - END
 
         // Content Print - START
         ContentPrintManager.newInstance(this)
         // Content Print - End
     }
+    private lateinit var notificationHubHelper: NotificationHubHelper
+    private fun registerWithNotificationHubs() {
+        // If device is Android 13, request permission for notifications
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ActivityCompat.checkSelfPermission(
+                    this.application,
+                    POST_NOTIFICATIONS
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
+                val activity = this as Activity
+                ActivityCompat.requestPermissions(activity, arrayOf(POST_NOTIFICATIONS), 1)
+            }
+        }
 
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.CREATED) {
+                try {
+                    val token = FirebaseMessaging.getInstance().token.await()
+                    notificationHubHelper.registerWithNotificationHubs(token)
+                    // Token registration successful
+                    Log.d("MainActivity", "Notification Hub Registration successful")
+                } catch (e: Exception) {
+                    // Handle registration error
+                    Log.e("MainActivity", "Notification Hub Registration failed", e)
+                }
+            }
+        }
+    }
     override fun onDestroy() {
         //Debug.waitForDebugger();
         // do not delete if from Home screen picker

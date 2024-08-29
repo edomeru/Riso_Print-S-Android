@@ -162,7 +162,9 @@ open class ContentPrintFragment : BaseFragment(),
                 }
 
                 R.id.menu_id_action_login_button -> {
+                    Log.d(ContentPrintManager.TAG, "===== Login button clicked =====")
                     lastAuthentication = Authentication.LOGIN
+                    Log.d(ContentPrintManager.TAG, "===== Attempting to login =====")
                     _contentPrintManager?.login(this.activity, this)
                 }
 
@@ -229,7 +231,8 @@ open class ContentPrintFragment : BaseFragment(),
             updateActionBar()
             // Display error
             if (lastAuthentication == Authentication.LOGIN && !ContentPrintManager.isLoggedIn) {
-                _contentPrintManager?.login(activity, this@ContentPrintFragment)
+                Log.d(ContentPrintManager.TAG, "===== Login failed, showing error dialog =====")
+                showLoginError()
             }
         }
 
