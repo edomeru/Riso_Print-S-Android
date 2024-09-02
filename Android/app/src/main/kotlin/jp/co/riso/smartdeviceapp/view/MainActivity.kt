@@ -61,7 +61,7 @@ import kotlinx.coroutines.tasks.await
  * 
  * @brief Main activity class.
  */
-class MainActivity : BaseActivity(), PauseableHandlerCallback {
+class MainActivity : BaseActivity(), PauseableHandlerCallback{
     private var _drawerLayout: SDADrawerLayout? = null
     private var _mainLayout: ViewGroup? = null
     private var _leftLayout: ViewGroup? = null
@@ -194,6 +194,8 @@ class MainActivity : BaseActivity(), PauseableHandlerCallback {
                 try {
                     val token = FirebaseMessaging.getInstance().token.await()
                     notificationHubHelper.registerWithNotificationHubs(token)
+                    ContentPrintManager.deviceToken = token
+                    ContentPrintManager.getInstance()?.registerDevice(token, null)
                     // Token registration successful
                     Log.d("MainActivity", "Notification Hub Registration successful")
                 } catch (e: Exception) {

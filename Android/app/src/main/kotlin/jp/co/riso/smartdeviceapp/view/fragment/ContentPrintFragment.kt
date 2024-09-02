@@ -238,7 +238,7 @@ open class ContentPrintFragment : BaseFragment(),
         }
 
 
-        _contentPrintManager?.registerDevice("", this)
+        _contentPrintManager?.registerDevice(ContentPrintManager.deviceToken, this)
 
         if (ContentPrintManager.isLoggedIn && ContentPrintManager.filenameFromNotification != null) {
             // Download the file from the notification
@@ -380,7 +380,7 @@ open class ContentPrintFragment : BaseFragment(),
     override fun onConfirm() {
         if (_lastConfirmation == Confirmation.LOGOUT) {
             _contentPrintManager?.logout(this)
-            _contentPrintManager?.unregisterDevice("", this)
+            _contentPrintManager?.unregisterDevice(ContentPrintManager.deviceToken, this)
         } else { // _lastConfirmation == Confirmation.PREVIEW
             if (ContentPrintManager.selectedFile != null) {
                 _contentPrintManager?.downloadFile(ContentPrintManager.selectedFile!!, this)

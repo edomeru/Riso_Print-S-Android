@@ -501,7 +501,11 @@ class ContentPrintManager(context: Context?) {
         }
     }
 
-    fun registerDevice(deviceToken: String, callback: IDeviceRegisterCallback) {
+    fun registerDevice(deviceToken: String?, callback: IDeviceRegisterCallback?) {
+        if (deviceToken == null) {
+            callback?.onDeviceRegistered(false)
+            return
+        }
         CoroutineScope(Dispatchers.IO).launch {
             val request = DeviceRegisterRequest()
             request.deviceToken = deviceToken
@@ -511,7 +515,11 @@ class ContentPrintManager(context: Context?) {
         }
     }
 
-    fun unregisterDevice(deviceToken: String, callback: IDeviceRegisterCallback) {
+    fun unregisterDevice(deviceToken: String?, callback: IDeviceRegisterCallback?) {
+        if (deviceToken == null) {
+            callback?.onDeviceRegistered(false)
+            return
+        }
         CoroutineScope(Dispatchers.IO).launch {
             val request = DeviceRegisterRequest()
             request.deviceToken = deviceToken
@@ -712,5 +720,7 @@ class ContentPrintManager(context: Context?) {
         var fileCount: Int = 0
         var fileList: List<ContentPrintFile> = ArrayList()
         var printerList: List<ContentPrintPrinter> = ArrayList()
+
+        var deviceToken: String? = null
     }
 }
