@@ -124,7 +124,7 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
                 <data
-                    android:host="jp.co.riso.smartprint"
+                    android:host="jp.co.riso.cloudhub.smartprint"
                     android:path="/8t10HTvSMhcmNO0y+/7mkDzwCUk="
                     android:scheme="msauth" />
             </intent-filter>
