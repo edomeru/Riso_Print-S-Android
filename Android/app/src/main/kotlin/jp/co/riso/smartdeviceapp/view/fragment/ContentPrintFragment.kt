@@ -53,6 +53,7 @@ open class ContentPrintFragment : BaseFragment(),
         View.OnClickListener,
         ContentPrintManager.IAuthenticationCallback,
         ContentPrintManager.IContentPrintCallback,
+        ContentPrintManager.IDeviceRegisterCallback,
         PullToRefreshListView.OnRefreshListener,
         ContentPrintFileAdapter.ContentPrintFileAdapterInterface,
         ConfirmDialogFragment.ConfirmDialogListener {
@@ -236,6 +237,9 @@ open class ContentPrintFragment : BaseFragment(),
             }
         }
 
+
+        _contentPrintManager?.registerDevice("", this)
+
         if (ContentPrintManager.isLoggedIn && ContentPrintManager.filenameFromNotification != null) {
             // Download the file from the notification
             _contentPrintManager?.downloadFile(
@@ -364,11 +368,19 @@ open class ContentPrintFragment : BaseFragment(),
     }
 
     // ================================================================================
+    // INTERFACE - IDeviceRegisterCallback
+    // ================================================================================
+    override fun onDeviceRegistered(success: Boolean) {
+        Log.d("Register Device", "===== onDeviceRegistered - END =====")
+    }
+
+    // ================================================================================
     // INTERFACE - ConfirmDialogFragment.ConfirmDialogListener
     // ================================================================================
     override fun onConfirm() {
         if (_lastConfirmation == Confirmation.LOGOUT) {
             _contentPrintManager?.logout(this)
+            _contentPrintManager?.unregisterDevice("", this)
         } else { // _lastConfirmation == Confirmation.PREVIEW
             if (ContentPrintManager.selectedFile != null) {
                 _contentPrintManager?.downloadFile(ContentPrintManager.selectedFile!!, this)
