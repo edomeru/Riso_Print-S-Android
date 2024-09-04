@@ -213,12 +213,11 @@ class PDFConverterManager(
             e.printStackTrace()
             return CONVERSION_SECURITY_ERROR
         }
-
-        var bitmap: Bitmap? = null
+        var rect = Rect(0, 0, A4_WIDTH, A4_HEIGHT)
+        var bitmap: Bitmap?
         var tempImgFile: File? = null
-
         try {
-            // Check if it is needed to store file in a temp file
+            // check if it is needed to store file in temp file
             if (isUriAuthorityAnyOf(_uri, AppConstants.IMG_URI_AUTHORITIES)) {
                 tempImgFile = copyInputStreamToTempFile(_uri)
                 _uri = Uri.fromFile(tempImgFile)
@@ -238,49 +237,34 @@ class PDFConverterManager(
             e.printStackTrace()
             return CONVERSION_FAILED
         } finally {
-            // Delete temp image file if it exists
-            tempImgFile?.let {
+            // delete temp image file if exists
+            if (tempImgFile != null) {
                 try {
-                    FileUtils.delete(it)
+                    FileUtils.delete(tempImgFile)
                 } catch (e: IOException) {
                     e.printStackTrace()
                 }
             }
         }
-
         if (_pdfConversionTask!!.isCancelled) {
             return 0
         }
 
-        // Get image dimensions
-        val imageWidth = bitmap!!.width
-        val imageHeight = bitmap.height
-
-        // Create PDF document with the image size
+        // check if image is landscape
+        val width = bitmap!!.width
+        val height = bitmap.height
+        if (width > height) {
+            rect = Rect(0, 0, A4_HEIGHT, A4_WIDTH)
+        }
+        _interfaceRef!!.get()!!.onNotifyProgress(1, 1, false)
         val document = PdfDocument()
         if (_pdfConversionTask!!.isCancelled) {
             return 0
         }
-
-        val pageInfo = PageInfo.Builder(imageWidth, imageHeight, 1).create()
-        val page = document.startPage(pageInfo)
-        val canvas = page.canvas
-
-        // Set background color if needed
-        val paint = Paint().apply {
-            color = Color.WHITE
-        }
-        canvas.drawPaint(paint)
-
-        // Draw the image without scaling
-        canvas.drawBitmap(bitmap, 0f, 0f, null)
-        bitmap.recycle()
-        document.finishPage(page)
-
+        drawBitmapToPage(bitmap, rect, document, 1)
         if (_pdfConversionTask!!.isCancelled) {
             return 0
         }
-
         try {
             createDestFile(_context)
             if (_pdfConversionTask!!.isCancelled) {
@@ -304,36 +288,28 @@ class PDFConverterManager(
      */
     fun convertImagesToPDF(): Int {
         try {
-            // Check if all items in ClipData are supported image files
-            for (i in 0 until _clipData!!.itemCount) {
-                val uri = _clipData!!.getItemAt(i).uri
-                if (!ImageUtils.isImageFileSupported(_context, uri)) {
-                    return CONVERSION_UNSUPPORTED
-                }
+            // Check first if all files are supported image files
+            if (!ImageUtils.isImageFileSupported(_context, _clipData)) {
+                return CONVERSION_UNSUPPORTED
             }
         } catch (e: SecurityException) {
             e.printStackTrace()
             return CONVERSION_SECURITY_ERROR
         }
-
+        var rect = Rect(0, 0, A4_WIDTH, A4_HEIGHT)
         var bitmap: Bitmap?
         val document = PdfDocument()
         var i = 0
-
         while (i < _clipData!!.itemCount) {
             _interfaceRef!!.get()!!.onNotifyProgress(i + 1, _clipData!!.itemCount, false)
             var tempImgFile: File? = null
-
             try {
                 var uri = _clipData!!.getItemAt(i).uri
-
-                // Check if it is needed to store file in a temp file
+                // check if it is needed to store file in temp file
                 if (isUriAuthorityAnyOf(uri, AppConstants.IMG_URI_AUTHORITIES)) {
                     tempImgFile = copyInputStreamToTempFile(uri)
                     uri = Uri.fromFile(tempImgFile)
                 }
-
-                // Get bitmap from URI
                 bitmap = ImageUtils.getBitmapFromUri(_context, uri)
                 bitmap = bitmap?.let { ImageUtils.rotateImageIfRequired(_context, it, uri) }
                 if (bitmap == null) {
@@ -349,7 +325,7 @@ class PDFConverterManager(
                 e.printStackTrace()
                 return CONVERSION_FAILED
             } finally {
-                // Delete temp image file if exists
+                // delete temp image file if exists
                 if (tempImgFile != null) {
                     try {
                         FileUtils.delete(tempImgFile)
@@ -358,43 +334,30 @@ class PDFConverterManager(
                     }
                 }
             }
-
             if (_pdfConversionTask!!.isCancelled) {
                 return 0
             }
 
-            // Determine PDF page size based on image resolution
-            val pageWidth = bitmap!!.width
-            val pageHeight = bitmap.height
-
-            // Create PDF page with image dimensions
-            val pageInfo = PageInfo.Builder(pageWidth, pageHeight, i + 1).create()
-            val page = document.startPage(pageInfo)
-            val canvas = page.canvas
-
-            // Set background color if needed
-            val paint = Paint().apply {
-                color = Color.WHITE
+            // check first image orientation
+            if (i == 0) {
+                // check if image is landscape (only the first image will be considered)
+                val width = bitmap!!.width
+                val height = bitmap.height
+                if (width > height) {
+                    rect = Rect(0, 0, A4_HEIGHT, A4_WIDTH)
+                }
             }
-            canvas.drawPaint(paint)
-
-            // Draw the image without scaling
-            canvas.drawBitmap(bitmap, 0f, 0f, null)
-
-            // Finish the page
-            document.finishPage(page)
-
-            // Recycle bitmap
-            bitmap.recycle()
-
             if (_pdfConversionTask!!.isCancelled) {
                 document.close()
                 return 0
             }
-
+            drawBitmapToPage(bitmap, rect, document, i + 1)
+            if (_pdfConversionTask!!.isCancelled) {
+                document.close()
+                return 0
+            }
             i += 1
         }
-
         try {
             createDestFile(_context)
             if (_pdfConversionTask!!.isCancelled) {
@@ -410,7 +373,6 @@ class PDFConverterManager(
         } finally {
             document.close()
         }
-
         return CONVERSION_OK
     }
 
@@ -555,38 +517,16 @@ class PDFConverterManager(
      * @return Scaled bitmap.
      */
     private fun getScaledBitmap(bitmap: Bitmap?, maxWidth: Int, maxHeight: Int): Bitmap {
-        if (bitmap == null) {
-            return Bitmap.createBitmap(maxWidth, maxHeight, Bitmap.Config.ARGB_8888)
-        }
-
-        val originalWidth = bitmap.width
-        val originalHeight = bitmap.height
-        val aspectRatio = originalWidth.toFloat() / originalHeight.toFloat()
-
-        // Calculate new dimensions preserving aspect ratio
-        var scaledWidth: Int
-        var scaledHeight: Int
-
-        if (originalWidth > originalHeight) {
-            // Landscape or square image
-            scaledWidth = maxWidth
-            scaledHeight = (maxWidth / aspectRatio).toInt()
-            if (scaledHeight > maxHeight) {
-                scaledHeight = maxHeight
-                scaledWidth = (maxHeight * aspectRatio).toInt()
-            }
+        val ratioBitmap = bitmap!!.width.toFloat() / bitmap.height.toFloat()
+        val ratioMax = maxWidth.toFloat() / maxHeight.toFloat()
+        var finalWidth = maxWidth
+        var finalHeight = maxHeight
+        if (ratioMax > ratioBitmap) {
+            finalWidth = (maxHeight.toFloat() * ratioBitmap).toInt()
         } else {
-            // Portrait image
-            scaledHeight = maxHeight
-            scaledWidth = (maxHeight * aspectRatio).toInt()
-            if (scaledWidth > maxWidth) {
-                scaledWidth = maxWidth
-                scaledHeight = (maxWidth / aspectRatio).toInt()
-            }
+            finalHeight = (maxWidth.toFloat() / ratioBitmap).toInt()
         }
-
-        // Create scaled bitmap with filtering enabled
-        return Bitmap.createScaledBitmap(bitmap, scaledWidth, scaledHeight, true)
+        return Bitmap.createScaledBitmap(bitmap, finalWidth, finalHeight, false)
     }
 
     /**
