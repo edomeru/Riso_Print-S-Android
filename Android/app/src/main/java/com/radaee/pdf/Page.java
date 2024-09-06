@@ -1775,7 +1775,7 @@ public class Page
 	 * -4: save PDF file failed.<br/>
 	 * -5: cert file open failed.
 	 */
-    public int Sign(Document.DocForm form, float[] rect, String cert_file, String pswd, String name, String reason, String location, String contact)
+    public int Sign(DocForm form, float[] rect, String cert_file, String pswd, String name, String reason, String location, String contact)
 	{
 		//int sign(long hand, long form, float[] box, String cert_file, String pswd, String reason, String location, String contact);
 		return sign(hand, form.hand, rect, cert_file, pswd, name, reason, location, contact);
