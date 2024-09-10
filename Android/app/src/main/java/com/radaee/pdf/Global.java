@@ -1,12 +1,11 @@
 package com.radaee.pdf;
 
-import android.content.Context;
 import android.content.ContextWrapper;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.os.Build;
-import android.os.Environment;
 import android.os.StrictMode;
+
 
 import com.radaee.util.CommonUtil;
 
@@ -21,31 +20,25 @@ import jp.co.riso.smartprint.R;
  * class for Global setting.
  * 
  * @author RadaeePDF.com
- * @version 3.65.25
+ * @version 3.65.28
  */
 public class Global
 {
-	private static int mLicenseType = 1;
-	private static String mCompany = "RISO KAGAKU CORPORATION";
-	private static String mEmail = "zhang@riso.co.jp";
-	private static String mKey = "J7GEIT-JYKWMH-NRHUWW-T0WD5S-GH0FFJ-GT61BP";
+	//public static String mCompany = "radaee";
+	//public static String mEmail = "radaeepdf@gmail.com";
+	//public static String mKey = "LNJFDN-C89QFX-9ZOU9E-OQ31K2-5R5V9L-KM0Y1L";
 
-	public static boolean Init(Context ctx)
-    {
-        //second para is license type
-        //            0 means standard license.
-        //            1 means professional license
-        //            2 means premium license
-        //3rd para is company name string(not package name)
-        //4th para is mail
-        //5th para is key string
-        //the package name got by native C/C++ library, not by pass parameter.
-		boolean res = Init( (ContextWrapper)ctx, mLicenseType, mCompany, mEmail, mKey);
-		return res;
-	}
+	public static String mCompany = "radaee";
+	public static String mEmail = "radaee_com@yahoo.cn";
+	public static String mKey = "LNJFDN-C89QFX-9ZOU9E-OQ31K2-FADG6Z-XEBCAO";
+
+	//binding to app ID "com.radaee.reader", can avtive version before "20220910".
+	//the version string can be retrieved by Global.getVersion().
+	//public static String mSerial = "8ABE22CCD8FFABCDAA323CE341437435030398E5EDBE968602CD531F4247D0F8131969A90E859A058BBEF59DD79526C8";
+
 	/**
 	 * get version string from library.
-	 * @return version string, like: "201401"
+	 * @return version string, like: "20181101"
 	 */
 	private static native String getVersion();
 	private static native void setCMapsPath(String cmaps, String umaps);
@@ -80,138 +73,19 @@ public class Global
 	private static native String getFaceName(int index);
 
 	/**
-	 * active license for premium version.<br/>
-	 * this is full version for all features.
-	 * 
-	 * @param context
-	 *            Context object
-	 * @param company
-	 *            company name, exapmle "radaee"
-	 * @param mail
-	 *            address, example "radaee_com@yahoo.cn"
-	 * @param serial
-	 *            serial number you got or buy.
-	 * @return true or false
+	 * active license with expire time.
+	 * @param context ContextWrapper object
+	 * @param serial Serial number
+	 * @return
+	 * 1: standard license
+	 * 2: professional license
+	 * 3: premium license
+	 * others: failed.
 	 */
-	private static native boolean activePremium(ContextWrapper context,
-			String company, String mail, String serial);
-
-	/**
-	 * active license for professional version.<br/>
-	 * this is for annotation editing version but no form features.
-	 * 
-	 * @param context
-	 *            Context object
-	 * @param company
-	 *            company name, exapmle "radaee"
-	 * @param mail
-	 *            address, example "radaee_com@yahoo.cn"
-	 * @param serial
-	 *            serial number you got or buy.
-	 * @return true or false
-	 */
-	private static native boolean activeProfessional(ContextWrapper context,
-			String company, String mail, String serial);
-
-	/**
-	 * active license for standard version.<br/>
-	 * this can't save and edit and no reflow function.
-	 * 
-	 * @param context
-	 *            Context object
-	 * @param company
-	 *            company name, exapmle "radaee"
-	 * @param mail
-	 *            address, example "radaee_com@yahoo.cn"
-	 * @param serial
-	 *            serial number you got or buy.
-	 * @return true or false
-	 */
-	private static native boolean activeStandard(ContextWrapper context,
-			String company, String mail, String serial);
-
-	/**
-	 * active license for premium version.<br/>
-	 * this is full version for all features.<br/>
-	 * the license for this method is binding to version string, see Global.getVersion();
-	 * 
-	 * @param context
-	 *            Context object
-	 * @param company
-	 *            company name, exapmle "radaee"
-	 * @param mail
-	 *            address, example "radaee_com@yahoo.cn"
-	 * @param serial
-	 *            serial number you got or buy.
-	 * @return true or false
-	 */
-	private static native boolean activePremiumForVer(ContextWrapper context,
-			String company, String mail, String serial);
-
-	/**
-	 * active license for professional version.<br/>
-	 * this is for annotation editing version but no form features.<br/>
-	 * the license for this method is binding to version string, see Global.getVersion();
-	 * @param context
-	 *            Context object
-	 * @param company
-	 *            company name, exapmle "radaee"
-	 * @param mail
-	 *            address, example "radaee_com@yahoo.cn"
-	 * @param serial
-	 *            serial number you got or buy.
-	 * @return true or false
-	 */
-	private static native boolean activeProfessionalForVer(ContextWrapper context,
-			String company, String mail, String serial);
-
-	/**
-	 * active license for standard version.<br/>
-	 * this can't save and edit and no reflow function.<br/>
-	 * the license for this method is binding to version string, see Global.getVersion();
-	 * 
-	 * @param context
-	 *            Context object
-	 * @param company
-	 *            company name, exapmle "radaee"
-	 * @param mail
-	 *            address, example "radaee_com@yahoo.cn"
-	 * @param serial
-	 *            serial number you got or buy.
-	 * @return true or false
-	 */
-	private static native boolean activeStandardForVer(ContextWrapper context,
-			String company, String mail, String serial);
-
-	/**
-	 * active license for time limit. features same as professional version, but
-	 * actived only in date range from dt1 to dt2.
-	 * 
-	 * @param context
-	 *            Context object
-	 * @param company
-	 *            company name, exapmle "radaee"
-	 * @param mail
-	 *            mail address, example "radaee_com@yahoo.cn"
-	 * @param dt1
-	 *            start date example "2012-12-31", must formated "yyyy-mm-dd" 10
-	 *            length.
-	 * @param dt2
-	 *            end date example "2012-12-31", must formated "yyyy-mm-dd" 10
-	 *            length.
-	 * @param serial
-	 *            serial number you got or buy.
-	 * @return true or false
-	 */
-	private static native boolean activeTime(ContextWrapper context, String company,
-			String mail, String dt1, String dt2, String serial);
-	private static native boolean activeStandardTitanium(ContextWrapper context,
-			String company, String mail, String serial);
-	private static native boolean activeProfessionalTitanium(ContextWrapper context,
-			String company, String mail, String serial);
-	private static native boolean activePremiumTitanium(ContextWrapper context,
-			String company, String mail, String serial);
-
+	//private static native int active(ContextWrapper context, String serial);
+	private static native boolean activeStandard(ContextWrapper context, String company, String email, String serial);
+	private static native boolean activeProfessional(ContextWrapper context, String company, String email, String serial);
+	private static native boolean activePremium(ContextWrapper context, String company, String email, String serial);
 	/**
 	 * hide all annotations when render pages?
 	 * 
@@ -495,13 +369,9 @@ public class Global
 	/**
 	 * global initialize function. it load JNI library and write some data to memory.
 	 * @param act Context object must derived from CoontextWrapper, native get package name from this Activity, and then check package name.
-	 * @param license_type 0: standard license, 1: professional license, 2: premium license.
-	 * @param company_name
-	 * @param mail
-	 * @param serial
-	 * @return
+	 * @return true or false
 	 */
-	public static boolean Init(ContextWrapper act, int license_type, String company_name, String mail, String serial)
+	public static boolean Init(ContextWrapper act)
 	{
 		if(ms_init) return true;
 		if( act == null ) return false;
@@ -528,19 +398,12 @@ public class Global
             ftmp.mkdir();
 		tmp_path = ftmp.getPath();
 
-		switch(license_type)
-		{
-		case 1:
-			ms_init = activeProfessional(act, company_name, mail, serial);
-			break;
-		case 2:
-			ms_init = activePremium(act, company_name, mail, serial);
-			break;
-		default:
-			ms_init = activeStandard(act, company_name, mail, serial);
-			break;
-		}
-
+		//int licenseType = active(act, mSerial);
+		int licenseType = 0;
+		if (activeStandard(act, mCompany, mEmail, mKey)) licenseType = 1;
+		else if (activeProfessional(act, mCompany, mEmail, mKey)) licenseType = 2;
+		else if (activePremium(act, mCompany, mEmail, mKey)) licenseType = 3;
+		ms_init = (licenseType > 0);
 		//this code need to be added, that support share on higher Android version.
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
 			StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();

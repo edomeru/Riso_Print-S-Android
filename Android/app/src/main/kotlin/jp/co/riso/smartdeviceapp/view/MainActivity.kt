@@ -22,7 +22,6 @@ import android.view.*
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.core.content.ContextCompat
 import androidx.drawerlayout.widget.DrawerLayout
-import com.radaee.pdf.Global
 import jp.co.riso.android.os.pauseablehandler.PauseableHandler
 import jp.co.riso.android.os.pauseablehandler.PauseableHandlerCallback
 import jp.co.riso.android.util.FileUtils
@@ -48,6 +47,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.google.firebase.messaging.FirebaseMessaging
+import com.radaee.pdf.Global
 import jp.co.riso.smartdeviceapp.controller.print.ContentPrintManager
 import jp.co.riso.smartdeviceapp.view.notification.NotificationHubHelper
 import kotlinx.coroutines.launch
@@ -61,7 +61,7 @@ import kotlinx.coroutines.tasks.await
  * 
  * @brief Main activity class.
  */
-class MainActivity : BaseActivity(), PauseableHandlerCallback {
+class MainActivity : BaseActivity(), PauseableHandlerCallback{
     private var _drawerLayout: SDADrawerLayout? = null
     private var _mainLayout: ViewGroup? = null
     private var _leftLayout: ViewGroup? = null
@@ -194,6 +194,8 @@ class MainActivity : BaseActivity(), PauseableHandlerCallback {
                 try {
                     val token = FirebaseMessaging.getInstance().token.await()
                     notificationHubHelper.registerWithNotificationHubs(token)
+                    ContentPrintManager.deviceToken = token
+                    ContentPrintManager.getInstance()?.registerDevice(token, null)
                     // Token registration successful
                     Log.d("MainActivity", "Notification Hub Registration successful")
                 } catch (e: Exception) {

@@ -24,7 +24,6 @@ import jp.co.riso.smartdeviceapp.controller.db.KeyConstants.KEY_SQL_CONTENT_FILE
 import jp.co.riso.smartdeviceapp.controller.db.KeyConstants.KEY_SQL_CONTENT_FILE_NAME
 import jp.co.riso.smartdeviceapp.controller.db.KeyConstants.KEY_SQL_CONTENT_PRINT_TABLE
 import jp.co.riso.smartdeviceapp.controller.db.KeyConstants.KEY_SQL_CONTENT_USER_CURRENT_EMAIL
-import jp.co.riso.smartdeviceapp.controller.print.ContentPrintManager
 import jp.co.riso.smartdeviceapp.controller.print.ContentPrintManager.Companion.TAG
 import java.util.*
 

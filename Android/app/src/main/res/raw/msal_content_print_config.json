@@ -1,7 +1,7 @@
 {
   "client_id" : "c6cc0539-4cab-46d8-b6dc-408b099e0d72",
   "authorization_user_agent" : "DEFAULT",
-  "redirect_uri" : "msauth://jp.co.riso.smartprint/o1y2df8OV3aI9a1gMYLH1a95q4c%3D",
+  "redirect_uri" : "msauth://jp.co.riso.smartprint/8t10HTvSMhcmNO0y%2B%2F7mkDzwCUk%3D",
   "account_mode": "SINGLE",
   "broker_redirect_uri_registered": true,
   "logging": {
@@ -9,7 +9,7 @@
     "log_level": "VERBOSE",
     "logcat_enabled": true
   },
-  "authorities" : [
+  "authorities": [
     {
       "type": "AAD",
       "audience": {

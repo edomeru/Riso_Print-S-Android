@@ -11,7 +11,7 @@
     <style name="SplashTheme" parent="android:Theme.NoTitleBar">
         <item name="android:windowBackground">@color/bg_color_splash</item>
     </style>
-
+    <style name="ProgressBar" parent="android:Widget.DeviceDefault.ProgressBar"/>
     <!-- Customized Action Bar -->
     <style name="SDAActionBar"
            parent="@android:style/Widget.Holo.ActionBar.Solid">
@@ -68,4 +68,9 @@
         <item name="android:windowLayoutInDisplayCutoutMode">shortEdges</item>
     </style>
     <!-- Content Print - END -->
+
+    <style name="popup_anim" parent="@android:style/Animation">
+        <item name="android:windowEnterAnimation">@anim/anim_popup_start</item>
+        <item name="android:windowExitAnimation">@anim/anim_popup_end</item>
+    </style>
 </resources>

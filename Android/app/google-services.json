@@ -7,6 +7,28 @@
   "client": [
     {
       "client_info": {
+        "mobilesdk_app_id": "1:375060601142:android:8c5398318a39cad78bbb97",
+        "android_client_info": {
+          "package_name": "jp.co.riso.cloudhub.smartprint"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA80GfK0Qqw27TVzERt2JhIwn2FxWIINoc"
+        },
+        {
+          "current_key": "AIzaSyAGayZW4bJgE3GGoRWVf20M4Eqd3YoZ2Qk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
         "mobilesdk_app_id": "1:375060601142:android:44acc94372c8f4b38bbb97",
         "android_client_info": {
           "package_name": "jp.co.riso.smartprint"
@@ -14,6 +36,9 @@
       },
       "oauth_client": [],
       "api_key": [
+        {
+          "current_key": "AIzaSyA80GfK0Qqw27TVzERt2JhIwn2FxWIINoc"
+        },
         {
           "current_key": "AIzaSyAGayZW4bJgE3GGoRWVf20M4Eqd3YoZ2Qk"
         }

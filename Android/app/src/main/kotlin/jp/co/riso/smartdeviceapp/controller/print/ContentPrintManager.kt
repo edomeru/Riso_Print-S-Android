@@ -45,6 +45,7 @@ import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Path
@@ -156,6 +157,12 @@ class ContentPrintManager(context: Context?) {
 
         @GET(API_CURRENT_USER)
         fun getCurrentUser(): Call<CurrentUserResult>
+
+        @POST(API_REGISTER_DEVICE)
+        fun registerDevice(@Body request: DeviceRegisterRequest): Call<ResponseBody>
+
+        @DELETE(API_UNREGISTER_DEVICE)
+        fun unregisterDevice(@Body request: DeviceRegisterRequest): Call<ResponseBody>
     }
 
     interface IContentPrintCallback {
@@ -177,6 +184,10 @@ class ContentPrintManager(context: Context?) {
     interface IRegisterToBoxCallback {
         fun onStartBoxRegistration()
         fun onBoxRegistered(success: Boolean)
+    }
+
+    interface IDeviceRegisterCallback {
+        fun onDeviceRegistered(success: Boolean)
     }
 
     class AuthInterceptor : Interceptor {
@@ -317,8 +328,15 @@ class ContentPrintManager(context: Context?) {
         var printSettings: ContentPrintPrintSettings? = null
     }
 
-    class ContentPrintBoxRegistrationResultCallback(var callback: IRegisterToBoxCallback?) :
-        Callback<ResponseBody> {
+        class DeviceRegisterRequest {
+            @SerializedName("platform")
+            var platform: String? = null
+
+            @SerializedName("device_token")
+            var deviceToken: String? = null
+        }
+
+    class ContentPrintBoxRegistrationResultCallback(var callback: IRegisterToBoxCallback?) : Callback<ResponseBody> {
         override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
             callback?.onBoxRegistered(false)
             Log.e(TAG, "registerToBox - Error ${t.message}")
@@ -331,6 +349,22 @@ class ContentPrintManager(context: Context?) {
             callback?.onBoxRegistered(true)
             Log.d(TAG, "registerToBox - END")
         }
+    }
+
+
+    class DeviceRegisterationResultCallback(var callback: IDeviceRegisterCallback?): Callback<ResponseBody> {
+        override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+            callback?.onDeviceRegistered(false)
+            Log.e(TAG, "registerDevice - Error ${t.message}")
+        }
+        override fun onResponse(
+            call: Call<ResponseBody>,
+            response: Response<ResponseBody>
+        ) {
+            callback?.onDeviceRegistered(true)
+            Log.d(TAG, "registerDevice OK- END")
+        }
+
     }
 
     /**
@@ -543,6 +577,34 @@ class ContentPrintManager(context: Context?) {
         }
     }
 
+    fun registerDevice(deviceToken: String?, callback: IDeviceRegisterCallback?) {
+        if (deviceToken == null) {
+            callback?.onDeviceRegistered(false)
+            return
+        }
+        CoroutineScope(Dispatchers.IO).launch {
+            val request = DeviceRegisterRequest()
+            request.deviceToken = deviceToken
+            request.platform ="fcm"
+
+            contentPrintService?.registerDevice(request)?.enqueue(DeviceRegisterationResultCallback(callback))
+        }
+    }
+
+    fun unregisterDevice(deviceToken: String?, callback: IDeviceRegisterCallback?) {
+        if (deviceToken == null) {
+            callback?.onDeviceRegistered(false)
+            return
+        }
+        CoroutineScope(Dispatchers.IO).launch {
+            val request = DeviceRegisterRequest()
+            request.deviceToken = deviceToken
+            request.platform ="fcm"
+
+            contentPrintService?.unregisterDevice(request)?.enqueue(DeviceRegisterationResultCallback(callback))
+        }
+    }
+
     companion object {
         fun newInstance(activity: Activity?) {
             _manager = ContentPrintManager(activity)
@@ -740,6 +802,8 @@ class ContentPrintManager(context: Context?) {
         private const val API_LIST_PRINTERS = "api/device/printerList"
         private const val API_REGISTER = "api/content/registered"
         private const val API_CURRENT_USER = "api/user/me"
+        private const val API_REGISTER_DEVICE = "/api/register"
+        private const val API_UNREGISTER_DEVICE = "/api/unregister"
 
         val TAG: String = ContentPrintManager::class.java.simpleName ?: "Content Print"
 
@@ -769,5 +833,7 @@ class ContentPrintManager(context: Context?) {
         var email: String? = null
         var emailAdress: String? = null
         private var dbHelper: DatabaseManager? = null
+
+        var deviceToken: String? = null
     }
 }

@@ -29,7 +29,7 @@
     <application
         android:name="jp.co.riso.smartdeviceapp.SmartDeviceApp"
         android:allowBackup="false"
-        android:icon="@drawable/ic_launcher"
+        android:icon="@mipmap/ic_launcher"
         android:label="@string/ids_app_launcher_name"
         android:resizeableActivity="false"
         android:theme="@style/AppTheme"
@@ -125,7 +125,7 @@
                 <category android:name="android.intent.category.BROWSABLE" />
                 <data
                     android:host="jp.co.riso.smartprint"
-                    android:path="/o1y2df8OV3aI9a1gMYLH1a95q4c="
+                    android:path="/8t10HTvSMhcmNO0y+/7mkDzwCUk="
                     android:scheme="msauth" />
             </intent-filter>
 

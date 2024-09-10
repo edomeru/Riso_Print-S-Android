@@ -53,6 +53,7 @@ open class ContentPrintFragment : BaseFragment(),
         View.OnClickListener,
         ContentPrintManager.IAuthenticationCallback,
         ContentPrintManager.IContentPrintCallback,
+        ContentPrintManager.IDeviceRegisterCallback,
         PullToRefreshListView.OnRefreshListener,
         ContentPrintFileAdapter.ContentPrintFileAdapterInterface,
         ConfirmDialogFragment.ConfirmDialogListener {
@@ -236,9 +237,14 @@ open class ContentPrintFragment : BaseFragment(),
             }
         }
 
-        if (ContentPrintManager.isLoggedIn) {
-            _contentPrintManager?.getCurrentUser( this)
-            refreshFileList()
+        _contentPrintManager?.registerDevice(ContentPrintManager.deviceToken, this)
+
+        if (ContentPrintManager.isLoggedIn && ContentPrintManager.filenameFromNotification != null) {
+            // Download the file from the notification
+            _contentPrintManager?.downloadFile(
+                ContentPrintManager.filenameFromNotification,
+                this
+            )
         } else {
             // Update the file list
             refreshFileList()
@@ -361,11 +367,19 @@ open class ContentPrintFragment : BaseFragment(),
     }
 
     // ================================================================================
+    // INTERFACE - IDeviceRegisterCallback
+    // ================================================================================
+    override fun onDeviceRegistered(success: Boolean) {
+        Log.d("Register Device", "===== onDeviceRegistered - END =====")
+    }
+
+    // ================================================================================
     // INTERFACE - ConfirmDialogFragment.ConfirmDialogListener
     // ================================================================================
     override fun onConfirm() {
         if (_lastConfirmation == Confirmation.LOGOUT) {
             _contentPrintManager?.logout(this)
+            _contentPrintManager?.unregisterDevice(ContentPrintManager.deviceToken, this)
         } else { // _lastConfirmation == Confirmation.PREVIEW
             if (ContentPrintManager.selectedFile != null) {
                 _contentPrintManager?.downloadFile(ContentPrintManager.selectedFile!!, this)

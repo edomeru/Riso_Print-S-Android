@@ -10,13 +10,13 @@ android {
     buildToolsVersion = '34.0.0'
 
     defaultConfig {
-        applicationId "jp.co.riso.smartprint"
+        applicationId "jp.co.riso.cloudhub.smartprint"
         minSdkVersion 28
         targetSdkVersion 34
         versionCode 590002001
         versionName 'v5.900.2.1'
 
-        testApplicationId "jp.co.riso.smartprint.test"
+        testApplicationId "jp.co.riso.cloudhub.smartprint.test"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
         ndkVersion '25.2.9519653'
