@@ -70,7 +70,7 @@ public class PDFMainAct extends Activity {
             m_handler = new Handler();
             m_runable = new Runnable() {
                 public void run() {
-                    m_dlg = ProgressDialog.show(PDFMainAct.this, getString(R.string.please_wait), getString(R.string.thumbnail_creation_running), true);
+                    m_dlg = ProgressDialog.show(PDFMainAct.this, "", "", true);
                 }
             };
             m_handler.postDelayed(m_runable, 1000);//delay 1 second to display progress dialog.
@@ -89,12 +89,12 @@ public class PDFMainAct extends Activity {
                     task.execute();
                 }
             });
-            builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+            builder.setNegativeButton("", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int which) {
                     dialog.dismiss();
                 }
             });
-            builder.setTitle(R.string.input_password);
+            builder.setTitle("");
             builder.setCancelable(false);
             builder.setView(layout);
 
@@ -110,19 +110,19 @@ public class PDFMainAct extends Activity {
                     InputPswd();
                     break;
                 case -2://unknown encryption
-                    onFail(m_doc, getString(R.string.failed_encryption));
+                    onFail(m_doc, "");
                     break;
                 case -3://damaged or invalid format
-                    onFail(m_doc, getString(R.string.failed_invalid_format));
+                    onFail(m_doc, "");
                     break;
                 case -10://access denied or invalid file path
-                    onFail(m_doc, getString(R.string.failed_invalid_path));
+                    onFail(m_doc,"");
                     break;
                 case 0://succeeded, and continue
                     InitView(m_doc, m_path);
                     break;
                 default://unknown error
-                    onFail(m_doc, getString(R.string.failed_unknown));
+                    onFail(m_doc, "");
                     break;
             }
             if (m_dlg != null)
@@ -156,7 +156,7 @@ public class PDFMainAct extends Activity {
             m_handler = new Handler();
             m_runable = new Runnable() {
                 public void run() {
-                    m_dlg = ProgressDialog.show(PDFMainAct.this, getString(R.string.please_wait), getString(R.string.thumbnail_creation_running), true);
+                    m_dlg = ProgressDialog.show(PDFMainAct.this, "", "", true);
                 }
             };
             m_handler.postDelayed(m_runable, 1000);//delay 1 second to display progress dialog.
@@ -175,12 +175,12 @@ public class PDFMainAct extends Activity {
                     task.execute();
                 }
             });
-            builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+            builder.setNegativeButton("", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int which) {
                     dialog.dismiss();
                 }
             });
-            builder.setTitle(R.string.input_password);
+            builder.setTitle("");
             builder.setCancelable(false);
             builder.setView(layout);
 
@@ -196,19 +196,18 @@ public class PDFMainAct extends Activity {
                     InputPswd();
                     break;
                 case -2://unknown encryption
-                    onFail(m_doc, getString(R.string.failed_encryption));
+                    onFail(m_doc, "");
                     break;
                 case -3://damaged or invalid format
-                    onFail(m_doc, getString(R.string.failed_invalid_format));
+                    onFail(m_doc, "");
                     break;
                 case -10://access denied or invalid file path
-                    onFail(m_doc, getString(R.string.failed_invalid_path));
-                    break;
+                    onFail(m_doc, "");
                 case 0://succeeded, and continue
                     InitView(m_doc, m_path);
                     break;
                 default://unknown error
-                    onFail(m_doc, getString(R.string.failed_unknown));
+                    onFail(m_doc, "");
                     break;
             }
             if (m_dlg != null)
@@ -243,7 +242,7 @@ public class PDFMainAct extends Activity {
             m_handler = new Handler();
             m_runable = new Runnable() {
                 public void run() {
-                    m_dlg = ProgressDialog.show(PDFMainAct.this, getString(R.string.please_wait), getString(R.string.thumbnail_creation_running), true);
+                    m_dlg = ProgressDialog.show(PDFMainAct.this, "", "", true);
                 }
             };
             m_handler.postDelayed(m_runable, 1000);//delay 1 second to display progress dialog.
@@ -262,12 +261,12 @@ public class PDFMainAct extends Activity {
                     task.execute();
                 }
             });
-            builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+            builder.setNegativeButton("", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int which) {
                     dialog.dismiss();
                 }
             });
-            builder.setTitle(R.string.input_password);
+            builder.setTitle("");
             builder.setCancelable(false);
             builder.setView(layout);
 
@@ -283,19 +282,19 @@ public class PDFMainAct extends Activity {
                     InputPswd();
                     break;
                 case -2://unknown encryption
-                    onFail(m_doc, getString(R.string.failed_encryption));
+                    onFail(m_doc, "");
                     break;
                 case -3://damaged or invalid format
-                    onFail(m_doc, getString(R.string.failed_invalid_format));
+                    onFail(m_doc, "");
                     break;
                 case -10://access denied or invalid file path
-                    onFail(m_doc, getString(R.string.failed_invalid_path));
+                    onFail(m_doc, "");
                     break;
                 case 0://succeeded, and continue
                     InitView(m_doc, m_path);
                     break;
                 default://unknown error
-                    onFail(m_doc, getString(R.string.failed_unknown));
+                    onFail(m_doc, "");
                     break;
             }
             if (m_dlg != null)
@@ -387,14 +386,14 @@ public class PDFMainAct extends Activity {
                         }
                     }
                 });
-                builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                builder.setNegativeButton("", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                     }
                 });
-                builder.setTitle(getString(R.string.confirm));
+                builder.setTitle("");
                 builder.setCancelable(false);
                 TextView tview = new TextView(PDFMainAct.this);
-                tview.setText(getString(R.string.browser_file_delete_confirm) + "\n" + m_item_grid.RDGetPath() + "\n?");
+                tview.setText("" + "\n" + m_item_grid.RDGetPath() + "\n?");
                 builder.setView(tview);
 
                 AlertDialog dlg = builder.create();
@@ -468,14 +467,14 @@ public class PDFMainAct extends Activity {
                         UpdateRecentUI(m_vRecent);
                     }
                 });
-                builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                builder.setNegativeButton("", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                     }
                 });
-                builder.setTitle(getString(R.string.confirm));
+                builder.setTitle("");
                 builder.setCancelable(false);
                 TextView tview = new TextView(PDFMainAct.this);
-                tview.setText(getString(R.string.browser_file_delete_recent_list_confirm));
+                tview.setText("");
                 builder.setView(tview);
 
                 AlertDialog dlg = builder.create();
@@ -507,14 +506,14 @@ public class PDFMainAct extends Activity {
                         UpdateRecentUI(m_vRecent);
                     }
                 });
-                builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                builder.setNegativeButton("", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                     }
                 });
-                builder.setTitle(getString(R.string.confirm));
+                builder.setTitle("");
                 builder.setCancelable(false);
                 TextView tview = new TextView(PDFMainAct.this);
-                tview.setText(getString(R.string.browser_file_delete_confirm) + "\n" + m_item_rec.RDGetFile().getAbsoluteFile() + "\n?");
+                tview.setText("" + "\n" + m_item_rec.RDGetFile().getAbsoluteFile() + "\n?");
                 builder.setView(tview);
 
                 AlertDialog dlg = builder.create();
@@ -622,14 +621,14 @@ public class PDFMainAct extends Activity {
                         UpdateFilesUI(m_vFiles);
                     }
                 });
-                builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                builder.setNegativeButton("", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                     }
                 });
-                builder.setTitle(getString(R.string.confirm));
+                builder.setTitle("");
                 builder.setCancelable(false);
                 TextView tview = new TextView(PDFMainAct.this);
-                tview.setText(getString(R.string.browser_file_delete_confirm) + m_item_file.RDGetFile(m_item_idx).getAbsolutePath() + "\n?");
+                tview.setText("" + m_item_file.RDGetFile(m_item_idx).getAbsolutePath() + "\n?");
                 builder.setView(tview);
 
                 AlertDialog dlg = builder.create();

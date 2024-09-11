@@ -1,5 +1,6 @@
 package com.radaee.annotui;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -17,6 +18,7 @@ import com.radaee.pdf.Page;
 
 import jp.co.riso.smartprint.R;
 
+@SuppressLint("AppCompatCustomView")
 public class UIIconButton extends Button {
     public UIIconButton(Context context) {
         super(context);

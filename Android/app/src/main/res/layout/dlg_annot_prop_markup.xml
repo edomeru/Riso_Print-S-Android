@@ -8,7 +8,7 @@
         android:id="@+id/txt_icon"
         android:layout_width="80dp"
         android:layout_height="wrap_content"
-        android:text="@string/annot_color"
+        android:text=""
         android:layout_marginTop="4dp"/>
 
     <com.radaee.annotui.UIColorButton
@@ -26,7 +26,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/txt_icon"
         android:layout_marginTop="16dp"
-        android:text="@string/alpha" />
+        android:text="" />
 
     <SeekBar
         android:id="@+id/seek_alpha"
@@ -52,7 +52,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/seek_alpha"
         android:layout_marginTop="5dp"
-        android:text="@string/annot_lock"
+        android:text=""
         android:textSize="12sp" />
 
 </RelativeLayout>

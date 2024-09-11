@@ -341,7 +341,7 @@ public class CommonUtil {
     public static void showPDFOutlines(final ILayoutView mPdfLayoutView, Context mContext) {
         if (mPdfLayoutView.PDFGetDoc() != null) {
             if (mPdfLayoutView.PDFGetDoc().GetOutlines() == null) {
-                Toast.makeText(mContext, R.string.no_pdf_outlines, Toast.LENGTH_SHORT).show();
+                Toast.makeText(mContext, "", Toast.LENGTH_SHORT).show();
                 return;
             }
 
@@ -349,7 +349,7 @@ public class CommonUtil {
             final OutlineList mOutlineList = (OutlineList) layout.findViewById(R.id.lst_outline);
             mOutlineList.SetOutlines(mPdfLayoutView.PDFGetDoc());
             final AlertDialog mAlertDialog = new AlertDialog.Builder(mContext)
-                    .setTitle(R.string.pdf_outline)
+                    .setTitle("")
                     .setView(layout)
                     .show();
             AdapterView.OnItemClickListener item_clk = new AdapterView.OnItemClickListener() {

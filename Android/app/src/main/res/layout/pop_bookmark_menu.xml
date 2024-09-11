@@ -10,7 +10,7 @@
         android:id="@+id/delete"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="@string/delete"
+        android:text=""
         android:gravity="center"
         android:textAppearance="?android:attr/textAppearanceMedium"/>
 

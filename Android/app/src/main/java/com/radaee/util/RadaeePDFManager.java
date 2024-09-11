@@ -123,7 +123,7 @@ public class RadaeePDFManager implements RadaeePluginCallback.PDFReaderListener 
             intent.putExtra( "BMPFormat", bmpFormat);
             context.startActivity(intent);
         } else
-            Toast.makeText(context, context.getString(R.string.failed_invalid_path), Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, "", Toast.LENGTH_SHORT).show();
     }
 
     /**
@@ -380,11 +380,11 @@ public class RadaeePDFManager implements RadaeePluginCallback.PDFReaderListener 
             BookmarkHandler.setDbPath(mContext.getFilesDir() + File.separator + "Bookmarks.db");
         BookmarkHandler.BookmarkStatus status = BookmarkHandler.addToBookmarks(filePath, page, bookmarkLabel);
         if(status == BookmarkHandler.BookmarkStatus.SUCCESS)
-            return mContext.getString(R.string.bookmark_success, bookmarkLabel);
+            return "";
         else if(status == BookmarkHandler.BookmarkStatus.ALREADY_ADDED)
-            return mContext.getString(R.string.bookmark_already_added);
+            return "";
         else
-            return mContext.getString(R.string.bookmark_error);
+            return "";
     }
 
     /**

@@ -1653,7 +1653,7 @@ public class PDFLayoutView extends View implements ILayoutView, LayoutListener {
 
     public void OnFound(boolean found) {
         if (found) invalidate();
-        else Toast.makeText(getContext(), R.string.no_more_found, Toast.LENGTH_SHORT).show();
+        else Toast.makeText(getContext(), "", Toast.LENGTH_SHORT).show();
         if (m_listener != null)
             m_listener.OnPDFSearchFinished(found);
     }
@@ -2189,7 +2189,7 @@ public class PDFLayoutView extends View implements ILayoutView, LayoutListener {
         if (m_status != STA_ANNOT) return;
         if(!PDFCanSave() || (Global.g_annot_readonly && m_annot.IsReadOnly())
                 || (Global.g_annot_lock && m_annot.IsLocked())) {
-            Toast.makeText(getContext(), R.string.cannot_write_or_encrypted, Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "", Toast.LENGTH_SHORT).show();
             PDFEndAnnot();
             return;
         }
@@ -2230,7 +2230,7 @@ public class PDFLayoutView extends View implements ILayoutView, LayoutListener {
     public void PDFEditAnnot() {
         if (m_status != STA_ANNOT) return;
         if(!PDFCanSave()) {
-            Toast.makeText(getContext(), R.string.cannot_write_or_encrypted, Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "", Toast.LENGTH_SHORT).show();
             PDFEndAnnot();
             return;
         }
@@ -2251,13 +2251,13 @@ public class PDFLayoutView extends View implements ILayoutView, LayoutListener {
                 PDFEndAnnot();
             }
         });
-        builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+        builder.setNegativeButton("", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
                 PDFEndAnnot();
             }
         });
-        builder.setTitle(R.string.note_content);
+        builder.setTitle("");
         builder.setCancelable(false);
         builder.setView(layout);
 
@@ -2450,7 +2450,7 @@ public class PDFLayoutView extends View implements ILayoutView, LayoutListener {
             m_layout.vRenderSync(m_layout.vGetPage(item.m_pageno));
             invalidate();
         } else
-            Toast.makeText(getContext(), R.string.no_more_undo, Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "", Toast.LENGTH_SHORT).show();
     }
 
     public void PDFRedo() {
@@ -2462,7 +2462,7 @@ public class PDFLayoutView extends View implements ILayoutView, LayoutListener {
             m_layout.vRenderSync(m_layout.vGetPage(item.m_pageno));
             invalidate();
         } else
-            Toast.makeText(getContext(), R.string.no_more_redo, Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "", Toast.LENGTH_SHORT).show();
     }
 
     @Override

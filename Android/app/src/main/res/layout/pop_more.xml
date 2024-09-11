@@ -41,7 +41,7 @@
                 android:layout_height="match_parent"
                 android:layout_marginLeft="4dp"
                 android:gravity="center_vertical"
-                android:text="@string/pages_list"/>
+                android:text=""/>
 
         </LinearLayout>
 
@@ -64,7 +64,7 @@
                 android:layout_height="match_parent"
                 android:layout_marginLeft="4dp"
                 android:gravity="center_vertical"
-                android:text="@string/bookmark_add"/>
+                android:text=""/>
 
         </LinearLayout>
 
@@ -87,7 +87,7 @@
                 android:layout_height="match_parent"
                 android:layout_marginLeft="4dp"
                 android:gravity="center_vertical"
-                android:text="@string/bookmark_show"/>
+                android:text=""/>
 
         </LinearLayout>
 
@@ -110,7 +110,7 @@
                 android:layout_height="match_parent"
                 android:layout_marginLeft="4dp"
                 android:gravity="center_vertical"
-                android:text="@string/save"/>
+                android:text=""/>
 
         </LinearLayout>
 
@@ -133,7 +133,7 @@
                 android:layout_height="match_parent"
                 android:layout_marginLeft="4dp"
                 android:gravity="center_vertical"
-                android:text="@string/print"/>
+                android:text=""/>
 
         </LinearLayout>
 
@@ -156,7 +156,7 @@
                 android:layout_height="match_parent"
                 android:layout_marginLeft="4dp"
                 android:gravity="center_vertical"
-                android:text="@string/share"/>
+                android:text=""/>
 
         </LinearLayout>
 

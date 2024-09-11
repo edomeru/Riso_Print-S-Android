@@ -23,7 +23,7 @@
                 android:layout_height="30dp">
             </ImageView>
             <TextView
-                android:text="@string/tag_recent"
+                android:text=""
                 android:gravity="center_horizontal"
                 android:layout_width="match_parent"
                 android:textColor="@color/bar_text_color"
@@ -43,7 +43,7 @@
                 android:layout_height="30dp">
             </ImageView>
             <TextView
-                android:text="@string/tag_files"
+                android:text=""
                 android:gravity="center_horizontal"
                 android:layout_width="match_parent"
                 android:textColor="@color/bar_text_color"
@@ -63,7 +63,7 @@
                 android:layout_height="30dp">
             </ImageView>
             <TextView
-                android:text="@string/tag_navigate"
+                android:text=""
                 android:gravity="center_horizontal"
                 android:layout_width="match_parent"
                 android:textColor="@color/bar_text_color"

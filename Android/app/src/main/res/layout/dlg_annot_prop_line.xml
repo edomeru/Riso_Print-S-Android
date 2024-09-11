@@ -9,7 +9,7 @@
         android:layout_width="80dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
-        android:text="@string/line_width" />
+        android:text="" />
 
     <EditText
         android:id="@+id/edit_lwidth"
@@ -26,7 +26,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/txt_lwidth"
         android:layout_marginTop="16dp"
-        android:text="@string/line_style" />
+        android:text="" />
 
     <com.radaee.annotui.UILStyleButton
         android:id="@+id/btn_lstyle"
@@ -44,7 +44,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/txt_lstyle"
         android:layout_marginTop="16dp"
-        android:text="@string/line_color" />
+        android:text="" />
 
     <com.radaee.annotui.UIColorButton
         android:id="@+id/btn_lcolor"
@@ -62,7 +62,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/txt_icon"
         android:layout_marginTop="16dp"
-        android:text="@string/fill_color" />
+        android:text="" />
 
     <com.radaee.annotui.UIColorButton
         android:id="@+id/btn_fcolor"
@@ -80,7 +80,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/txt_fcolor"
         android:layout_marginTop="16dp"
-        android:text="@string/line_start" />
+        android:text="" />
 
     <com.radaee.annotui.UILHeadButton
         android:id="@+id/btn_lhead1"
@@ -98,7 +98,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/txt_lhead1"
         android:layout_marginTop="16dp"
-        android:text="@string/line_end" />
+        android:text="" />
 
     <com.radaee.annotui.UILHeadButton
         android:id="@+id/btn_lhead2"
@@ -116,7 +116,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/txt_lhead2"
         android:layout_marginTop="16dp"
-        android:text="@string/alpha" />
+        android:text="" />
 
     <SeekBar
         android:id="@+id/seek_alpha"
@@ -142,7 +142,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/seek_alpha"
         android:layout_marginTop="5dp"
-        android:text="@string/annot_lock"
+        android:text=""
         android:textSize="12sp" />
 
 </RelativeLayout>

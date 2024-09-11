@@ -75,7 +75,7 @@
         android:layout_height="35dp"
         android:layout_below="@id/tog_enable"
         android:gravity="center"
-        android:text="@string/cancel"
+        android:text=""
         android:textSize="10sp" />
 
     <Button
