@@ -25,7 +25,7 @@ public class UIAnnotDlgIcon extends UIAnnotDlg {
                 dialog.dismiss();
 
                 if (m_annot.IsLocked()) {
-                    Toast.makeText(getContext(), "", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), R.string.cannot_write_or_encrypted, Toast.LENGTH_SHORT).show();
                 }
                 else {
 
@@ -48,7 +48,7 @@ public class UIAnnotDlgIcon extends UIAnnotDlg {
                     m_callback.onUpdate();
             }
         });
-        setNegativeButton("", new DialogInterface.OnClickListener() {
+        setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();

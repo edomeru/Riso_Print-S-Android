@@ -66,16 +66,16 @@ public class PDFViewAct extends Activity implements ILayoutView.PDFLayoutListene
     private void ProcessOpenResult(int ret) {
         switch (ret) {
             case -1://need input password
-                onFail("");
+                onFail(getString(R.string.failed_invalid_password));
                 break;
             case -2://unknown encryption
-                onFail("");
+                onFail(getString(R.string.failed_encryption));
                 break;
             case -3://damaged or invalid format
-                onFail("");
+                onFail(getString(R.string.failed_invalid_format));
                 break;
             case -10://access denied or invalid file path
-                onFail("");
+                onFail(getString(R.string.failed_invalid_path));
                 break;
             case 0://succeeded, and continue
                 m_save_doc_to_bundle = false;
@@ -83,7 +83,7 @@ public class PDFViewAct extends Activity implements ILayoutView.PDFLayoutListene
                 task.execute();
                 break;
             default://unknown error
-                onFail("");
+                onFail(getString(R.string.failed_unknown));
                 break;
         }
     }
@@ -104,7 +104,7 @@ public class PDFViewAct extends Activity implements ILayoutView.PDFLayoutListene
             handler = new Handler(Looper.getMainLooper());
             runnable = new Runnable() {
                 public void run() {
-                    dlg = ProgressDialog.show(PDFViewAct.this, "", "", true);
+                    dlg = ProgressDialog.show(PDFViewAct.this, getString(R.string.please_wait), getString(R.string.loading_pdf), true);
                 }
             };
             handler.postDelayed(runnable, 1000);//delay 1 second to display progress dialog.
@@ -282,14 +282,14 @@ public class PDFViewAct extends Activity implements ILayoutView.PDFLayoutListene
                 if (m_controller != null) m_controller.savePDF();
                 if(onBackPressed) super.onBackPressed();
             } else {
-                new AlertDialog.Builder(this).setTitle("")
-                        .setMessage("").setPositiveButton("", new DialogInterface.OnClickListener() {
+                new AlertDialog.Builder(this).setTitle(R.string.exiting)
+                        .setMessage(R.string.save_msg).setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         if (m_controller != null) m_controller.savePDF();
                         if(onBackPressed) PDFViewAct.super.onBackPressed();
                     }
-                }).setNegativeButton("", new DialogInterface.OnClickListener() {
+                }).setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         if(onBackPressed) PDFViewAct.super.onBackPressed();
@@ -413,7 +413,7 @@ public class PDFViewAct extends Activity implements ILayoutView.PDFLayoutListene
                     android.content.ClipboardManager clipboard = (android.content.ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
                     android.content.ClipData clip = android.content.ClipData.newPlainText("Radaee", sel_text);
                     clipboard.setPrimaryClip(clip);
-                    Toast.makeText(PDFViewAct.this, "", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(PDFViewAct.this, getString(R.string.copy_text, sel_text), Toast.LENGTH_SHORT).show();
                 } else if (m_view.PDFCanSave()) {
                     boolean ret = false;
                     if (rad_group.getCheckedRadioButtonId() == R.id.rad_highlight)
@@ -425,20 +425,20 @@ public class PDFViewAct extends Activity implements ILayoutView.PDFLayoutListene
                     else if (rad_group.getCheckedRadioButtonId() == R.id.rad_squiggly)
                         ret = m_view.PDFSetSelMarkup(4);
                     if (!ret)
-                        Toast.makeText(PDFViewAct.this, "", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(PDFViewAct.this, R.string.annotation_failed, Toast.LENGTH_SHORT).show();
                 } else
-                    Toast.makeText(PDFViewAct.this, "", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(PDFViewAct.this, R.string.cannot_write_or_encrypted, Toast.LENGTH_SHORT).show();
                 dialog.dismiss();
                 if (m_controller != null)
                     m_controller.OnSelectEnd();
             }
         });
-        builder.setNegativeButton("", new DialogInterface.OnClickListener() {
+        builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
             }
         });
-        builder.setTitle("");
+        builder.setTitle(R.string.process_selected_text);
         builder.setCancelable(false);
         builder.setView(layout);
         AlertDialog dlg = builder.create();
@@ -454,28 +454,28 @@ public class PDFViewAct extends Activity implements ILayoutView.PDFLayoutListene
             intent.setData(content_url);
             startActivity(intent);
         } catch (Exception e) {
-            Toast.makeText(PDFViewAct.this, "" + uri, Toast.LENGTH_SHORT).show();
+            Toast.makeText(PDFViewAct.this, getString(R.string.todo_open_url) + uri, Toast.LENGTH_SHORT).show();
         }
     }
 
     @Override
     public void OnPDFOpenJS(String js) {
-        Toast.makeText(PDFViewAct.this, "", Toast.LENGTH_SHORT).show();
+        Toast.makeText(PDFViewAct.this, R.string.todo_java_script, Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void OnPDFOpenMovie(String path) {
-        Toast.makeText(PDFViewAct.this, "", Toast.LENGTH_SHORT).show();
+        Toast.makeText(PDFViewAct.this, R.string.todo_play_movie, Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void OnPDFOpenSound(int[] paras, String path) {
-        Toast.makeText(PDFViewAct.this, "", Toast.LENGTH_SHORT).show();
+        Toast.makeText(PDFViewAct.this, R.string.todo_play_sound, Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void OnPDFOpenAttachment(String path) {
-        Toast.makeText(PDFViewAct.this, "", Toast.LENGTH_SHORT).show();
+        Toast.makeText(PDFViewAct.this, R.string.todo_attachment, Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -484,7 +484,7 @@ public class PDFViewAct extends Activity implements ILayoutView.PDFLayoutListene
 
     @Override
     public void OnPDFOpen3D(String path) {
-        Toast.makeText(PDFViewAct.this, "", Toast.LENGTH_SHORT).show();
+        Toast.makeText(PDFViewAct.this, R.string.todo_3d, Toast.LENGTH_SHORT).show();
     }
 
     @Override

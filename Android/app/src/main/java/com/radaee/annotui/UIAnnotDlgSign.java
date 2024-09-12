@@ -49,11 +49,11 @@ public class UIAnnotDlgSign extends UIAnnotDlg {
                 public void onClick(View v) {
                     //open browser dialog.
                     AlertDialog.Builder builder = new AlertDialog.Builder(m_layout.getContext());
-                    builder.setTitle("");
+                    builder.setTitle(getContext().getString(R.string.sign_select_certificate));
                     LayoutInflater inflater = (LayoutInflater) ctx.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
                     View view = inflater.inflate(R.layout.dlg_browser, null);
                     builder.setView(view);
-                    builder.setNegativeButton("", new DialogInterface.OnClickListener() {
+                    builder.setNegativeButton(getContext().getString(R.string.confirm), new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
                             dialog.dismiss();
@@ -65,7 +65,7 @@ public class UIAnnotDlgSign extends UIAnnotDlg {
                         public void onShow(DialogInterface dialog) {
                             final FileBrowserView fb_view = dlg.findViewById(R.id.fb_view);
                             TextView txt_filter = dlg.findViewById(R.id.txt_filter);
-                            txt_filter.setText("");
+                            txt_filter.setText(getContext().getString(R.string.sign_certificate_filetype));
                             fb_view.FileInit("/mnt", new String[]{".p12", ".pfx"});
                             fb_view.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                                 @Override
@@ -119,12 +119,12 @@ public class UIAnnotDlgSign extends UIAnnotDlg {
                         m_callback.onUpdate();
                 }
                 else if(iRet == -5)
-                    Toast.makeText(getContext(), "", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getContext(), getContext().getString(R.string.sign_error_fail_certificate), Toast.LENGTH_LONG).show();
                 else
-                    Toast.makeText(getContext(), "", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getContext(), getContext().getString(R.string.sign_error_fail), Toast.LENGTH_LONG).show();
             }
         });
-        setNegativeButton("", new DialogInterface.OnClickListener() {
+        setNegativeButton(getContext().getString(R.string.cancel), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();

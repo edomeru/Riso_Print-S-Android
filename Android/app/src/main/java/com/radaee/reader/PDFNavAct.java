@@ -62,7 +62,7 @@ public class PDFNavAct extends Activity implements OnItemClickListener {
             handler = new Handler();
             runable = new Runnable() {
                 public void run() {
-                    dlg = ProgressDialog.show(PDFNavAct.this, "", "", true);
+                    dlg = ProgressDialog.show(PDFNavAct.this, getString(R.string.please_wait), getString(R.string.thumbnail_creation_running), true);
                 }
             };
             handler.postDelayed(runable, 1000);//delay 1 second to display progress dialog.
@@ -78,19 +78,19 @@ public class PDFNavAct extends Activity implements OnItemClickListener {
                     InputPswd(item);
                     break;
                 case -2://unknown encryption
-                    onFail(doc, "");
+                    onFail(doc, getString(R.string.failed_encryption));
                     break;
                 case -3://damaged or invalid format
-                    onFail(doc, "");
+                    onFail(doc, getString(R.string.failed_invalid_format));
                     break;
                 case -10://access denied or invalid file path
-                    onFail(doc, "");
+                    onFail(doc, getString(R.string.failed_invalid_path));
                     break;
                 case 0://succeeded, and continue
                     InitView(doc, path);
                     break;
                 default://unknown error
-                    onFail(doc, "");
+                    onFail(doc, getString(R.string.failed_unknown));
                     break;
             }
             if (dlg != null)
@@ -151,12 +151,12 @@ public class PDFNavAct extends Activity implements OnItemClickListener {
                 task.execute();
             }
         });
-        builder.setNegativeButton("", new DialogInterface.OnClickListener() {
+        builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
             }
         });
-        builder.setTitle("");
+        builder.setTitle(R.string.input_password);
         builder.setCancelable(false);
         builder.setView(layout);
 

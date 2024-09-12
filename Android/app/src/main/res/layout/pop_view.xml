@@ -37,7 +37,7 @@
             android:layout_height="match_parent"
             android:layout_marginLeft="4dp"
             android:layout_marginTop="6dp"
-            android:text="" />
+            android:text="@string/vertical" />
 
     </LinearLayout>
 
@@ -58,7 +58,7 @@
             android:layout_height="match_parent"
             android:layout_marginLeft="4dp"
             android:layout_marginTop="6dp"
-            android:text="" />
+            android:text="@string/horizontal" />
 
     </LinearLayout>
 
@@ -80,7 +80,7 @@
             android:layout_gravity="center_vertical"
             android:layout_marginLeft="4dp"
             android:layout_marginTop="6dp"
-            android:text="" />
+            android:text="@string/single_page" />
 
     </LinearLayout>
 
@@ -102,7 +102,7 @@
             android:layout_gravity="center_vertical"
             android:layout_marginLeft="4dp"
             android:layout_marginTop="6dp"
-            android:text="" />
+            android:text="@string/dual_page" />
 
     </LinearLayout>
 

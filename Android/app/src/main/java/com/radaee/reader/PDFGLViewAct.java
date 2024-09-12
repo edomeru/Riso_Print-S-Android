@@ -87,7 +87,7 @@ public class PDFGLViewAct extends Activity implements ILayoutView.PDFLayoutListe
 		{
 			public void run()
 			{
-				dlg = ProgressDialog.show(PDFGLViewAct.this, "", "", true);
+				dlg = ProgressDialog.show(PDFGLViewAct.this, getString(R.string.please_wait), getString(R.string.loading_pdf), true);
 			}
 		};
 		@Override
@@ -296,14 +296,14 @@ public class PDFGLViewAct extends Activity implements ILayoutView.PDFLayoutListe
 				if (m_controller != null) m_controller.savePDF();
 				if(onBackPressed) super.onBackPressed();
 			} else {
-				new AlertDialog.Builder(this).setTitle("")
-						.setMessage("").setPositiveButton("", new DialogInterface.OnClickListener() {
+				new AlertDialog.Builder(this).setTitle(R.string.exiting)
+						.setMessage(R.string.save_msg).setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
 						if (m_controller != null) m_controller.savePDF();
 						if(onBackPressed) PDFGLViewAct.super.onBackPressed();
 					}
-				}).setNegativeButton("", new DialogInterface.OnClickListener() {
+				}).setNegativeButton(R.string.no, new DialogInterface.OnClickListener() {
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
 						if(onBackPressed) PDFGLViewAct.super.onBackPressed();
@@ -399,7 +399,7 @@ public class PDFGLViewAct extends Activity implements ILayoutView.PDFLayoutListe
 					android.content.ClipboardManager clipboard = (android.content.ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
 					android.content.ClipData clip = android.content.ClipData.newPlainText("Radaee", sel_text);
 					clipboard.setPrimaryClip(clip);
-					Toast.makeText(PDFGLViewAct.this, "", Toast.LENGTH_SHORT).show();
+					Toast.makeText(PDFGLViewAct.this, getString(R.string.copy_text, sel_text), Toast.LENGTH_SHORT).show();
 				} else if (m_view.PDFCanSave()) {
 					boolean ret = false;
 					if (rad_group.getCheckedRadioButtonId() == R.id.rad_highlight)
@@ -411,20 +411,20 @@ public class PDFGLViewAct extends Activity implements ILayoutView.PDFLayoutListe
 					else if (rad_group.getCheckedRadioButtonId() == R.id.rad_squiggly)
 						ret = m_view.PDFSetSelMarkup(4);
 					if (!ret)
-						Toast.makeText(PDFGLViewAct.this,"", Toast.LENGTH_SHORT).show();
+						Toast.makeText(PDFGLViewAct.this, R.string.annotation_failed, Toast.LENGTH_SHORT).show();
 				} else
-					Toast.makeText(PDFGLViewAct.this, "", Toast.LENGTH_SHORT).show();
+					Toast.makeText(PDFGLViewAct.this, R.string.cannot_write_or_encrypted, Toast.LENGTH_SHORT).show();
 				dialog.dismiss();
 				if (m_controller != null)
 					m_controller.OnSelectEnd();
 			}});
-		builder.setNegativeButton("", new DialogInterface.OnClickListener()
+		builder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener()
 		{
 			public void onClick(DialogInterface dialog, int which)
 			{
 				dialog.dismiss();
 			}});
-		builder.setTitle("");
+		builder.setTitle(R.string.process_selected_text);
 		builder.setCancelable(false);
 		builder.setView(layout);
 		AlertDialog dlg = builder.create();

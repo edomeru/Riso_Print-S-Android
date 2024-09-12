@@ -9,7 +9,7 @@
         android:layout_width="80dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="14dp"
-        android:text="" />
+        android:text="@string/icon" />
 
     <com.radaee.annotui.UIIconButton
         android:id="@+id/btn_icon"
@@ -24,7 +24,7 @@
         android:id="@+id/txt_fcolor"
         android:layout_width="80dp"
         android:layout_height="wrap_content"
-        android:text=""
+        android:text="@string/fill_color"
         android:layout_below="@id/txt_icon"
         android:layout_marginTop="26dp" />
 
@@ -44,7 +44,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/txt_fcolor"
         android:layout_marginTop="26dp"
-        android:text="" />
+        android:text="@string/alpha" />
 
     <SeekBar
         android:id="@+id/seek_alpha"
@@ -70,7 +70,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/seek_alpha"
         android:layout_marginTop="10dp"
-        android:text=""
+        android:text="@string/annot_lock"
         android:textSize="12sp" />
 
 </RelativeLayout>

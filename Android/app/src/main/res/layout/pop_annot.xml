@@ -9,7 +9,7 @@
         android:id="@+id/btn_annot_perform"
         android:layout_width="@dimen/annot_menu_btn_size"
         android:layout_height="match_parent"
-        android:contentDescription=""
+        android:contentDescription="@string/annot_perform"
         android:background="@drawable/bg_btn_menu"
         android:scaleType="fitXY"
         android:src="@drawable/btn_perform"/>
@@ -18,7 +18,7 @@
         android:id="@+id/btn_annot_edit"
         android:layout_width="@dimen/annot_menu_btn_size"
         android:layout_height="match_parent"
-        android:contentDescription=""
+        android:contentDescription="@string/annot_edit"
         android:background="@drawable/bg_btn_menu"
         android:scaleType="fitXY"
         android:src="@drawable/btn_annot_note"/>
@@ -30,7 +30,7 @@
         android:background="@drawable/bg_btn_menu"
         android:scaleType="fitXY"
         android:src="@drawable/btn_remove"
-        android:contentDescription=""/>
+        android:contentDescription="@string/annot_remove"/>
 
     <ImageButton
         android:id="@+id/btn_annot_property"
@@ -39,6 +39,6 @@
         android:background="@drawable/bg_btn_menu"
         android:scaleType="fitCenter"
         android:src="@drawable/btn_settings"
-        android:contentDescription=""/>
+        android:contentDescription="@string/annot_property"/>
 
 </LinearLayout>

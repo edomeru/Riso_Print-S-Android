@@ -910,7 +910,7 @@ public class PDFViewController implements OnClickListener, SeekBar.OnSeekBarChan
     void savePDF() {
         if (m_view.PDFSave()) {
             sFileState = MODIFIED_AND_SAVED;
-            Toast.makeText(m_parent.getContext(), "", Toast.LENGTH_SHORT).show();
+            Toast.makeText(m_parent.getContext(), R.string.saved_message, Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -950,7 +950,7 @@ public class PDFViewController implements OnClickListener, SeekBar.OnSeekBarChan
                     // Content layout reflow is complete
                     callback.onLayoutFinished(info, true);
                 } else { // Otherwise report an error to the print framework
-                    callback.onLayoutFailed("");
+                    callback.onLayoutFailed(m_parent.getContext().getString(R.string.pdf_print_calculation_failed));
                 }
             }
 
@@ -989,7 +989,7 @@ public class PDFViewController implements OnClickListener, SeekBar.OnSeekBarChan
                         input.close();
                         output.close();
                     } else
-                        callback.onWriteFailed("");
+                        callback.onWriteFailed(m_parent.getContext().getString(R.string.pdf_print_not_available));
                 } catch (Exception e) {
                     e.printStackTrace();
                     callback.onWriteFailed(e.toString());
@@ -1010,7 +1010,7 @@ public class PDFViewController implements OnClickListener, SeekBar.OnSeekBarChan
 
             m_parent.getContext().startActivity(share);
         } else {
-            Toast.makeText(m_parent.getContext(), "", Toast.LENGTH_SHORT).show();
+            Toast.makeText(m_parent.getContext(), R.string.pdf_share_not_available, Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -1045,12 +1045,12 @@ public class PDFViewController implements OnClickListener, SeekBar.OnSeekBarChan
     private void addToBookmarks() {
         try {
             if (!TextUtils.isEmpty(m_docPath)) {
-                String bookmarkLabel = "";
+                String bookmarkLabel = m_parent.getContext().getString(R.string.bookmark_label, m_cur_page + 1);
                 RadaeePDFManager mPDFManager = new RadaeePDFManager();
                 Toast.makeText(m_parent.getContext(), mPDFManager.addToBookmarks(m_parent.getContext(), m_docPath,
                         m_cur_page, bookmarkLabel), Toast.LENGTH_SHORT).show();
             } else
-                Toast.makeText(m_parent.getContext(), "", Toast.LENGTH_SHORT).show();
+                Toast.makeText(m_parent.getContext(), R.string.bookmark_error, Toast.LENGTH_SHORT).show();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -1065,7 +1065,7 @@ public class PDFViewController implements OnClickListener, SeekBar.OnSeekBarChan
                 }
             });
         else
-            Toast.makeText(m_parent.getContext(), "", Toast.LENGTH_SHORT).show();
+            Toast.makeText(m_parent.getContext(), R.string.bookmark_error, Toast.LENGTH_SHORT).show();
     }
     private final RadaeePluginCallback.PDFControllerListener mControllerListner = new RadaeePluginCallback.PDFControllerListener() {
         @Override

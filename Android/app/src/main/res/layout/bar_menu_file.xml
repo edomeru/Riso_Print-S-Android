@@ -55,7 +55,7 @@
             android:layout_toEndOf="@id/img_00"
             android:gravity="center_vertical"
             android:paddingStart="10dp"
-            android:text=""
+            android:text="@string/browser_file_delete"
             android:textColor="@color/menu_text_color" />
     </RelativeLayout>
     <RelativeLayout
@@ -75,7 +75,7 @@
             android:layout_toEndOf="@id/img_01"
             android:gravity="center_vertical"
             android:paddingStart="10dp"
-            android:text=""
+            android:text="@string/browser_file_share"
             android:textColor="@color/menu_text_color" />
     </RelativeLayout>
 </LinearLayout>

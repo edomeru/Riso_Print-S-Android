@@ -113,7 +113,7 @@ public class BookmarkHandler {
     }
 
     public static void showBookmarks(final Context mContext, final String pdfPath, final BookmarkListener bookmarkListener) {
-        ProgressDialog progressDialog = ProgressDialog.show(mContext, "",
+        ProgressDialog progressDialog = ProgressDialog.show(mContext, mContext.getString(R.string.bookmarks),
                 mContext.getString(R.string.loading), true, false);
         List<Bookmark> mBookmarks = getBookmarks(pdfPath);
         if(mBookmarks != null && mBookmarks.size() > 0) {
@@ -123,7 +123,7 @@ public class BookmarkHandler {
             mBookmarksList.setAdapter(mAdapter);
 
             final AlertDialog mAlertDialog = new AlertDialog.Builder(mContext)
-                    .setTitle("")
+                    .setTitle(R.string.bookmarks)
                     .setView(mBookmarksList)
                     .show();
 
@@ -145,7 +145,7 @@ public class BookmarkHandler {
             });
         }
         else
-            Toast.makeText(mContext, "", Toast.LENGTH_SHORT).show();
+            Toast.makeText(mContext, R.string.no_bookmarks, Toast.LENGTH_SHORT).show();
         progressDialog.dismiss();
     }
 
@@ -216,7 +216,7 @@ public class BookmarkHandler {
                     if(adapterView.getCount() == 0 && mAlertDialog != null)
                         mAlertDialog.dismiss();
                 } else
-                    Toast.makeText(mContext, "", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(mContext, R.string.bookmark_remove_error, Toast.LENGTH_SHORT).show();
                 mPopup.dismiss();
             }
         });

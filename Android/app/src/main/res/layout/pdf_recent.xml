@@ -24,7 +24,7 @@
                 android:gravity="center_vertical"
                 android:paddingLeft="4dp"
                 android:paddingTop="2dp"
-                android:text=""
+                android:text="@string/browser_file_recent"
                 android:textColor="@color/bar_text_color"
                 android:textSize="18sp"
                 android:layout_toStartOf="@id/btn_clear"
@@ -38,7 +38,7 @@
                 android:id="@+id/txt_no_recent"
                 android:textSize="20sp"
                 android:gravity="center"
-                android:text=""
+                android:text="@string/txt_no_recent"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
             </TextView>

@@ -176,7 +176,7 @@ public class GLLayoutReflow extends GLLayout
     }
     public void vFindStart( String key, boolean match_case, boolean whole_word )
     {
-        Toast.makeText(m_ctx, "", Toast.LENGTH_LONG).show();
+        Toast.makeText(m_ctx, R.string.no_search_reflow, Toast.LENGTH_LONG).show();
         m_finder.find_end();
     }
     public void gl_zoom_start(GL10 gl10)

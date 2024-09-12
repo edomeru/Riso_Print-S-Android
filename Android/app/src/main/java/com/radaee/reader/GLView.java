@@ -2466,7 +2466,7 @@ public class GLView extends GLSurfaceView implements GLCanvas.CanvasListener {
         if (m_status != STA_ANNOT) return;
         if (!PDFCanSave() || (Global.g_annot_readonly && m_annot.IsReadOnly())
                 || (Global.g_annot_lock && m_annot.IsLocked())) {
-            Toast.makeText(getContext(), "", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), R.string.cannot_write_or_encrypted, Toast.LENGTH_SHORT).show();
             PDFEndAnnot();
             return;
         }
@@ -2511,7 +2511,7 @@ public class GLView extends GLSurfaceView implements GLCanvas.CanvasListener {
     public void PDFEditAnnot() {
         if (m_status != STA_ANNOT) return;
         if (!PDFCanSave()) {
-            Toast.makeText(getContext(), "", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), R.string.cannot_write_or_encrypted, Toast.LENGTH_SHORT).show();
             PDFEndAnnot();
             return;
         }

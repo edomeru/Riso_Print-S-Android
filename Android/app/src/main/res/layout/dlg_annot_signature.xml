@@ -8,7 +8,7 @@
         android:id="@+id/txt_hwriting"
         android:layout_width="match_parent"
         android:layout_height="24dp"
-        android:text="" />
+        android:text="@string/sign_certificate_hand" />
 
     <TextView
         android:id="@+id/txt_pswd"
@@ -17,7 +17,7 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentBottom="true"
         android:gravity="center_vertical"
-        android:text="" />
+        android:text="@string/sign_certificate_password" />
 
     <EditText
         android:id="@+id/edit_pswd"
@@ -34,7 +34,7 @@
         android:layout_above="@id/edit_pswd"
         android:layout_alignParentLeft="true"
         android:gravity="center_vertical"
-        android:text="" />
+        android:text="@string/sign_certificate" />
 
     <Button
         android:id="@+id/btn_browser"
@@ -44,7 +44,7 @@
         android:layout_alignParentRight="true"
         android:minWidth="0dp"
         android:minHeight="0dp"
-        android:text=""
+        android:text="@string/sign_certificate_select"
         android:textAllCaps="false"
         android:textSize="12sp" />
 
