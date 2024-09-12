@@ -228,7 +228,7 @@
     <string name="strikeout">StrikeOut</string>
     <string name="squiggly">Squiggly</string>
     <string name="process_selected_text">Process selected text</string>
-    <string name="cancel">Cancel</string>
+    <string name="cancel">Annuler</string>
     <string name="no_more_redo">No more redo.</string>
     <string name="no_more_undo">No more undo.</string>
     <string name="pdf_outline">PDF Outlines</string>
@@ -284,7 +284,7 @@
     <string name="pdf_print_calculation_failed">Page count calculation failed.</string>
     <string name="pdf_share_not_available">PDF File is not available for share.</string>
     <string name="copy_text">Text copied to clipboard: %1$s</string>
-    <string name="print">Print</string>
+    <string name="print">Imprimer</string>
     <string name="share">Share</string>
     <string name="bookmark_label">Page: %1$d</string>
     <string name="bookmark_already_added">Bookmark already exists</string>
@@ -297,10 +297,10 @@
     <string name="bookmarks">Bookmarks</string>
     <string name="no_bookmarks">No bookmarks to show</string>
     <string name="loading">Loading…</string>
-    <string name="delete">Delete</string>
+    <string name="delete">Effacer</string>
     <string name="confirm">Confirm</string>
     <string name="clear">Clear</string>
-    <string name="save">Save</string>
+    <string name="save">Enregistrer</string>
     <string name="saved_message">Document saved</string>
     <string name="delete_signature_message">A signature is already present, do you want to delete it?</string>
     <string name="warning">Warning</string>
@@ -317,7 +317,7 @@
     <string name="sign_error_fail" translatable="false">Sign failed. General error.</string>
     <string name="annot_perform">Perform</string>
     <string name="annot_edit">poptext</string>
-    <string name="annot_remove">remove</string>
+    <string name="annot_remove">Effacer</string>
     <string name="annot_property">property</string>
     <string name="line_width">Line width</string>
     <string name="line_style">Line style</string>
@@ -325,7 +325,7 @@
     <string name="line_start">Line start</string>
     <string name="line_end">Line end</string>
     <string name="fill_color">Fill color</string>
-    <string name="annot_color">Color</string>
+    <string name="annot_color">Couleur</string>
     <string name="icon">icon</string>
     <string name="annot_lock">Lock</string>
     <string name="alpha">Alpha</string>
@@ -336,7 +336,7 @@
     <string name="txt_files_title">Files on Device:</string>
     <string name="txt_no_files">There is no files on storage.</string>
     <string name="button_ok_label">OK</string>
-    <string name="text_cancel_label">Cancel</string>
+    <string name="text_cancel_label">Annuler</string>
     <string name="permission_dialog_title">Permission required</string>
     <string name="permission_dialog_content">Due to privacy policy update after Android 11, we also need to update our storage access permission to browse document files. Please click on OK button to authorize us.</string>
     <string name="permission_denied_content">Sorry without necessary permission, some functionalities may be unavailable.</string>
