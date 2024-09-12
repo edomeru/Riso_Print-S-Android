@@ -196,7 +196,10 @@ class MainActivity : BaseActivity(), PauseableHandlerCallback, IDeviceRegisterCa
                     val token = FirebaseMessaging.getInstance().token.await()
                     notificationHubHelper.registerWithNotificationHubs(token)
                     ContentPrintManager.deviceToken = token
-                    ContentPrintManager.getInstance()?.registerDevice(token, self)
+
+                    if (ContentPrintManager.isLoggedIn) {
+                        ContentPrintManager.getInstance()?.registerDevice(token, self)
+                    }
                     // Token registration successful
 
                 } catch (e: Exception) {

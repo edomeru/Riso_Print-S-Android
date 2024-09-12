@@ -64,6 +64,7 @@ import java.time.format.DateTimeFormatter
  * @brief Manager responsible for Content Print management
  */
 class ContentPrintManager(context: Context?) {
+
     /**
      *  MSAL interface and classes
      */
@@ -146,7 +147,7 @@ class ContentPrintManager(context: Context?) {
         fun registerDevice(@Body request: DeviceRegisterRequest): Call<ResponseBody>
 
         @DELETE(API_UNREGISTER_DEVICE)
-        fun unregisterDevice(@Path("device_id") deviceId: String, @Body request: DeviceRegisterRequest): Call<ResponseBody>
+        fun unregisterDevice(@Path("device_id") deviceId: String): Call<ResponseBody>
     }
 
     interface IContentPrintCallback {
@@ -168,6 +169,9 @@ class ContentPrintManager(context: Context?) {
 
     interface IDeviceRegisterCallback {
         fun onDeviceRegistered(success: Boolean)
+    }
+    interface IDeviceUnregisterCallback {
+        fun onDeviceUnregistered(success: Boolean)
     }
 
     class AuthInterceptor : Interceptor {
@@ -310,6 +314,21 @@ class ContentPrintManager(context: Context?) {
         ) {
             callback?.onDeviceRegistered(true)
             Log.d(TAG, "registerDevice OK- END")
+        }
+
+    }
+
+    class DeviceUnregisterationResultCallback(var callback: IDeviceUnregisterCallback?): Callback<ResponseBody> {
+        override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
+            callback?.onDeviceUnregistered(false)
+            Log.e(TAG, "UnregisterDevice - Error ${t.message}")
+        }
+        override fun onResponse(
+            call: Call<ResponseBody>,
+            response: Response<ResponseBody>
+        ) {
+            callback?.onDeviceUnregistered(true)
+            Log.d(TAG, "UnregisterDevice OK- END")
         }
 
     }
@@ -515,17 +534,13 @@ class ContentPrintManager(context: Context?) {
         }
     }
 
-    fun unregisterDevice(deviceToken: String?, callback: IDeviceRegisterCallback?) {
+    fun unregisterDevice(deviceToken: String?, callback: IDeviceUnregisterCallback?) {
         if (deviceToken == null) {
-            callback?.onDeviceRegistered(false)
+            callback?.onDeviceUnregistered(false)
             return
         }
         CoroutineScope(Dispatchers.IO).launch {
-            val request = DeviceRegisterRequest()
-            request.deviceToken = deviceToken
-            request.platform ="fcm"
-
-            contentPrintService?.unregisterDevice(deviceToken, request)?.enqueue(DeviceRegisterationResultCallback(callback))
+            contentPrintService?.unregisterDevice(deviceToken)?.enqueue(DeviceUnregisterationResultCallback(callback))
         }
     }
 

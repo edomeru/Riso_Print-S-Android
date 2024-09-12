@@ -54,6 +54,7 @@ open class ContentPrintFragment : BaseFragment(),
         ContentPrintManager.IAuthenticationCallback,
         ContentPrintManager.IContentPrintCallback,
         ContentPrintManager.IDeviceRegisterCallback,
+        ContentPrintManager.IDeviceUnregisterCallback,
         PullToRefreshListView.OnRefreshListener,
         ContentPrintFileAdapter.ContentPrintFileAdapterInterface,
         ConfirmDialogFragment.ConfirmDialogListener {
@@ -237,8 +238,9 @@ open class ContentPrintFragment : BaseFragment(),
             }
         }
 
-
-        _contentPrintManager?.registerDevice(ContentPrintManager.deviceToken, this)
+        if (ContentPrintManager.isLoggedIn) {
+            _contentPrintManager?.registerDevice(ContentPrintManager.deviceToken, this)
+        }
 
         if (ContentPrintManager.isLoggedIn && ContentPrintManager.filenameFromNotification != null) {
             // Download the file from the notification
@@ -372,14 +374,24 @@ open class ContentPrintFragment : BaseFragment(),
     // ================================================================================
     override fun onDeviceRegistered(success: Boolean) {
         Log.d("Register Device", "===== onDeviceRegistered - END =====")
+
+
     }
+    // ================================================================================
+    // INTERFACE - IDeviceUnregisterCallback
+    // ================================================================================
+    override fun onDeviceUnregistered(success: Boolean){
+        Log.d("Unregister Device", "===== onDeviceUnregistered - END =====")
+        _contentPrintManager?.logout(this)
+    }
+
+
 
     // ================================================================================
     // INTERFACE - ConfirmDialogFragment.ConfirmDialogListener
     // ================================================================================
     override fun onConfirm() {
         if (_lastConfirmation == Confirmation.LOGOUT) {
-            _contentPrintManager?.logout(this)
             _contentPrintManager?.unregisterDevice(ContentPrintManager.deviceToken, this)
         } else { // _lastConfirmation == Confirmation.PREVIEW
             if (ContentPrintManager.selectedFile != null) {
