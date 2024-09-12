@@ -146,7 +146,7 @@ class ContentPrintManager(context: Context?) {
         fun registerDevice(@Body request: DeviceRegisterRequest): Call<ResponseBody>
 
         @DELETE(API_UNREGISTER_DEVICE)
-        fun unregisterDevice(@Body request: DeviceRegisterRequest): Call<ResponseBody>
+        fun unregisterDevice(@Path("device_id") deviceId: String, @Body request: DeviceRegisterRequest): Call<ResponseBody>
     }
 
     interface IContentPrintCallback {
@@ -525,7 +525,7 @@ class ContentPrintManager(context: Context?) {
             request.deviceToken = deviceToken
             request.platform ="fcm"
 
-            contentPrintService?.unregisterDevice(request)?.enqueue(DeviceRegisterationResultCallback(callback))
+            contentPrintService?.unregisterDevice(deviceToken, request)?.enqueue(DeviceRegisterationResultCallback(callback))
         }
     }
 
@@ -694,8 +694,8 @@ class ContentPrintManager(context: Context?) {
         private const val API_DOWNLOAD_FILE = "api/content/preview/{file_id}"
         private const val API_LIST_PRINTERS = "api/device/printerList"
         private const val API_REGISTER = "api/content/registered"
-        private const val API_REGISTER_DEVICE = "/api/register"
-        private const val API_UNREGISTER_DEVICE = "/api/unregister"
+        private const val API_REGISTER_DEVICE = "/api/user/device/register"
+        private const val API_UNREGISTER_DEVICE = "/api/user/device/{device_id}"
 
 
         val TAG: String = ContentPrintManager::class.java.simpleName ?: "Content Print"
