@@ -279,7 +279,7 @@ class ContentPrintManager(context: Context?) {
         @SerializedName("platform")
         var platform: String? = null
 
-        @SerializedName("device_token")
+        @SerializedName("device_id")
         var deviceToken: String? = null
     }
 
@@ -694,8 +694,8 @@ class ContentPrintManager(context: Context?) {
         private const val API_DOWNLOAD_FILE = "api/content/preview/{file_id}"
         private const val API_LIST_PRINTERS = "api/device/printerList"
         private const val API_REGISTER = "api/content/registered"
-        private const val API_REGISTER_DEVICE = "/api/user/device/register"
-        private const val API_UNREGISTER_DEVICE = "/api/user/device/{device_id}"
+        private const val API_REGISTER_DEVICE = "api/user/device/register"
+        private const val API_UNREGISTER_DEVICE = "api/user/device/{device_id}"
 
 
         val TAG: String = ContentPrintManager::class.java.simpleName ?: "Content Print"

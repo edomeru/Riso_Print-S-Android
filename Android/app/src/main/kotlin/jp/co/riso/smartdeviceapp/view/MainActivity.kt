@@ -49,6 +49,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import com.google.firebase.messaging.FirebaseMessaging
 import jp.co.riso.smartdeviceapp.controller.print.ContentPrintManager
+import jp.co.riso.smartdeviceapp.controller.print.ContentPrintManager.IDeviceRegisterCallback
 import jp.co.riso.smartdeviceapp.view.notification.NotificationHubHelper
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
@@ -61,7 +62,7 @@ import kotlinx.coroutines.tasks.await
  * 
  * @brief Main activity class.
  */
-class MainActivity : BaseActivity(), PauseableHandlerCallback{
+class MainActivity : BaseActivity(), PauseableHandlerCallback, IDeviceRegisterCallback {
     private var _drawerLayout: SDADrawerLayout? = null
     private var _mainLayout: ViewGroup? = null
     private var _leftLayout: ViewGroup? = null
@@ -188,16 +189,16 @@ class MainActivity : BaseActivity(), PauseableHandlerCallback{
                 ActivityCompat.requestPermissions(activity, arrayOf(POST_NOTIFICATIONS), 1)
             }
         }
-
+        val self = this
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.CREATED) {
                 try {
                     val token = FirebaseMessaging.getInstance().token.await()
                     notificationHubHelper.registerWithNotificationHubs(token)
                     ContentPrintManager.deviceToken = token
-                    ContentPrintManager.getInstance()?.registerDevice(token, null)
+                    ContentPrintManager.getInstance()?.registerDevice(token, self)
                     // Token registration successful
-                    Log.d("MainActivity", "Notification Hub Registration successful")
+
                 } catch (e: Exception) {
                     // Handle registration error
                     Log.e("MainActivity", "Notification Hub Registration failed", e)
@@ -580,6 +581,15 @@ class MainActivity : BaseActivity(), PauseableHandlerCallback{
         if (!_isRadaeeInitialized) {
             Global.Init(this)
             _isRadaeeInitialized = true
+        }
+    }
+
+    override fun onDeviceRegistered(success: Boolean) {
+        if (success) {
+            Log.d("MainActivity", "Registration Device successful")
+        }
+        else {
+            Log.d("MainActivity", "Registration Device unsuccessful")
         }
     }
 
