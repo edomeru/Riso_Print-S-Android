@@ -206,7 +206,10 @@ class ContentPrintManager(context: Context?) {
                 Log.e(TAG, "response body count ${responseBody.count}")
                 Log.e(TAG, "response body list ${responseBody.list}")
                 fileCount = responseBody.count
-                fileList = responseBody.list
+                // Filter the list to include only PDF files
+                fileList = responseBody.list.filter { file ->
+                    file.filename?.lowercase()?.endsWith(".pdf") == true
+                }
                 callback?.onFileListUpdated(true)
             } else {
                 Log.e(TAG, "Unexpected response body type: ${responseBody?.javaClass?.name}")
@@ -228,6 +231,10 @@ class ContentPrintManager(context: Context?) {
         ) {
             fileCount = response.body()?.count ?: 0
             fileList = response.body()?.list ?: ArrayList()
+            // Filter the list to include only PDF files
+            fileList = fileList.filter { file ->
+                file.filename?.lowercase()?.endsWith(".pdf") == true
+            }
             Log.d(TAG, "updateFileList - END")
 
             for (file in fileList) {
