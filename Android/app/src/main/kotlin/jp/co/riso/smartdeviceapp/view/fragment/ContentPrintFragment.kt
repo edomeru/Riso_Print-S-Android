@@ -529,6 +529,8 @@ open class ContentPrintFragment : BaseFragment(),
                 KEY_CONTENT_PRINT_LOGOUT_DIALOG
             )
             DialogUtils.displayDialog(requireActivity(), KEY_CONTENT_PRINT_LOGOUT_DIALOG, confirm)
+            ContentPrintManager.emailAdress = null
+            ContentPrintManager.email = null
         }
     }
 

@@ -112,4 +112,7 @@
     <dimen name="content_print_row_height">86dp</dimen>
     <dimen name="content_print_row_image_size">48dp</dimen>
     <!-- Content Print - END -->
+
+    <dimen name="annot_menu_btn_size">35dp</dimen>
+    <dimen name="annot_menu_bar_margin">10dp</dimen>
 </resources>

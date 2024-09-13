@@ -29,12 +29,7 @@ import com.radaee.pdf.PageContent;
 import com.radaee.pdf.ResImage;
 import com.radaee.pdf.adv.Obj;
 import com.radaee.pdf.adv.Ref;
-
-/* 20230411 [PRINT-S] Update Radaee to latest version (3.65.x) for IntelCPU Support
- * Comment out unused functions that causes compile error due to dependency
- * */
-//import com.radaee.view.ILayoutView;
-//import com.radaee.viewlib.R;
+import com.radaee.view.ILayoutView;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -50,6 +45,8 @@ import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Locale;
+
+import jp.co.riso.smartprint.R;
 
 /**
  * @author Davide created on 15/01/2016.
@@ -182,7 +179,7 @@ public class CommonUtil {
         final String MD5 = "MD5";
         try {
             // Create MD5 Hash
-            MessageDigest digest = java.security.MessageDigest.getInstance(MD5);
+            MessageDigest digest = MessageDigest.getInstance(MD5);
             digest.update(input);
             byte messageDigest[] = digest.digest();
 
@@ -341,34 +338,31 @@ public class CommonUtil {
         }
     }
 
-    /* 20230411 [PRINT-S] Update Radaee to latest version (3.65.x) for IntelCPU Support
-    * Comment out unused functions that causes compile error due to dependency
-    * */
-//    public static void showPDFOutlines(final ILayoutView mPdfLayoutView, Context mContext) {
-//        if (mPdfLayoutView.PDFGetDoc() != null) {
-//            if (mPdfLayoutView.PDFGetDoc().GetOutlines() == null) {
-//                Toast.makeText(mContext, R.string.no_pdf_outlines, Toast.LENGTH_SHORT).show();
-//                return;
-//            }
-//
-//            LinearLayout layout = (LinearLayout) LayoutInflater.from(mContext).inflate(R.layout.dlg_outline, null, false);
-//            final OutlineList mOutlineList = (OutlineList) layout.findViewById(R.id.lst_outline);
-//            mOutlineList.SetOutlines(mPdfLayoutView.PDFGetDoc());
-//            final AlertDialog mAlertDialog = new AlertDialog.Builder(mContext)
-//                    .setTitle(R.string.pdf_outline)
-//                    .setView(layout)
-//                    .show();
-//            AdapterView.OnItemClickListener item_clk = new AdapterView.OnItemClickListener() {
-//                @Override
-//                public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-//                    OutlineList.OutlineListAdt.outline_ui_item item = mOutlineList.GetItem(i);
-//                    mPdfLayoutView.PDFGotoPage(item.GetPageNO());
-//                    mAlertDialog.dismiss();
-//                }
-//            };
-//            mOutlineList.setOnItemClickListener(item_clk);
-//        }
-//    }
+    public static void showPDFOutlines(final ILayoutView mPdfLayoutView, Context mContext) {
+        if (mPdfLayoutView.PDFGetDoc() != null) {
+            if (mPdfLayoutView.PDFGetDoc().GetOutlines() == null) {
+                Toast.makeText(mContext, R.string.no_pdf_outlines, Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            LinearLayout layout = (LinearLayout) LayoutInflater.from(mContext).inflate(R.layout.dlg_outline, null, false);
+            final OutlineList mOutlineList = (OutlineList) layout.findViewById(R.id.lst_outline);
+            mOutlineList.SetOutlines(mPdfLayoutView.PDFGetDoc());
+            final AlertDialog mAlertDialog = new AlertDialog.Builder(mContext)
+                    .setTitle(R.string.pdf_outline)
+                    .setView(layout)
+                    .show();
+            AdapterView.OnItemClickListener item_clk = new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                    OutlineList.OutlineListAdt.outline_ui_item item = mOutlineList.GetItem(i);
+                    mPdfLayoutView.PDFGotoPage(item.GetPageNO());
+                    mAlertDialog.dismiss();
+                }
+            };
+            mOutlineList.setOnItemClickListener(item_clk);
+        }
+    }
 
     static private String m_types[] = new String[]{"null", "boolean", "int", "real", "string", "name", "array", "dictionary", "reference", "stream"};
 

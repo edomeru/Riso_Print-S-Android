@@ -528,7 +528,7 @@ public class Document
 		 * @param dfont returned by Document.NewFontCID()
 		 * @return resource handle
 		 */
-		public ResFont AddResFont(Document.DocFont dfont)
+		public ResFont AddResFont(DocFont dfont)
 		{
 			if(dfont == null) return null;
 			long ret = addFormResFont(m_doc.hand_val, hand, dfont.hand);
@@ -543,7 +543,7 @@ public class Document
 		 * @param dimg returned by Document.NewImageXXX()
 		 * @return resource handle
 		 */
-		public ResImage AddResImage(Document.DocImage dimg)
+		public ResImage AddResImage(DocImage dimg)
 		{
 			if(dimg == null) return null;
 			long ret = addFormResImage(m_doc.hand_val, hand, dimg.hand);
@@ -558,7 +558,7 @@ public class Document
 		 * @param dgs returned by Document.NewGState()
 		 * @return resource handle
 		 */
-		public ResGState AddResGState(Document.DocGState dgs)
+		public ResGState AddResGState(DocGState dgs)
 		{
 			if(dgs == null) return null;
 			long ret = addFormResGState(m_doc.hand_val, hand, dgs.hand);

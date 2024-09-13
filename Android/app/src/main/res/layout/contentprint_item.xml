@@ -4,7 +4,7 @@
     android:id="@+id/content_print_row"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical" >
+    android:orientation="vertical">
 
     <LinearLayout
         android:id="@+id/contentPrintItem"
@@ -16,33 +16,51 @@
         <androidx.cardview.widget.CardView
             android:layout_width="@dimen/content_print_row_image_size"
             android:layout_height="@dimen/content_print_row_image_size"
-            app:cardCornerRadius="8dp"
-            app:cardElevation="0dp"
-            app:cardBackgroundColor="@color/theme_light_3"
             android:layout_gravity="center_vertical"
             android:layout_marginLeft="6dp"
-            android:layout_marginRight="12dp">
+            android:layout_marginRight="12dp"
+            app:cardBackgroundColor="@color/theme_light_3"
+            app:cardCornerRadius="8dp"
+            app:cardElevation="0dp">
 
             <ImageView
                 android:id="@+id/thumbnailImage"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:src="@drawable/img_btn_loading_indicator"
                 android:background="@color/theme_light_3"
-                android:scaleType="centerCrop" />
+                android:scaleType="centerCrop"
+                android:src="@drawable/img_btn_loading_indicator" />
 
         </androidx.cardview.widget.CardView>
 
-        <TextView
-            android:id="@+id/filenameText"
-            style="@style/EllipsizeText"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:duplicateParentState="true"
-            android:gravity="center_vertical"
-            android:text="@string/default_textview"
-            android:textColor="@color/selector_contentprint_text" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/content_print_row_height"
+            android:weightSum="5">
 
+            <TextView
+                android:id="@+id/filenameText"
+                style="@style/EllipsizeText"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="4"
+                android:duplicateParentState="true"
+                android:gravity="center_vertical"
+                android:text="@string/default_textview"
+                android:textColor="@color/selector_contentprint_text" />
+
+            <TextView
+                android:id="@+id/newFile"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="right"
+                android:paddingRight="7dp"
+                android:text="NEW"
+                android:textColor="@color/dialogErrorText"
+                android:visibility="visible" />
+
+        </LinearLayout>
     </LinearLayout>
 
     <View

@@ -1,7 +1,7 @@
 {
-  "client_id": "c6cc0539-4cab-46d8-b6dc-408b099e0d72",
-  "authorization_user_agent": "DEFAULT",
-  "redirect_uri" : "msauth://jp.co.riso.cloudhub.smartprint/8t10HTvSMhcmNO0y%2B%2F7mkDzwCUk%3D",
+  "client_id" : "c6cc0539-4cab-46d8-b6dc-408b099e0d72",
+  "authorization_user_agent" : "DEFAULT",
+  "redirect_uri" : "msauth://jp.co.riso.smartprint/8t10HTvSMhcmNO0y%2B%2F7mkDzwCUk%3D",
   "account_mode": "SINGLE",
   "broker_redirect_uri_registered": true,
   "logging": {
