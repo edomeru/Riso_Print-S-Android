@@ -27,10 +27,10 @@ public class Global
 	//public static String mCompany = "radaee";
 	//public static String mEmail = "radaeepdf@gmail.com";
 	//public static String mKey = "LNJFDN-C89QFX-9ZOU9E-OQ31K2-5R5V9L-KM0Y1L";
-
-	public static String mCompany = "radaee";
-	public static String mEmail = "radaee_com@yahoo.cn";
-	public static String mKey = "LNJFDN-C89QFX-9ZOU9E-OQ31K2-FADG6Z-XEBCAO";
+	private static int mLicenseType = 1;
+	public static String mCompany = "RISO KAGAKU CORPORATION";
+	public static String mEmail = "zhang@riso.co.jp";
+	public static String mKey = "J7GEIT-JYKWMH-NRHUWW-T0WD5S-GH0FFJ-GT61BP";
 
 	//binding to app ID "com.radaee.reader", can avtive version before "20220910".
 	//the version string can be retrieved by Global.getVersion().
