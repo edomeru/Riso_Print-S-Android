@@ -333,8 +333,13 @@ class ContentPrintManager(context: Context?) {
             call: Call<ResponseBody>,
             response: Response<ResponseBody>
         ) {
-            callback?.onDeviceUnregistered(true)
-            Log.d(TAG, "UnregisterDevice OK- END")
+            if (response.code() == 200) {
+                callback?.onDeviceUnregistered(true)
+                Log.d(TAG, "UnregisterDevice OK- END")
+            } else {
+                callback?.onDeviceUnregistered(false)
+                Log.e(TAG, "UnregisterDevice - Status code ${response.code()}")
+            }
         }
 
     }
