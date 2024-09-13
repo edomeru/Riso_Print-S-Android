@@ -312,8 +312,14 @@ class ContentPrintManager(context: Context?) {
             call: Call<ResponseBody>,
             response: Response<ResponseBody>
         ) {
-            callback?.onDeviceRegistered(true)
-            Log.d(TAG, "registerDevice OK- END")
+            if (response.code() == 200) {
+                callback?.onDeviceRegistered(true)
+                Log.d(TAG, "registerDevice OK- END")
+            }
+            else {
+                callback?.onDeviceRegistered(false)
+                Log.e(TAG, "registerDevice - Status code ${response.code()}")
+            }
         }
 
     }
