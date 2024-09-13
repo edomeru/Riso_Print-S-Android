@@ -528,7 +528,7 @@ class ContentPrintManager(context: Context?) {
         CoroutineScope(Dispatchers.IO).launch {
             val request = DeviceRegisterRequest()
             request.deviceToken = deviceToken
-            request.platform ="fcm"
+            request.platform ="fcmv1"
 
             contentPrintService?.registerDevice(request)?.enqueue(DeviceRegisterationResultCallback(callback))
         }
