@@ -7,6 +7,7 @@
  */
 package jp.co.riso.smartdeviceapp.controller.db
 
+import android.annotation.SuppressLint
 import jp.co.riso.android.util.Logger.logInfo
 import jp.co.riso.android.util.AppUtils.getFileContentsFromAssets
 import jp.co.riso.android.util.Logger.logError
@@ -18,6 +19,13 @@ import android.content.ContentValues
 import android.content.Context
 import android.database.Cursor
 import android.database.SQLException
+import android.util.Log
+import jp.co.riso.smartdeviceapp.controller.db.KeyConstants.KEY_SQL_CONTENT_FILE_ID
+import jp.co.riso.smartdeviceapp.controller.db.KeyConstants.KEY_SQL_CONTENT_FILE_NAME
+import jp.co.riso.smartdeviceapp.controller.db.KeyConstants.KEY_SQL_CONTENT_PRINT_TABLE
+import jp.co.riso.smartdeviceapp.controller.db.KeyConstants.KEY_SQL_CONTENT_USER_CURRENT_EMAIL
+import jp.co.riso.smartdeviceapp.controller.print.ContentPrintManager
+import jp.co.riso.smartdeviceapp.controller.print.ContentPrintManager.Companion.TAG
 import java.util.*
 
 /**
@@ -28,7 +36,7 @@ import java.util.*
  *
  * @param _context Context to use to open or create the database.
  */
-open class DatabaseManager (private val _context: Context?) :
+open class DatabaseManager(private val _context: Context?) :
     SQLiteOpenHelper(_context, DATABASE_NAME, null, DATABASE_VERSION) {
     override fun onOpen(db: SQLiteDatabase) {
         // http://stackoverflow.com/questions/13641250/sqlite-delete-cascade-not-working
@@ -42,6 +50,7 @@ open class DatabaseManager (private val _context: Context?) :
     override fun onCreate(db: SQLiteDatabase) {
         logInfo(DatabaseManager::class.java, "onCreate - Begin")
 
+        db.execSQL(SQL_CREATE_CONTENT_PRINT_TABLE)
         // initial database structure
         executeSqlCommandFromScript(db, DATABASE_SQL)
         if (DATABASE_VERSION > DATABASE_VERSION_01) {   // For database v2
@@ -90,6 +99,73 @@ open class DatabaseManager (private val _context: Context?) :
         // Should not happen for now
         logInfo(DatabaseManager::class.java, "onUpgrade - End")
     }
+
+    @SuppressLint("Range")
+    fun getColumnTypes(tableName: String): Map<String, String>? {
+        val columns = mutableMapOf<String, String>()
+        val db = readableDatabase
+        val cursor = db.rawQuery("PRAGMA table_info($tableName)", null)
+        try {
+            if (cursor.moveToFirst()) {
+                do {
+                    val name = cursor.getString(cursor.getColumnIndex("name"))
+                    val type = cursor.getString(cursor.getColumnIndex("type"))
+                    columns[name] = type
+                } while (cursor.moveToNext())
+            }
+        } catch (e: Exception) {
+            Log.e("DatabaseHelper", "Error retrieving column types", e)
+        } finally {
+            cursor.close()
+            db.close()
+        }
+        return columns
+    }
+
+
+    @SuppressLint("Range")
+    fun getAllViewedFiles(emailAdd: String?): List<ViewedFiles> {
+        val dataList = mutableListOf<ViewedFiles>()
+        val db = readableDatabase
+        var cursor: Cursor? = null
+        try {
+            if (emailAdd == null) {
+                Log.e(TAG, "Email address is null")
+                return dataList
+            }
+
+            val query =
+                "SELECT * FROM $KEY_SQL_CONTENT_PRINT_TABLE WHERE $KEY_SQL_CONTENT_USER_CURRENT_EMAIL  = ?"
+            cursor = db.rawQuery(query, arrayOf(emailAdd))
+            if (cursor.moveToFirst()) {
+                do {
+                    val fileId = cursor.getString(cursor.getColumnIndex(KEY_SQL_CONTENT_FILE_ID))
+                    val fileName =
+                        cursor.getString(cursor.getColumnIndex(KEY_SQL_CONTENT_FILE_NAME))
+                    val email = cursor.getString(
+                        cursor.getColumnIndex(
+                            KEY_SQL_CONTENT_USER_CURRENT_EMAIL
+                        )
+                    )
+                    val data = ViewedFiles(fileId, fileName, email)
+                    dataList.add(data)
+                } while (cursor.moveToNext())
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "Error fetching all data from $KEY_SQL_CONTENT_PRINT_TABLE", e)
+        } finally {
+            cursor?.close()
+            db.close()
+        }
+        return dataList
+    }
+
+    data class ViewedFiles(
+        val fileId: String,
+        val fileName: String,
+        val email: String
+    )
+
 
     /**
      * @brief Executes the SQL script from the given path to SQL script file
@@ -301,6 +377,7 @@ open class DatabaseManager (private val _context: Context?) :
         private const val DATABASE_VERSION_02 = 2
         private const val DATABASE_VERSION_03 = 3
         private const val DATABASE_VERSION_04 = 4 ///< current database version of the application
+
         @JvmField
         val DATABASE_VERSION =
             if (AppConstants.DEBUG_LOWER_DB_VERSION) DATABASE_VERSION_03 else DATABASE_VERSION_04
@@ -310,6 +387,13 @@ open class DatabaseManager (private val _context: Context?) :
         private const val DATABASE_SQLv3 = "db/SmartDeviceAppDBv3.sql"
         private const val DATABASE_SQLv4 = "db/SmartDeviceAppDBv4.sql"
         private const val INITIALIZE_SQL = "db/initializeDB.sql" // for testing only
+        private const val SQL_CREATE_CONTENT_PRINT_TABLE =
+            "CREATE TABLE IF NOT EXISTS ContentPrint (" +
+                    "_id INTEGER PRIMARY KEY AUTOINCREMENT," +
+                    "fileId TEXT NOT NULL," +
+                    "fileName TEXT NOT NULL," +
+                    "email TEXT NOT NULL" +
+                    ");"
 
         /**
          * @brief Gets the value of the requested column as a String.

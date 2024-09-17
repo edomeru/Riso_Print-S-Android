@@ -20,4 +20,5 @@ class ContentPrintFile(
     @SerializedName("print_settings") var printSettings: ContentPrintPrintSettings?
 ) {
     var thumbnailImagePath: String? = null
+    var isRecentlyUploaded: Boolean = false
 }
