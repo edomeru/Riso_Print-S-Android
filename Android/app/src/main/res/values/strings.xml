@@ -209,11 +209,11 @@
     <string name="ids_err_msg_download_failed">Loading Preview Failed.</string>
     <string name="ids_err_msg_login_failed">Login failed. Please try again.</string>
     <string name="app_name" translatable="false">Radaee Reader</string>
-    <string name="failed_invalid_password">Open Failed: Invalid Password</string>
-    <string name="failed_invalid_format">Open Failed: Damaged or Invalid PDF file</string>
-    <string name="failed_encryption">Open Failed: Unknown Encryption</string>
-    <string name="failed_invalid_path">Open Failed: Access denied or Invalid path</string>
-    <string name="failed_unknown">Open Failed: Unknown Error</string>
+    <string name="failed_invalid_password">Failed to Open</string>
+    <string name="failed_invalid_format">Failed to Open</string>
+    <string name="failed_encryption">Failed to Open</string>
+    <string name="failed_invalid_path">Failed to Open</string>
+    <string name="failed_unknown">Failed to Open</string>
     <string name="please_wait">Please wait</string>
     <string name="no_more_found">No more found</string>
     <string name="thumbnail_creation_running">Thumbnail creation is running…</string>
