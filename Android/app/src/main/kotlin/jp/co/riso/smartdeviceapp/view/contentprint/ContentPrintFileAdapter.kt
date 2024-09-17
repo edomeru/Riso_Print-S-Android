@@ -10,6 +10,7 @@ package jp.co.riso.smartdeviceapp.view.contentprint
 import android.content.Context
 import android.graphics.BitmapFactory
 import android.os.SystemClock
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,6 +18,8 @@ import android.widget.ArrayAdapter
 import android.widget.ImageView
 import android.widget.TextView
 import jp.co.riso.smartdeviceapp.AppConstants
+import jp.co.riso.smartdeviceapp.controller.db.DatabaseManager
+import jp.co.riso.smartdeviceapp.controller.print.ContentPrintManager
 import jp.co.riso.smartdeviceapp.model.ContentPrintFile
 import jp.co.riso.smartprint.R
 
@@ -66,12 +69,19 @@ class ContentPrintFileAdapter(
 
         viewHolder.contentPrintFilename = convertView.findViewById(R.id.filenameText)
         viewHolder.thumbnailImage = convertView.findViewById(R.id.thumbnailImage)
+        viewHolder.newFileText = convertView.findViewById(R.id.newFile)
         viewHolder.position = position
 
         viewHolder.contentPrintFilename?.text = contentPrintFile.filename
         if (contentPrintFile.thumbnailImagePath != null) {
             val bitmap = BitmapFactory.decodeFile(contentPrintFile.thumbnailImagePath)
             viewHolder.thumbnailImage?.setImageBitmap(bitmap)
+        }
+
+        if (contentPrintFile.isRecentlyUploaded == true) {
+            viewHolder.newFileText?.visibility = View.INVISIBLE
+        } else {
+            viewHolder.newFileText?.visibility = View.VISIBLE
         }
 
         val separator: View = convertView.findViewById(R.id.contentprint_separator)
@@ -105,6 +115,7 @@ class ContentPrintFileAdapter(
     inner class ViewHolder {
         internal var thumbnailImage: ImageView? = null
         internal var contentPrintFilename: TextView? = null
+        internal var newFileText: TextView? = null
         internal var position: Int = -1
     }
 
@@ -135,7 +146,8 @@ class ContentPrintFileAdapter(
     // ================================================================================
     override fun onClick(v: View) {
         if (v.id == R.id.content_print_row &&
-            SystemClock.elapsedRealtime() - _lastClickTime > AppConstants.DOUBLE_TAP_TIME_ELAPSED) {
+            SystemClock.elapsedRealtime() - _lastClickTime > AppConstants.DOUBLE_TAP_TIME_ELAPSED
+        ) {
             // prevent double tap
             _lastClickTime = SystemClock.elapsedRealtime()
 
@@ -144,6 +156,14 @@ class ContentPrintFileAdapter(
 
             if (_adapterInterface!!.onFileSelect(contentPrintFile) != -1) {
                 v.isActivated = true
+
+                //Save viewed file into the local DB
+                contentPrintFile?.filename?.let {
+                    ContentPrintManager.saveViewedFile(
+                        context, contentPrintFile.fileId.toString(),
+                        it
+                    )
+                }
             }
         }
     }

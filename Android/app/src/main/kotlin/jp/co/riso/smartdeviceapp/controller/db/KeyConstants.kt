@@ -73,6 +73,9 @@ object KeyConstants {
     /// SQL key for print job table
     const val KEY_SQL_PRINTJOB_TABLE = "PrintJob"
 
+    /// SQL key for content print table
+    const val KEY_SQL_CONTENT_PRINT_TABLE = "ContentPrint"
+
     /// SQL key for print job ID
     const val KEY_SQL_PRINTJOB_ID = "pjb_id"
 
@@ -90,4 +93,14 @@ object KeyConstants {
 
     /// SQL key for print setting id
     const val KEY_SQL_PRINTSETTING_ID = "pst_id"
+
+    /// SQL key for content file id
+    const val KEY_SQL_CONTENT_FILE_ID = "fileId"
+
+    /// SQL key for content file name
+    const val KEY_SQL_CONTENT_FILE_NAME = "fileName"
+
+    /// SQL key for user current email
+    const val KEY_SQL_CONTENT_USER_CURRENT_EMAIL = "email"
+
 }

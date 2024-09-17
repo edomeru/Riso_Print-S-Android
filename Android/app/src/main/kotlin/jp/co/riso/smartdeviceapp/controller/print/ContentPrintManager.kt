@@ -8,6 +8,7 @@
 package jp.co.riso.smartdeviceapp.controller.print
 
 import android.app.Activity
+import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
@@ -25,6 +26,8 @@ import com.microsoft.identity.client.PublicClientApplication
 import com.microsoft.identity.client.SilentAuthenticationCallback
 import com.microsoft.identity.client.exception.MsalException
 import jp.co.riso.smartdeviceapp.AppConstants
+import jp.co.riso.smartdeviceapp.controller.db.DatabaseManager
+import jp.co.riso.smartdeviceapp.controller.db.KeyConstants
 import jp.co.riso.smartdeviceapp.model.ContentPrintFile
 import jp.co.riso.smartdeviceapp.model.ContentPrintPrintSettings
 import jp.co.riso.smartdeviceapp.model.ContentPrintPrinter
@@ -56,6 +59,7 @@ import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
+import java.util.concurrent.TimeUnit
 
 
 /**
@@ -68,7 +72,7 @@ class ContentPrintManager(context: Context?) {
     /**
      *  MSAL interface and classes
      */
-    open class SingleAccountApplicationCreatedListener: ISingleAccountApplicationCreatedListener {
+    open class SingleAccountApplicationCreatedListener : ISingleAccountApplicationCreatedListener {
         // This variable is saved for testing purposes
         var application: ISingleAccountPublicClientApplication? = null
 
@@ -90,7 +94,8 @@ class ContentPrintManager(context: Context?) {
         fun onAuthenticationFinished()
     }
 
-    class InteractiveAuthenticationCallback(private var authenticationCallback: IAuthenticationCallback?) : AuthenticationCallback {
+    class InteractiveAuthenticationCallback(private var authenticationCallback: IAuthenticationCallback?) :
+        AuthenticationCallback {
         override fun onSuccess(authenticationResult: IAuthenticationResult?) {
             isLoggedIn = true
             receiveAuthenticationResult(authenticationResult, this.authenticationCallback)
@@ -109,7 +114,8 @@ class ContentPrintManager(context: Context?) {
         }
     }
 
-    class RefreshAuthenticationCallback(private var authenticationCallback: IAuthenticationCallback?) : SilentAuthenticationCallback {
+    class RefreshAuthenticationCallback(private var authenticationCallback: IAuthenticationCallback?) :
+        SilentAuthenticationCallback {
         override fun onSuccess(authenticationResult: IAuthenticationResult?) {
             isLoggedIn = true
             receiveAuthenticationResult(authenticationResult, this.authenticationCallback)
@@ -127,11 +133,18 @@ class ContentPrintManager(context: Context?) {
      */
     interface IContentPrintService {
         @GET(API_LIST_FILES)
-        fun listFiles(@Query("limit") limit: Int, @Query("page") page: Int, @Query("printer_type") printerType: Int): Call<ContentPrintFileResult>
+        fun listFiles(
+            @Query("limit") limit: Int,
+            @Query("page") page: Int,
+            @Query("printer_type") printerType: Int
+        ): Call<ContentPrintFileResult>
 
         @Streaming
         @GET(API_DOWNLOAD_FILE)
-        suspend fun downloadThumbnail(@Path("file_id") fileId: Int, @Query("thumbnail") thumbnail: Int): Response<ResponseBody>
+        suspend fun downloadThumbnail(
+            @Path("file_id") fileId: Int,
+            @Query("thumbnail") thumbnail: Int
+        ): Response<ResponseBody>
 
         @Streaming
         @GET(API_DOWNLOAD_FILE)
@@ -148,12 +161,18 @@ class ContentPrintManager(context: Context?) {
 
         @DELETE(API_UNREGISTER_DEVICE)
         fun unregisterDevice(@Path("device_id") deviceId: String): Call<ResponseBody>
+        @GET(API_CURRENT_USER)
+        fun getCurrentUser(): Call<CurrentUserResult>
     }
 
     interface IContentPrintCallback {
         fun onFileListUpdated(success: Boolean)
 
-        fun onThumbnailDownloaded(contentPrintFile: ContentPrintFile, filePath: String, success: Boolean)
+        fun onThumbnailDownloaded(
+            contentPrintFile: ContentPrintFile,
+            filePath: String,
+            success: Boolean
+        )
 
         fun onStartFileDownload()
 
@@ -190,7 +209,16 @@ class ContentPrintManager(context: Context?) {
         var count: Int = -1
     }
 
-    class ContentPrintFileResultCallback(var callback: IContentPrintCallback?) : Callback<ContentPrintFileResult> {
+    class CurrentUserResult {
+        @SerializedName("user_id")
+        var userId: Int = -1
+
+        @SerializedName("email")
+        var userEmail: String? = ""
+    }
+
+    class ContentPrintFileResultCallback(var callback: IContentPrintCallback?) :
+        Callback<ContentPrintFileResult> {
         override fun onFailure(call: Call<ContentPrintFileResult>, t: Throwable) {
             Log.e(TAG, "updateFileList - Error ${t.message}")
             callback?.onFileListUpdated(false)
@@ -219,7 +247,11 @@ class ContentPrintManager(context: Context?) {
         }
     }
 
-    class ContentPrintFileDownloadCallback(var manager: ContentPrintManager, var filename: String?, var callback: IContentPrintCallback?) : Callback<ContentPrintFileResult> {
+    class ContentPrintFileDownloadCallback(
+        var manager: ContentPrintManager,
+        var filename: String?,
+        var callback: IContentPrintCallback?
+    ) : Callback<ContentPrintFileResult> {
         override fun onFailure(call: Call<ContentPrintFileResult>, t: Throwable) {
             Log.e(TAG, "listFiles - Error ${t.message}")
             callback?.onFileListUpdated(false)
@@ -247,6 +279,25 @@ class ContentPrintManager(context: Context?) {
         }
     }
 
+    class CurrentUserResultCallback(var callback: IContentPrintCallback?) :
+        Callback<CurrentUserResult> {
+        override fun onFailure(call: Call<CurrentUserResult>, t: Throwable) {
+            Log.e(TAG, "updateFileList - Error ${t.message}")
+            callback?.onFileListUpdated(false)
+        }
+
+        override fun onResponse(
+            call: Call<CurrentUserResult>,
+            response: Response<CurrentUserResult>
+        ) {
+            var uId = response.body()?.userId ?: 0
+            (response.body()?.userEmail ?: "").also { email = it }
+            _userId = uId
+            _email = email
+            emailAdress = email
+        }
+    }
+
     class ContentPrintPrinterResult {
         @SerializedName("list")
         var list: List<ContentPrintPrinter> = ArrayList()
@@ -255,7 +306,8 @@ class ContentPrintManager(context: Context?) {
         var count: Int = -1
     }
 
-    class ContentPrintPrinterResultCallback(var callback: IContentPrintCallback?): Callback<ContentPrintPrinterResult> {
+    class ContentPrintPrinterResultCallback(var callback: IContentPrintCallback?) :
+        Callback<ContentPrintPrinterResult> {
         override fun onFailure(call: Call<ContentPrintPrinterResult>, t: Throwable) {
             Log.e(TAG, "updatePrinterList - Error ${t.message}")
             callback?.onPrinterListUpdated(false)
@@ -294,7 +346,8 @@ class ContentPrintManager(context: Context?) {
         var deviceToken: String? = null
     }
 
-    class ContentPrintBoxRegistrationResultCallback(var callback: IRegisterToBoxCallback?) : Callback<ResponseBody> {
+    class ContentPrintBoxRegistrationResultCallback(var callback: IRegisterToBoxCallback?) :
+        Callback<ResponseBody> {
         override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
             callback?.onBoxRegistered(false)
             Log.e(TAG, "registerToBox - Error ${t.message}")
@@ -308,7 +361,6 @@ class ContentPrintManager(context: Context?) {
             Log.d(TAG, "registerToBox - END")
         }
     }
-
 
     class DeviceRegisterationResultCallback(var callback: IDeviceRegisterCallback?): Callback<ResponseBody> {
         override fun onFailure(call: Call<ResponseBody>, t: Throwable) {
@@ -385,6 +437,8 @@ class ContentPrintManager(context: Context?) {
             _accessToken = getKeyValue(KEY_TOKEN)
             _authority = getKeyValue(KEY_AUTHORITY)
             checkAccessToken(context as? IAuthenticationCallback)
+            dbHelper = DatabaseManager(context)
+
         } else {
             // Reset variables to null
             application = null
@@ -396,7 +450,7 @@ class ContentPrintManager(context: Context?) {
     fun login(activity: Activity?, authenticationCallback: IAuthenticationCallback) {
         if (application != null && !isLoggedIn) {
             authenticationCallback.onAuthenticationStarted()
-
+            Log.d(ContentPrintManager.TAG, "loginTEST")
             val params = AcquireTokenParameters.Builder()
                 .startAuthorizationFromActivity(activity)
                 .withScopes(scopes)
@@ -437,7 +491,13 @@ class ContentPrintManager(context: Context?) {
         CoroutineScope(Dispatchers.IO).launch {
             // Get the file from the file list
             contentPrintService?.listFiles(0, 0, PRINTER_TYPE)
-                ?.enqueue(ContentPrintFileDownloadCallback(this@ContentPrintManager, filename, callback))
+                ?.enqueue(
+                    ContentPrintFileDownloadCallback(
+                        this@ContentPrintManager,
+                        filename,
+                        callback
+                    )
+                )
         }
     }
 
@@ -453,9 +513,19 @@ class ContentPrintManager(context: Context?) {
         }
     }
 
-    private suspend fun downloadFile(contentPrintFile: ContentPrintFile,
-                             callback: IContentPrintCallback?,
-                             isThumbnail: Boolean) {
+    fun getCurrentUser(callback: IContentPrintCallback?) {
+        Log.d(TAG, "getCurrentUser")
+        CoroutineScope(Dispatchers.IO).launch {
+            contentPrintService?.getCurrentUser()
+                ?.enqueue(CurrentUserResultCallback(callback))
+        }
+    }
+
+    private suspend fun downloadFile(
+        contentPrintFile: ContentPrintFile,
+        callback: IContentPrintCallback?,
+        isThumbnail: Boolean
+    ) {
         try {
             if (!isThumbnail) {
                 callback?.onStartFileDownload()
@@ -508,9 +578,9 @@ class ContentPrintManager(context: Context?) {
         } catch (e: Exception) {
             Log.e(TAG, "Error in downloading file ${contentPrintFile.filename}: $e")
             if (isThumbnail) {
-               callback?.onThumbnailDownloaded(contentPrintFile, "", false)
+                callback?.onThumbnailDownloaded(contentPrintFile, "", false)
             } else {
-               callback?.onFileDownloaded(contentPrintFile, "", false)
+                callback?.onFileDownloaded(contentPrintFile, "", false)
             }
         }
     }
@@ -523,7 +593,12 @@ class ContentPrintManager(context: Context?) {
         }
     }
 
-    fun registerToBox(fileId: Int, serialNo: String, printSettings: ContentPrintPrintSettings, callback: IRegisterToBoxCallback?) {
+    fun registerToBox(
+        fileId: Int,
+        serialNo: String,
+        printSettings: ContentPrintPrintSettings,
+        callback: IRegisterToBoxCallback?
+    ) {
         Log.d(TAG, "registerToBox - START")
         callback?.onStartBoxRegistration()
 
@@ -601,6 +676,9 @@ class ContentPrintManager(context: Context?) {
         private fun initializeHttpClient() {
             val client = OkHttpClient.Builder()
                 .addInterceptor(AuthInterceptor())
+                .connectTimeout(60, TimeUnit.SECONDS)  // Set connection timeout
+                .writeTimeout(60, TimeUnit.SECONDS)     // Set write timeout
+                .readTimeout(60, TimeUnit.SECONDS)      // Set read timeout
                 .build()
             val retrofit = Retrofit.Builder()
                 .baseUrl(_uri!!)
@@ -612,10 +690,12 @@ class ContentPrintManager(context: Context?) {
 
         private fun receiveAuthenticationResult(
             authenticationResult: IAuthenticationResult?,
-            authenticationCallback: IAuthenticationCallback?) {
+            authenticationCallback: IAuthenticationCallback?
+        ) {
             _authority = authenticationResult?.account?.authority
             _accessToken = authenticationResult?.accessToken
-            val expiresOn = authenticationResult?.expiresOn?.toInstant()?.atZone(ZoneId.of(TIME_ZONE))
+            val expiresOn =
+                authenticationResult?.expiresOn?.toInstant()?.atZone(ZoneId.of(TIME_ZONE))
 
             // Save the access token in the key store
             saveKeyValue(KEY_TOKEN, _accessToken)
@@ -656,13 +736,13 @@ class ContentPrintManager(context: Context?) {
         }
 
         private fun dateToString(date: ZonedDateTime?): String {
-            val formatter =  DateTimeFormatter.ofPattern(ISO_FORMAT)
+            val formatter = DateTimeFormatter.ofPattern(ISO_FORMAT)
             Log.d("TEST", "dateToString: ${formatter.format(date)}")
             return formatter.format(date)
         }
 
         private fun stringToDate(dateStr: String?): ZonedDateTime? {
-            val formatter =  DateTimeFormatter.ofPattern(ISO_FORMAT)
+            val formatter = DateTimeFormatter.ofPattern(ISO_FORMAT)
             val dateTime = LocalDateTime.parse(dateStr, formatter)
             Log.d("TEST", "stringToDate: $dateStr")
             return dateTime.atZone(ZoneId.of(TIME_ZONE))
@@ -713,6 +793,33 @@ class ContentPrintManager(context: Context?) {
             }
         }
 
+        fun saveViewedFile(context: Context?, fileId: String, fileName: String): Boolean {
+            val _databaseManager = DatabaseManager(context)
+
+            // Create Content
+            val viewedFile = ContentValues()
+            viewedFile.put(KeyConstants.KEY_SQL_CONTENT_FILE_ID, fileId)
+            viewedFile.put(KeyConstants.KEY_SQL_CONTENT_FILE_NAME, fileName)
+            Log.e("saveViewedFile", "_email: $_email")
+            viewedFile.put(KeyConstants.KEY_SQL_CONTENT_USER_CURRENT_EMAIL, _email)
+
+            if (!_databaseManager.insert(
+                    KeyConstants.KEY_SQL_CONTENT_PRINT_TABLE,
+                    null,
+                    viewedFile
+                )
+            ) {
+                _databaseManager.close()
+                return false
+            }
+            _databaseManager.close()
+            return true
+        }
+
+        fun getAllViewedFiles(): List<DatabaseManager.ViewedFiles>? {
+            return dbHelper?.getAllViewedFiles(_email)
+        }
+
         const val KEY_STORE = "ContentPrintKeyStore"
         const val KEY_TOKEN = "ContentPrintKeyToken"
         const val KEY_AUTHORITY = "ContentPrintKeyAuthority"
@@ -729,7 +836,7 @@ class ContentPrintManager(context: Context?) {
         private const val API_REGISTER = "api/content/registered"
         private const val API_REGISTER_DEVICE = "api/user/device/register"
         private const val API_UNREGISTER_DEVICE = "api/user/device/{device_id}"
-
+        private const val API_CURRENT_USER = "api/user/me"
 
         val TAG: String = ContentPrintManager::class.java.simpleName ?: "Content Print"
 
@@ -738,6 +845,8 @@ class ContentPrintManager(context: Context?) {
         private var _uri: String? = null
         private var _authority: String? = null
         private var _accessToken: String? = null
+        private var _userId: Int = 0
+        private var _email: String? = null
 
         var preferences: SharedPreferences? = null
         var application: ISingleAccountPublicClientApplication? = null
@@ -753,7 +862,10 @@ class ContentPrintManager(context: Context?) {
         var fileCount: Int = 0
         var fileList: List<ContentPrintFile> = ArrayList()
         var printerList: List<ContentPrintPrinter> = ArrayList()
-
         var deviceToken: String? = null
+        var isFromPushNotification: Boolean = false
+        var email: String? = null
+        var emailAdress: String? = null
+        private var dbHelper: DatabaseManager? = null
     }
 }
