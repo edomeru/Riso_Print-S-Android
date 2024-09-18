@@ -23,6 +23,8 @@ import android.widget.LinearLayout
 import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.core.content.ContextCompat
+import com.google.firebase.messaging.FirebaseMessaging
+import com.google.firebase.messaging.FirebaseMessagingService
 import eu.erikw.PullToRefreshListView
 import jp.co.riso.android.dialog.ConfirmDialogFragment
 import jp.co.riso.android.dialog.DialogUtils
@@ -384,6 +386,15 @@ open class ContentPrintFragment : BaseFragment(),
     // ================================================================================
     override fun onDeviceUnregistered(success: Boolean){
         Log.d("Unregister Device", "===== onDeviceUnregistered - END =====")
+        FirebaseMessaging.getInstance().deleteToken().addOnCompleteListener {task ->
+            if (task.isSuccessful){
+                Log.d("Unregister Device success", "===== FirebaseMessaging deleteToken =====")
+            }
+            else
+            {
+                Log.d("Unregister Device failed", "===== FirebaseMessaging deleteToken =====")
+            }
+        }
         _contentPrintManager?.logout(this)
     }
 
