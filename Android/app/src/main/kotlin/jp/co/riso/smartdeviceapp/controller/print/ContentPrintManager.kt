@@ -253,9 +253,8 @@ class ContentPrintManager(context: Context?) {
                         }
                     }
                     file.isRecentlyUploaded = isUploaded // Set the property based on the match
-
-                    callback?.onFileListUpdated(true)
                 }
+                callback?.onFileListUpdated(true)
             } else {
                 Log.e(TAG, "Unexpected response body type: ${responseBody?.javaClass?.name}")
                 callback?.onFileListUpdated(false)
