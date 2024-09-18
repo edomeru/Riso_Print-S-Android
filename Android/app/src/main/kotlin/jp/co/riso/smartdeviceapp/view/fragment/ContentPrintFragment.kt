@@ -23,6 +23,9 @@ import android.widget.LinearLayout
 import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.messaging.FirebaseMessagingService
 import eu.erikw.PullToRefreshListView
@@ -37,11 +40,13 @@ import jp.co.riso.smartdeviceapp.model.ContentPrintFile
 import jp.co.riso.smartdeviceapp.view.PDFHandlerActivity
 import jp.co.riso.smartdeviceapp.view.base.BaseFragment
 import jp.co.riso.smartdeviceapp.view.contentprint.ContentPrintFileAdapter
+import jp.co.riso.smartdeviceapp.view.notification.NotificationHubHelper
 import jp.co.riso.smartprint.R
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 import java.io.File
 import java.util.concurrent.TimeUnit
 import kotlin.math.ceil
@@ -241,8 +246,38 @@ open class ContentPrintFragment : BaseFragment(),
         }
 
         if (ContentPrintManager.isLoggedIn) {
-            _contentPrintManager?.registerDevice(ContentPrintManager.deviceToken, this)
-            _contentPrintManager?.getCurrentUser( this)
+
+            if (ContentPrintManager.deviceToken == null) {
+                val self = this
+                lifecycleScope.launch {
+                    repeatOnLifecycle(Lifecycle.State.CREATED) {
+                        try {
+                            val token = FirebaseMessaging.getInstance().token.await()
+                            val notificationHubHelper = NotificationHubHelper(
+                                self.requireContext(),
+                                getString(R.string.azure_notification_hubs_name),
+                                getString(R.string.azure_notification_hubs_connection_string)
+                            )
+
+                            notificationHubHelper.registerWithNotificationHubs(token)
+                            ContentPrintManager.deviceToken = token
+
+
+                            _contentPrintManager?.registerDevice(ContentPrintManager.deviceToken, self)
+                            // Token registration successful
+
+                        } catch (e: Exception) {
+                            // Handle registration error
+                            Log.e("MainActivity", "Notification Hub Registration failed", e)
+                        }
+                    }
+                }
+            }
+            else {
+                _contentPrintManager?.registerDevice(ContentPrintManager.deviceToken, this)
+
+            }
+            _contentPrintManager?.getCurrentUser(this)
             refreshFileList()
         }
 
@@ -386,6 +421,7 @@ open class ContentPrintFragment : BaseFragment(),
     // ================================================================================
     override fun onDeviceUnregistered(success: Boolean){
         Log.d("Unregister Device", "===== onDeviceUnregistered - END =====")
+        ContentPrintManager.deviceToken = null
         FirebaseMessaging.getInstance().deleteToken().addOnCompleteListener {task ->
             if (task.isSuccessful){
                 Log.d("Unregister Device success", "===== FirebaseMessaging deleteToken =====")
