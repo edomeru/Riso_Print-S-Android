@@ -238,7 +238,24 @@ class ContentPrintManager(context: Context?) {
                 fileList = responseBody.list.filter { file ->
                     file.filename?.lowercase()?.endsWith(".pdf") == true
                 }
-                callback?.onFileListUpdated(true)
+                var viewdFileList = dbHelper?.getAllViewedFiles(_email)
+
+                // Check the viewed files
+                for (file in fileList) {
+                    var isUploaded = false // Assume the file is not recently uploaded initially
+
+                    if (viewdFileList != null) {
+                        for (data in viewdFileList) {
+                            if (data.fileId.equals(file.fileId.toString())) {
+                                isUploaded = true
+                                break // No need to check further if a match is found
+                            }
+                        }
+                    }
+                    file.isRecentlyUploaded = isUploaded // Set the property based on the match
+
+                    callback?.onFileListUpdated(true)
+                }
             } else {
                 Log.e(TAG, "Unexpected response body type: ${responseBody?.javaClass?.name}")
                 callback?.onFileListUpdated(false)
