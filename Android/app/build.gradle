@@ -13,8 +13,8 @@ android {
         applicationId "jp.co.riso.cloudhub.smartprint"
         minSdkVersion 28
         targetSdkVersion 34
-        versionCode 590002001
-        versionName 'v5.900.2.1'
+        versionCode 590003000
+        versionName 'v5.900.3.0'
 
         testApplicationId "jp.co.riso.cloudhub.smartprint.test"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
